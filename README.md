@@ -1,1 +1,1 @@
-# trading-app
+# Forex Trading Application workshop
