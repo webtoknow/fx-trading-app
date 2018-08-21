@@ -1,5 +1,9 @@
 # Forex Trading Application workshop
 
+The purpose of this workshop is to provide students with a good undestanding of the enterprise applications development proccess (from idea and design to development and publishing).
+
+Each week will give the learner the opportunity to read and understand theoretical concepts and also to solve exercices to obtain a functional Forex trading application. At the end, the user will be able to buy and sell currencies and also view all transaction made by other users.
+
 ## The agenda
 
 The agenda has the following content:
