@@ -1,6 +1,6 @@
 # Forex Trading Application workshop
 
-During this workshop, we will learn about the whole process and all concepts involved in building an enterprise application from almost scratch. Starting with an idea and some wireframes, together we will analyze, develop, test and publish our app.
+During this workshop, we will learn about the whole process and all concepts involved in building an enterprise application from scratch. Starting with an idea and some wireframes, together we will analyze, develop, test and publish our app.
  
 Each week will be an opportunity to understand theoretical concepts and apply them in punctual exercices. In the end, we will obtain a functional Forex trading application meant to help us to buy and sell currencies and also to view all transactions made by other users.
 
