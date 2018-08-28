@@ -1,1 +1,0 @@
-# Forex Trading Application
