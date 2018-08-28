@@ -59,3 +59,4 @@ We just need:
 - [Angular CLI](https://github.com/angular/angular-cli)
 - [Maven](https://maven.apache.org/install.html)
 - [Postman](https://www.getpostman.com/apps)
+- [Postgresql](https://www.postgresql.org/download/)
