@@ -50,8 +50,12 @@ The agenda has the following content:
 We just need:
 
 - [Modern browser](https://browsehappy.com/)
-- [Idea](https://www.jetbrains.com/idea/download/)
-- [Visual Studio Code](https://code.visualstudio.com/Download)
+- IDE:
+  - [Idea](https://www.jetbrains.com/idea/download/)
+  - [Visual Studio Code](https://code.visualstudio.com/Download)
+  - [Eclipse](https://www.eclipse.org/downloads/packages/)
 - [Git](https://git-scm.com/download/win)
 - [NodeJS](https://nodejs.org/en/)
 - [Angular CLI](https://github.com/angular/angular-cli)
+- [Maven](https://maven.apache.org/install.html)
+- [Postman](https://www.getpostman.com/apps)
