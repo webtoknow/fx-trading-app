@@ -8,6 +8,8 @@ import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { RegisterPageComponent } from './pages/register-page/register-page.component';
 import { DashboardPageComponent } from './pages/dashboard-page/dashboard-page.component';
 import { NotFoundPageComponent } from './pages/not-found-page/not-found-page.component';
+import { FxRatesViewComponent } from './pages/dashboard-page/fx-rates-view/fx-rates-view.component';
+import { BlotterViewComponent } from './pages/dashboard-page/blotter-view/blotter-view.component';
 
 const appRoutes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -23,7 +25,9 @@ const appRoutes: Routes = [
     LoginPageComponent,
     RegisterPageComponent,
     DashboardPageComponent,
-    NotFoundPageComponent
+    NotFoundPageComponent,
+    FxRatesViewComponent,
+    BlotterViewComponent
   ],
   imports: [
     RouterModule.forRoot(
