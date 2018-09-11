@@ -1,3 +1,25 @@
-<p>
-  blotter-view works!
-</p>
+<h2>Blotter View</h2>
+<div class="table-responsive">
+  <table class="table table-striped table-sm">
+    <thead>
+      <tr>
+        <th>Deal ID</th>
+        <th>Username</th>
+        <th>CCY</th>
+        <th>Notional</th>
+        <th>Tenor</th>
+        <th>Transaction Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let tranzaction of tranzactions">
+        <td>{{ tranzaction.dealId }}</td>
+        <td>{{ tranzaction.username }}</td>
+        <td>{{ tranzaction.CCY }}</td>
+        <td>{{ tranzaction.notional | number }}</td>
+        <td>{{ tranzaction.tenor }}</td>
+        <td>{{ tranzaction.date | date:'short' }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
