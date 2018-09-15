@@ -1,0 +1,39 @@
+.main-div {
+    border-radius: 2px;
+    margin: 10px auto 30px;
+    max-width: 38%;
+    padding: 55px 85px;
+    border: 1px solid black
+}
+
+.panel {
+    margin-bottom: 30px;
+    border-bottom: 1px solid black;
+    padding-bottom: 20px;
+} 
+
+.col {
+    padding: 0;
+}
+
+.flex {
+    display: flex;
+}
+
+.invalid-feedback {
+    font-weight: bold;
+}
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.btn-link {
+    padding: 0;
+}
+
+.have-account-text {
+    margin-right: 10px;
+}

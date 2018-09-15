@@ -1,7 +1,9 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
+import { HttpModule } from '@angular/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
@@ -10,12 +12,22 @@ import { DashboardPageComponent } from './pages/dashboard-page/dashboard-page.co
 import { NotFoundPageComponent } from './pages/not-found-page/not-found-page.component';
 import { FxRatesViewComponent } from './pages/dashboard-page/fx-rates-view/fx-rates-view.component';
 import { BlotterViewComponent } from './pages/dashboard-page/blotter-view/blotter-view.component';
+import { AlertComponent } from './../app/directives/alert.component';
+import { AuthGuard } from 'src/app/guards/auth.guard';
+import { AlertService } from 'src/app/services/alert.service';
+import { AuthenticationService } from 'src/app/services/authentication.service';
+import { UserService } from 'src/app/services/user.service';
+import { JwtInterceptor } from 'src/app/helpers/jwt.interceptor';
+import { ErrorInterceptor } from 'src/app/helpers/error.interceptor';
+
+//fake BE
+import { fakeBackendProvider } from './helpers/fake-backend';
 
 const appRoutes: Routes = [
-  { path: '', redirectTo: '/login', pathMatch: 'full' },
+  { path: '', redirectTo: '/login', pathMatch: 'full', canActivate: [AuthGuard] },
   { path: 'login', component: LoginPageComponent },
   { path: 'register', component: RegisterPageComponent },
-  { path: 'dashboard', component: DashboardPageComponent },
+  { path: 'dashboard', component: DashboardPageComponent, canActivate: [AuthGuard] },
   { path: '**', component: NotFoundPageComponent }
 ];
 
@@ -27,16 +39,29 @@ const appRoutes: Routes = [
     DashboardPageComponent,
     NotFoundPageComponent,
     FxRatesViewComponent,
-    BlotterViewComponent
+    BlotterViewComponent,
+    AlertComponent
   ],
   imports: [
     RouterModule.forRoot(
       appRoutes,
       { enableTracing: true } // <-- debugging purposes only
     ),
-    BrowserModule
+    BrowserModule,
+    FormsModule,
+    ReactiveFormsModule,
+    HttpModule,
+    HttpClientModule
   ],
-  providers: [],
-  bootstrap: [AppComponent]
+  providers: [
+    AuthGuard,
+    AlertService,
+    AuthenticationService,
+    UserService,
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
+    fakeBackendProvider
+  ],
+  bootstrap: [AppComponent],
 })
 export class AppModule { }
