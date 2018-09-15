@@ -1,0 +1,32 @@
+<div class="widget">
+  <!-- <button class="btn btn-primary" (click)="onDelete()">Close</button> -->
+  
+  <!-- Select currency step -->
+  <div *ngIf="widget.selectCCYState">
+    <div class="form-group">
+        <label for="buyCCY">Buy currency</label>
+        <select
+            name="buyCCY"
+            id="buyCCY"
+            class="custom-select"
+            [(ngModel)]="widget.buyCCY"
+            required
+        >
+            <option *ngFor="let currency of currencies" [value]="currencies">{{ currency }}</option>
+        </select>
+    </div>
+      <div class="form-group">
+        <label for="sellCCY">Sell Currency</label>
+        <select
+          name="sellCCY"
+          id="sellCCY"
+          class="custom-select"
+          [(ngModel)]="widget.sellCCY"
+          required
+          >
+          <option *ngFor="let currency of currencies" [value]="currencies">{{ currency }}</option>
+        </select>
+    </div>
+      <button class="btn btn-primary btn-block" (click)="onSelectCurrency()">Ok</button>
+  </div>
+</div>

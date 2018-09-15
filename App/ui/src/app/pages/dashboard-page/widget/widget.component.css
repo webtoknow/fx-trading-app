@@ -1,0 +1,14 @@
+.widget {
+  width: 250px;
+  height: 250px;
+  border: 1px solid black;
+  padding: 10px;
+}
+
+.ng-valid[required], .ng-valid.required  {
+  border-left: 5px solid #42A948; /* green */
+}
+
+.ng-invalid:not(form)  {
+  border-left: 5px solid #a94442; /* red */
+}
