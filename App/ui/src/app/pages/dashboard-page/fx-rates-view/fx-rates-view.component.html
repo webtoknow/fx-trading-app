@@ -1,3 +1,11 @@
-<p>
-  fx-rates-view works!
-</p>
+<div class="row">
+  <app-widget
+    class="col"
+    *ngFor="let widget of widgets; let i=index"
+    [widget]="widget"
+    [index]="i"
+    (deleted)="onDeleteWidget($event)"
+  >
+  </app-widget>
+  <button (click)="onAddWidget()">Add widget</button>
+</div>
