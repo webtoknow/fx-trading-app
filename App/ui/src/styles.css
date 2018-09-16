@@ -17,3 +17,7 @@ html, body{
 .title-border {
     border-bottom: 1px solid rgb(221,221,221);
 }
+
+.screen-full-height {
+    height: 100vh;
+}
