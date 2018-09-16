@@ -1,36 +1,37 @@
-.main-div {
-    border-radius: 2px;
-    margin: 10px auto 30px;
-    max-width: 38%;
-    padding: 55px 85px;
-    border: 1px solid black
+.container-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.panel {
-    margin-bottom: 30px;
-    border-bottom: 1px solid black;
-    padding-bottom: 20px;
-} 
+.login-logo-container {
+    background-color: rgb(141,213,170);
+}
+
+.content {
+    width: 350px;
+}
 
 .icon {
     font-size: 24px;
-    color: rgb(102,102,102);
+    color: rgb(221,221,221);
     margin-right: 15px;
+    line-height: 31px;
 }
 
 .col {
     padding: 0;
 }
 
-.flex {
-    display: flex;
+.screen-full-height {
+    height: 100vh;
 }
 
 .invalid-feedback {
     font-weight: bold;
 }
 
-.forget-register-container {
+.register-container {
     display: flex;
     justify-content: space-between;
     margin-top: 20px;
@@ -38,4 +39,11 @@
 
 .btn-link {
     padding: 0;
+}
+
+.text-container {
+    margin-top: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
 }

@@ -1,1 +1,19 @@
 /* You can add global styles to this file, and also import other style files */
+
+html, body{
+    height: 100%;
+    color: rgb(124,124,124);
+}
+
+.flex {
+    display: flex;
+}
+
+.title {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+} 
+
+.title-border {
+    border-bottom: 1px solid rgb(221,221,221);
+}
