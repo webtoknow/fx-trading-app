@@ -1,6 +1,61 @@
-.widget {
-  min-width: 35%;
-  height: 250px;
-  border: 1px solid black;
-  padding: 10px;
+.content-widget {
+  width: 100%;
+  position: relative;
+}
+
+.widget-title {
+  padding: 20px 20px 10px;
+  border-bottom: 1px solid lightgrey;
+  margin: 0;
+}
+
+.label-long {
+  width: 160px;
+  justify-content: flex-start;
+}
+
+.label-short {
+  width: 70px;
+  justify-content: flex-start;
+}
+
+.form-control {
+  display: flex;
+  flex-grow: 1;
+}
+
+.btn-wraper {
+  display: grid;
+  justify-content: flex-end;
+}
+
+.btns-wrapper {
+  display: flex;
+  justify-content: space-between;
+}
+
+.rates-container {
+  display: flex;
+  justify-content: space-between;
+  background: lightgrey;
+  padding: 10px 20px;
+}
+
+.rate-up {
+  color: green;
+}
+
+.rate-down {
+  color: red;
+}
+
+.content-container {
+  padding: 20px;
+}
+
+.close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 15px;
 }

@@ -24,7 +24,7 @@ export class WidgetComponent implements OnInit {
 
   onSelectCurrency() {
     if (this.widget.primaryCCY && this.widget.secondaryCCY) {
-      this.widget.selectCCYState = false;
+      this.widget.pickCCYState = false;
     }
   }
 }
