@@ -1,0 +1,11 @@
+.container-widget {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.button-widget {
+  width: 35%;
+  height: 250px;
+  border: 1px solid black;
+  padding: 10px;
+}

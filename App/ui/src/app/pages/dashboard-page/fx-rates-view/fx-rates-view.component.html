@@ -1,11 +1,6 @@
-<div class="row">
-  <app-widget
-    class="col"
-    *ngFor="let widget of widgets; let i=index"
-    [widget]="widget"
-    [index]="i"
-    (deleted)="onDeleteWidget($event)"
-  >
+<h4 class="title">Fx Rates View</h4>
+<div class="container-widget">
+  <app-widget class="col" *ngFor="let widget of widgets; let i=index" [widget]="widget" [index]="i" (deleted)="onDeleteWidget($event)">
   </app-widget>
-  <button (click)="onAddWidget()">Add widget</button>
+  <button class="button-widget" (click)="onAddWidget()">Add widget</button>
 </div>
