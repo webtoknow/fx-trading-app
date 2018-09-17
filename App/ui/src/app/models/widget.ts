@@ -1,10 +1,10 @@
 export class Widget {
   
   constructor(
-    public sellCCY: string,
-    public buyCCY: string,
-    public sellRate: number,
-    public buyRate: number,
+    public primaryCCY: string,
+    public secondaryCCY: string,
+    public primaryRate: number,
+    public secondaryRate: number,
     public amount: string,
     public tenor: string,
     public selectCCYState: boolean,

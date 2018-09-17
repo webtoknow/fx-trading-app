@@ -23,7 +23,7 @@ export class WidgetComponent implements OnInit {
   }
 
   onSelectCurrency() {
-    if (this.widget.buyCCY && this.widget.sellCCY) {
+    if (this.widget.primaryCCY && this.widget.secondaryCCY) {
       this.widget.selectCCYState = false;
     }
   }

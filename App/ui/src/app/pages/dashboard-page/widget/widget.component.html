@@ -2,31 +2,62 @@
   <!-- <button class="btn btn-primary" (click)="onDelete()">Close</button> -->
   
   <!-- Select currency step -->
-  <div *ngIf="widget.selectCCYState">
+  <div *ngIf="!widget.selectCCYState">
     <div class="form-group">
-        <label for="buyCCY">Buy currency</label>
+        <label for="primaryCCY">Primary currency</label>
         <select
-            name="buyCCY"
-            id="buyCCY"
+            name="primaryCCY"
+            id="primaryCCY"
             class="custom-select"
-            [(ngModel)]="widget.buyCCY"
+            [(ngModel)]="widget.primaryCCY"
             required
         >
+            <option value="" disabled selected>Please select</option>
             <option *ngFor="let currency of currencies" [value]="currencies">{{ currency }}</option>
         </select>
     </div>
       <div class="form-group">
-        <label for="sellCCY">Sell Currency</label>
+        <label for="secondaryCCY">Secondary Currency</label>
         <select
-          name="sellCCY"
-          id="sellCCY"
+          name="secondaryCCY"
+          id="secondaryCCY"
           class="custom-select"
-          [(ngModel)]="widget.sellCCY"
+          [(ngModel)]="widget.secondaryCCY"
           required
           >
+          <option value="" disabled selected>Please select</option>
           <option *ngFor="let currency of currencies" [value]="currencies">{{ currency }}</option>
         </select>
     </div>
       <button class="btn btn-primary btn-block" (click)="onSelectCurrency()">Ok</button>
+  </div>
+
+  <!-- Trade step -->
+  <div *ngIf="widget.selectCCYState">
+    <div class="form-group">
+      <label for="amount">Amount</label>
+      <input
+        type="text"
+        class="form-control"
+        id="amount"
+        placeholder="Type the amount"
+        [(ngModel)]="widget.amount"
+        required
+      >
+    </div>
+    <div class="form-group">
+      <label for="primaryCCY">Tenor</label>
+      <select
+          name="tenor"
+          id="tenor"
+          class="custom-select"
+          [(ngModel)]="widget.tenor"
+          required
+      >
+          <option value="" disabled selected>Please select</option>
+          <option *ngFor="let currency of currencies" [value]="currencies">{{ currency }}</option>
+      </select>
+    </div>
+    <button class="btn btn-primary btn-block" (click)="onTrade()">Ok</button>
   </div>
 </div>
