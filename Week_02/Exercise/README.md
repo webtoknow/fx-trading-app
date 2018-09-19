@@ -1,7 +1,7 @@
 # Week 2 – Design
 
 ## Mind map - Mindmeister
-![LoginPage](Img/Mindmap.png "Login page")
+![LoginPage](Img/Mindmap.PNG "Mindmap")
 
 ## Wireframe - Balsamiq
 
