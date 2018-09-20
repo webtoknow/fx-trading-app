@@ -2,7 +2,11 @@
 
 html, body{
     height: 100%;
-    color: rgb(124,124,124);
+    color: #373A3C;
+}
+
+h1,h2,h3,h4,h5,h6 {
+    color: #7C7C7C;
 }
 
 .flex {
@@ -15,17 +19,13 @@ html, body{
 } 
 
 .title-border {
-    border-bottom: 1px solid rgb(221,221,221);
+    border-bottom: 1px solid #DDDDDD;
 }
 
 .screen-full-height {
     height: 100vh;
 }
 
-/* .ng-valid[required], .ng-valid.required  {
-  border-left: 5px solid #42A948;
-} */
-
 .ng-invalid:not(form)  {
-  border-left: 5px solid #a94442; /* red */
+  border-left: 5px solid #D9534F;
 }

@@ -10,14 +10,14 @@
           <label class="label-long" for="primaryCCY">Primary currency</label>
           <select name="primaryCCY" id="primaryCCY" class="form-control" [(ngModel)]="widget.primaryCCY" required>
             <option value="" disabled selected>Please select</option>
-            <option *ngFor="let currency of currencies" [value]="currencies">{{ currency }}</option>
+            <option *ngFor="let currency of currencies" [value]="currency">{{ currency }}</option>
           </select>
         </div>
         <div class="form-inline form-inline-long form-group">
           <label class="label-long" for="secondaryCCY">Secondary Currency</label>
           <select name="secondaryCCY" id="secondaryCCY" class="form-control" [(ngModel)]="widget.secondaryCCY" required>
             <option value="" disabled selected>Please select</option>
-            <option *ngFor="let currency of currencies" [value]="currencies">{{ currency }}</option>
+            <option *ngFor="let currency of currencies" [value]="currency">{{ currency }}</option>
           </select>
         </div>
         <div class="btn-wraper">
@@ -29,17 +29,18 @@
   <!-- Trade step -->
   <div *ngIf="!widget.pickCCYState">
     <!-- Title -->
-    <h4 class="widget-title">EUR/RON</h4>
+    <h4 class="widget-title no-border"><span class="widget-primary">{{ widget.primaryCCY }}</span>/{{ widget.secondaryCCY }}</h4>
     <!-- Rates -->
     <div class="rates-container">
       <div>
-        <span class="subtitle">SELL:</span>
+        <span class="widget-subtitle">SELL:</span>
         &nbsp;
         <span class="rate">4.65</span>
         <span class="fa fa-caret-up rate-up"></span>
       </div>
       <div>
-        <span class="subtitle">BUY:</span>
+        <span class="widget-subtitle">BUY:</span>
+         &nbsp;
         <span class="rate">4.65</span>
         <span class="fa fa-caret-down rate-down"></span>
       </div>
@@ -54,8 +55,8 @@
       <div class="form-inline form-inline-short form-group">
         <label class="label-short" for="primaryCCY">Tenor</label>
         <select name="tenor" id="tenor" class="form-control" [(ngModel)]="widget.tenor" required>
-          <option [value]="" disabled selected>Please select</option>
-          <option *ngFor="let currency of currencies" [value]="currencies">{{ currency }}</option>
+          <option value="" disabled selected>Please select</option>
+          <option *ngFor="let tenor of tenors" [value]="tenor">{{ tenor }}</option>
         </select>
       </div>
       <!-- Buttons  -->

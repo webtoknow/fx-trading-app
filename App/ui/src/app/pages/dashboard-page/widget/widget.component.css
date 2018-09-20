@@ -5,8 +5,26 @@
 
 .widget-title {
   padding: 20px 20px 10px;
-  border-bottom: 1px solid lightgrey;
+  border-bottom: 1px solid #DDDDDD;
   margin: 0;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.widget-subtitle {
+  font-size: 20px;
+  color: #7C7C7C;
+  font-weight: bold;
+}
+
+.widget-primary {
+  font-size: 24px;
+  color: #373A3C;
+}
+
+.widget-primary-currency {
+  color: #373A3C;
+  font-size: 24px;
 }
 
 .label-long {
@@ -37,7 +55,7 @@
 .rates-container {
   display: flex;
   justify-content: space-between;
-  background: lightgrey;
+  background: #F2F2F2;
   padding: 10px 20px;
 }
 
@@ -58,4 +76,13 @@
   top: 20px;
   right: 20px;
   font-size: 15px;
+}
+
+.rate {
+  font-size: 30px;
+  font-weight: bold;
+}
+
+.no-border {
+  border:0;
 }
