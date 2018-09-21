@@ -9,6 +9,11 @@ html, body{
     display: flex;
 }
 
+.flex-vertical-centered {
+    display: flex;
+    align-items: center;
+}
+
 .title {
     margin-bottom: 30px;
     padding-bottom: 20px;

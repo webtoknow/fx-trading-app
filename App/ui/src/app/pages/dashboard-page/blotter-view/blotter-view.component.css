@@ -40,3 +40,8 @@
     overflow: hidden;
     white-space: nowrap;
 }
+
+.blotter-table-header th {
+    padding-bottom: 6px;
+    padding-top: 6px;
+}
