@@ -1,24 +1,78 @@
-<h2>Blotter View</h2>
+<div class="title title-border">
+  <h4>Blotter View</h4>
+</div>
+<div class="filter-container">
+  <span class="flex-vertical-centered filter-label">Filters</span>
+  <span class="flex-vertical-centered filter-separator">|</span>
+  <div class="filter-input-container">
+    <div class="flex-vertical-centered filter-group">
+      <span for="CCYFilter">CCY&nbsp;Pair&nbsp;&nbsp;</span>
+      <select name="CCY" id="CCY" class="form-control form-control-sm" [(ngModel)]="filter.ccy" (ngModelChange)="filterBy($event)">
+        <option value="" selected>Please select&nbsp;&nbsp;</option>
+        <option *ngFor="let currency of currencies" [value]="currency">{{ currency }}</option>
+      </select>
+    </div>
+
+    <div class="flex-vertical-centered filter-group">
+      <span for="dateFilter">Date&nbsp;&nbsp;</span>
+      <div class="input-group input-group-sm">
+        <input 
+          type="text" 
+          class="form-control form-control-sm" 
+          placeholder="Please select&nbsp;" 
+          [(ngModel)]="filter.date" 
+          (ngModelChange)="filterBy($event)" 
+          [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }"
+          bsDatepicker>
+        <div class="input-group-append">
+          <span class="input-group-text calendar-icon" id="date-picker-icon">
+            <i class="fa fa-calendar-alt icon" aria-hidden="true"></i>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="table-responsive">
   <table class="table table-striped table-sm">
-    <thead>
+    <thead class="blotter-table-header">
       <tr>
-        <th>Deal ID</th>
-        <th>Username</th>
-        <th>CCY</th>
-        <th>Notional</th>
+        <th>ID</th>
+        <th class="clickable" (click)="sortBy('username')">
+          <span>Username&nbsp;</span>
+          <i class="fas fa-sort"></i>
+        </th>
+        <th class="clickable" (click)="sortBy('CCY')">
+          <span>CCY Pair&nbsp;</span>
+          <i class="fas fa-sort"></i>
+        </th>
+        <th>Rate</th>
+        <th class="clickable" (click)="sortBy('action')">
+          <span>Action&nbsp;</span>
+          <i class="fas fa-sort"></i>
+        </th>
+        <th class="clickable" (click)="sortBy('notional')">
+          <span>Notional&nbsp;</span>
+          <i class="fas fa-sort"></i>
+        </th>
         <th>Tenor</th>
-        <th>Transaction Date</th>
+        <th class="clickable" (click)="sortBy('date')">
+          <span>Transaction Date&nbsp;</span>
+          <i class="fas fa-sort"></i>
+        </th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let tranzaction of tranzactions">
-        <td>{{ tranzaction.dealId }}</td>
-        <td>{{ tranzaction.username }}</td>
-        <td>{{ tranzaction.CCY }}</td>
-        <td>{{ tranzaction.notional | number }}</td>
-        <td>{{ tranzaction.tenor }}</td>
-        <td>{{ tranzaction.date | date:'short' }}</td>
+      <tr *ngFor="let transaction of transactions">
+        <td>{{ transaction.dealId }}</td>
+        <td>{{ transaction.username }}</td>
+        <td>{{ transaction.CCY }}</td>
+        <td>{{ transaction.rate | number }}</td>
+        <td>{{ transaction.action }}</td>
+        <td>{{ transaction.notional }}</td>
+        <td>{{ transaction.tenor }}</td>
+        <td>{{ transaction.date | date:'dd/MM/yyyy HH:mm' }}</td>
       </tr>
     </tbody>
   </table>

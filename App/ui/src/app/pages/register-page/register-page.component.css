@@ -8,6 +8,11 @@
     background-color: rgb(141,213,170);
 }
 
+.fx-grayscale-logo {
+    width: 350px;
+    height: 350px;
+}
+
 .content {
     width: 350px;
 }

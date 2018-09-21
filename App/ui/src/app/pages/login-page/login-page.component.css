@@ -8,13 +8,18 @@
     background-color: rgb(141,213,170);
 }
 
+.fx-grayscale-logo {
+    width: 350px;
+    height: 350px;
+}
+
 .content {
     width: 350px;
 }
 
 .icon {
     font-size: 24px;
-    color: rgb(221,221,221);
+    color: #dddddd;
     margin-right: 15px;
     line-height: 31px;
 }

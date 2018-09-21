@@ -2,11 +2,27 @@
 
 html, body{
     height: 100%;
-    color: rgb(124,124,124);
+    color: #7C7C7C;
+}
+
+.btn-primary {
+    background-color: #3496F0;
+}
+
+.btn-link {
+    color: #3496F0;
+}
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #F2F2F2;
 }
 
 .flex {
     display: flex;
+}
+
+.flex-vertical-centered {
+    display: flex;
+    align-items: center;
 }
 
 .title {
@@ -15,9 +31,15 @@ html, body{
 } 
 
 .title-border {
-    border-bottom: 1px solid rgb(221,221,221);
+    border-bottom: 1px solid #dddddd;
 }
 
 .screen-full-height {
     height: 100vh;
 }
+
+.clickable:hover {
+    cursor: pointer;
+    opacity: 0.8;
+}
+
