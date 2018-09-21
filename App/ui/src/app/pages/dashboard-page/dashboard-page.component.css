@@ -3,12 +3,8 @@
 }
 
 .navbar {
-    padding: 3rem;
-}
-
-.navbar {
     padding: 0.5rem 3rem;
-    border-bottom: 1px solid #dddddd;
+    border: 1px solid #DDDDDD;
 }
 
 .fx-main-logo {
