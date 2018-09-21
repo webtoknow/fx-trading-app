@@ -33,3 +33,10 @@
 .calendar-icon > i {
     font-size: 18px;
 }
+
+.blotter-table-header {
+    background: #3496F0;
+    color: white;
+    overflow: hidden;
+    white-space: nowrap;
+}

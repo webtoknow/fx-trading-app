@@ -5,13 +5,6 @@ html, body{
     color: rgb(124,124,124);
 }
 
-thead {
-    background: #3496F0;
-    color: white;
-    overflow: hidden;
-    white-space: nowrap;
-}
-
 .flex {
     display: flex;
 }
