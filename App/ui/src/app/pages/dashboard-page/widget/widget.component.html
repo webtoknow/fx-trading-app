@@ -7,14 +7,14 @@
     <h4 class="widget-title">Pick a currency</h4>
     <div class="content-container">
       <div class="form-inline form-inline-long form-group">
-          <label class="label-long" for="primaryCCY">Primary currency</label>
+          <label class="label-long" for="primaryCCY">Primary</label>
           <select name="primaryCCY" id="primaryCCY" class="form-control" [(ngModel)]="widget.primaryCCY" required>
             <option value="" disabled selected>Please select</option>
             <option *ngFor="let currency of currencies" [value]="currency">{{ currency }}</option>
           </select>
         </div>
         <div class="form-inline form-inline-long form-group">
-          <label class="label-long" for="secondaryCCY">Secondary Currency</label>
+          <label class="label-long" for="secondaryCCY">Secondary</label>
           <select name="secondaryCCY" id="secondaryCCY" class="form-control" [(ngModel)]="widget.secondaryCCY" required>
             <option value="" disabled selected>Please select</option>
             <option *ngFor="let currency of currencies" [value]="currency">{{ currency }}</option>
@@ -29,18 +29,19 @@
   <!-- Trade step -->
   <div *ngIf="!widget.pickCCYState">
     <!-- Title -->
-    <h4 class="widget-title no-border"><span class="widget-primary">{{ widget.primaryCCY }}</span>/{{ widget.secondaryCCY }}</h4>
+    <h4 class="widget-title no-border">
+      <span class="widget-primary">{{ widget.primaryCCY }}</span>/{{ widget.secondaryCCY }}
+      <span class="fa fa-exchange-alt exchange" (click)="onCCYChange()"></span>
+    </h4>
     <!-- Rates -->
     <div class="rates-container">
       <div>
-        <span class="widget-subtitle">SELL:</span>
-        &nbsp;
+        <span class="widget-subtitle">SELL: </span>
         <span class="rate">4.65</span>
         <span class="fa fa-caret-up rate-up"></span>
       </div>
       <div>
-        <span class="widget-subtitle">BUY:</span>
-         &nbsp;
+        <span class="widget-subtitle">BUY: </span>
         <span class="rate">4.65</span>
         <span class="fa fa-caret-down rate-down"></span>
       </div>

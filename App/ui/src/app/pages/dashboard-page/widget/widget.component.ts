@@ -22,6 +22,10 @@ export class WidgetComponent implements OnInit {
     this.deleted.emit(this.index);
   }
 
+  onCCYChange() {
+    
+  }
+
   onSelectCurrency() {
     if (this.widget.primaryCCY && this.widget.secondaryCCY) {
       this.widget.pickCCYState = false;

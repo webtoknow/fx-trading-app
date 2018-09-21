@@ -4,7 +4,7 @@
 }
 
 .widget-title {
-  padding: 20px 20px 10px;
+  padding: 1rem 1rem 10px;
   border-bottom: 1px solid #DDDDDD;
   margin: 0;
   font-size: 20px;
@@ -27,13 +27,14 @@
   font-size: 24px;
 }
 
+
 .label-long {
-  width: 160px;
+  width: 80px;
   justify-content: flex-start;
 }
 
 .label-short {
-  width: 70px;
+  width: 60px;
   justify-content: flex-start;
 }
 
@@ -56,7 +57,7 @@
   display: flex;
   justify-content: space-between;
   background: #F2F2F2;
-  padding: 10px 20px;
+  padding: 10px 1rem;
 }
 
 .rate-up {
@@ -67,22 +68,33 @@
   color: red;
 }
 
-.content-container {
-  padding: 20px;
-}
-
-.close {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  font-size: 15px;
-}
-
 .rate {
   font-size: 30px;
   font-weight: bold;
 }
 
+.content-container {
+  padding: 1rem;
+}
+
+.close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  font-size: 15px;
+}
+
 .no-border {
   border:0;
+}
+
+.exchange {
+  color: #F0AD4E;
+  font-size: 18px;
+}
+
+@media only screen and (max-width: 1440px) {
+  .rate {
+    font-size: 26px;
+  }
 }

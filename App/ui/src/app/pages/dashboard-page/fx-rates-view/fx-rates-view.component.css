@@ -24,4 +24,11 @@
   border: 1px solid grey;
   border-radius: 5px;
   margin-bottom: 2.5rem;
+  height: 297px;
+}
+
+@media only screen and (max-width: 1440px) {
+  .rate {
+    font-size: 26px;
+  }
 }
