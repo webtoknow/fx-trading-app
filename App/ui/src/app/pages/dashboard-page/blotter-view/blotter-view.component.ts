@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Transaction } from 'src/app/models/transaction';
 import { filter } from 'rxjs/internal/operators/filter';
-import { BlotterService } from 'src/app/services/blotter.service';
+import { TradeService } from '../../../services/trade.service';
 
 
 @Component({
@@ -173,7 +173,7 @@ export class BlotterViewComponent implements OnInit {
   private initialTransactions: Transaction[] = [];*/
 
   constructor(
-    private blotterService: BlotterService
+    private blotterService: TradeService
   ) { }
 
   ngOnInit() {

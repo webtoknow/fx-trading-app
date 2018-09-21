@@ -18,7 +18,7 @@ import { AlertComponent } from './../app/directives/alert.component';
 import { AuthGuard } from 'src/app/guards/auth.guard';
 import { AlertService } from 'src/app/services/alert.service';
 import { AuthenticationService } from 'src/app/services/authentication.service';
-import { BlotterService } from 'src/app/services/blotter.service';
+import { TradeService } from './services/trade.service';
 import { UserService } from 'src/app/services/user.service';
 import { JwtInterceptor } from 'src/app/helpers/jwt.interceptor';
 import { ErrorInterceptor } from 'src/app/helpers/error.interceptor';
@@ -63,7 +63,7 @@ const appRoutes: Routes = [
     AlertService,
     AuthenticationService,
     UserService,
-    BlotterService,
+    TradeService,
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
     fakeBackendProvider
