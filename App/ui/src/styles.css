@@ -9,8 +9,24 @@ h1,h2,h3,h4,h5,h6 {
     color: #7C7C7C;
 }
 
+.btn-primary {
+    background-color: #3496F0;
+}
+
+.btn-link {
+    color: #3496F0;
+}
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #F2F2F2;
+}
+
 .flex {
     display: flex;
+}
+
+.flex-vertical-centered {
+    display: flex;
+    align-items: center;
 }
 
 .title {
@@ -29,3 +45,9 @@ h1,h2,h3,h4,h5,h6 {
 .ng-invalid:not(form)  {
   border-left: 5px solid #D9534F;
 }
+
+.clickable:hover {
+    cursor: pointer;
+    opacity: 0.8;
+}
+

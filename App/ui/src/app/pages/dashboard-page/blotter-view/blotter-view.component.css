@@ -1,0 +1,47 @@
+.filter-container {
+    margin-bottom: 22px;
+    display: flex;
+}
+
+.filter-label {
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.filter-separator {
+    color: rgb(221,221,221);
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.filter-input-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex: 1;
+}
+
+.filter-group {
+   margin-right: 15px;
+}
+
+.calendar-icon {
+    background-color: white;
+    color: #7C7C7C;
+}
+
+.calendar-icon > i {
+    font-size: 18px;
+}
+
+.blotter-table-header {
+    background: #3496F0;
+    color: white;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.blotter-table-header th {
+    padding-bottom: 6px;
+    padding-top: 6px;
+}
