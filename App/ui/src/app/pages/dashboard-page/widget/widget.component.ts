@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Widget } from 'src/app/models/widget';
+import { TradeService } from 'src/app/services/trade.service';
 
 @Component({
   selector: 'app-widget',
@@ -14,7 +15,10 @@ export class WidgetComponent implements OnInit {
   @Input() currencies: string[];
   @Output() deleted = new EventEmitter<number>();
 
-  constructor() { }
+  constructor(
+    private tradeService: TradeService
+  ) { }
+
   ngOnInit() {
   }
 
@@ -32,10 +36,17 @@ export class WidgetComponent implements OnInit {
     this.widget.secondaryCCY= tempCCY;
   }
 
-  onSelectCurrency() {
+  startPooling() {
+    // this.tradeService.poolingService(1000,this.tradeService.getFxRate).subscribe((response) => {
+    //   console.log(response)
+    // })
+  }
+
+  onPickCurrency() {
     const { primaryCCY, secondaryCCY } = this.widget;
     if (primaryCCY && secondaryCCY && primaryCCY !== secondaryCCY) {
       this.widget.pickCCYState = false;
+      this.startPooling();
     }
   }
 }

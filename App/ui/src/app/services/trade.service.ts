@@ -2,9 +2,10 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Transaction } from 'src/app/models/transaction';
 import { Observable } from 'rxjs/internal/Observable';
-import { catchError, map, tap, startWith, switchMap } from 'rxjs/operators';
-import { interval } from 'rxjs';
-import { backendUrl } from '../constans';
+import { interval } from "rxjs";
+import {startWith, switchMap} from "rxjs/operators";
+import { backendUrl } from '../constants';
+import { Rate } from 'src/app/models/rate';
 
 @Injectable()
 export class TradeService {
@@ -18,7 +19,7 @@ export class TradeService {
     }
 
     saveTransaction(transaction: Transaction) {
-        return this.http.post(backendUrl.fxTradeService.getTransactions, { params: transaction }) as Observable<Transaction[]>
+        return this.http.post(backendUrl.fxTradeService.saveTransaction, { params: transaction }) as Observable<Transaction[]>
     }
 
     getCurrencies() {
@@ -26,7 +27,17 @@ export class TradeService {
     }
 
     getFxRate(primaryCCY: string, secondaryCCY: string) {
-        return this.http.get(backendUrl.quoteService.getCurrencies, { params: { primaryCCY, secondaryCCY } }) as Observable<string[]>
+        return this.http.get(backendUrl.quoteService.getFxRate, { params: { primaryCCY, secondaryCCY } }) as Observable<Rate>
+    }
+
+    poolingService(timeInterval: number, service) {
+        let self = this;
+        return interval(timeInterval)
+            .pipe(
+                startWith(0),
+                switchMap(() => service().bind(self)
+            )
+        ) as Observable<any>
     }
 
 }

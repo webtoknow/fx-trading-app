@@ -13,6 +13,6 @@ export const backendUrl = {
   },
   quoteService: {
     getCurrencies: `${quoteApi}/currencies`,
-    getFxRate: `${quoteApi}fx-rate`
+    getFxRate: `${quoteApi}/fx-rate`
   }
 }

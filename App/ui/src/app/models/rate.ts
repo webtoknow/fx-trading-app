@@ -1,4 +1,4 @@
-export interface User {
+export interface Rate {
   buyRate: number;
   sellrate: number;
   ts: number

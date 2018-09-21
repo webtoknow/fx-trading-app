@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { User } from '../models/user';
-import { backendUrl } from 'src/app/constans';
+import { backendUrl } from '../constants';
 
 @Injectable()
 export class UserService {
