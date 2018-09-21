@@ -13,7 +13,7 @@ export class BlotterViewComponent implements OnInit {
 
   private sorted = false;
   private filter = {
-    ccy: '',
+    CCYPair: '',
     date: ''
   };
 
@@ -21,7 +21,7 @@ export class BlotterViewComponent implements OnInit {
     {
       dealId: 1234,
       username: "Catalin Popescu",
-      CCY: "USD/EUR",
+      CCYPair: "USD/EUR",
       rate: "0.86",
       action: "SELL",
       notional: 1000000,
@@ -31,7 +31,7 @@ export class BlotterViewComponent implements OnInit {
     {
       dealId: 212,
       username: "Bogdan Pascu",
-      CCY: "USD/EUR",
+      CCYPair: "USD/EUR",
       rate: "0.15",
       action: "BUY",
       notional: 1000000,
@@ -41,7 +41,7 @@ export class BlotterViewComponent implements OnInit {
     {
       dealId: 34,
       username: "George Popescu",
-      CCY: "EUR/USD",
+      CCYPair: "EUR/USD",
       rate: "0.63",
       action: "SELL",
       notional: 1000000,
@@ -51,7 +51,7 @@ export class BlotterViewComponent implements OnInit {
     {
       dealId: 455,
       username: "Andrei Nare",
-      CCY: "USD/EUR",
+      CCYPair: "USD/EUR",
       rate: "1.11",
       action: "SELL",
       notional: 1000000,
@@ -61,7 +61,7 @@ export class BlotterViewComponent implements OnInit {
     {
       dealId: 55,
       username: "George Barbu",
-      CCY: "RON/EUR",
+      CCYPair: "RON/EUR",
       rate: "0.46",
       action: "SELL",
       notional: 1000000,
@@ -71,7 +71,7 @@ export class BlotterViewComponent implements OnInit {
     {
       dealId: 3133,
       username: "Maria Munteanu",
-      CCY: "USD/GBP",
+      CCYPair: "USD/GBP",
       rate: "1.04",
       action: "BUY",
       notional: 1000000,
@@ -81,7 +81,7 @@ export class BlotterViewComponent implements OnInit {
     {
       dealId: 3123,
       username: "Mihai Nedelcu",
-      CCY: "EUR/GBP",
+      CCYPair: "EUR/GBP",
       rate: "0.86",
       action: "BUY",
       notional: 1000000,
@@ -91,7 +91,7 @@ export class BlotterViewComponent implements OnInit {
     {
       dealId: 4523,
       username: "Dan Purcarete",
-      CCY: "USD/GBP",
+      CCYPair: "USD/GBP",
       rate: "0.31",
       action: "SELL",
       notional: 1000000,
@@ -101,7 +101,7 @@ export class BlotterViewComponent implements OnInit {
     {
       dealId: 123,
       username: "Ileana Geo",
-      CCY: "RON/USD",
+      CCYPair: "RON/USD",
       rate: "0.67",
       action: "SELL",
       notional: 1000000,
@@ -111,7 +111,7 @@ export class BlotterViewComponent implements OnInit {
     {
       dealId: 12,
       username: "Dana Popescu",
-      CCY: "EUR/USD",
+      CCYPair: "EUR/USD",
       rate: "0.61",
       action: "SELL",
       notional: 1000000,
@@ -121,7 +121,7 @@ export class BlotterViewComponent implements OnInit {
     {
       dealId: 1,
       username: "George Nicolae",
-      CCY: "USD/GBP",
+      CCYPair: "USD/GBP",
       rate: "1.23",
       action: "SELL",
       notional: 234324,
@@ -131,7 +131,7 @@ export class BlotterViewComponent implements OnInit {
     {
       dealId: 1234,
       username: "Piti Popescu",
-      CCY: "USD/RON",
+      CCYPair: "USD/RON",
       rate: "1.01",
       action: "BUY",
       notional: 10050000,
@@ -141,7 +141,7 @@ export class BlotterViewComponent implements OnInit {
     {
       dealId: 55,
       username: "Adriana Popescu",
-      CCY: "USD/EUR",
+      CCYPair: "USD/EUR",
       rate: "0.12",
       action: "BUY",
       notional: 1234,
@@ -151,7 +151,7 @@ export class BlotterViewComponent implements OnInit {
     {
       dealId: 5234,
       username: "George Marcu",
-      CCY: "USD/RON",
+      CCYPair: "USD/RON",
       rate: "0.45",
       action: "BUY",
       notional: 555.23,
@@ -161,7 +161,7 @@ export class BlotterViewComponent implements OnInit {
   ];
 
    currencies = this.transactions
-     .map(transaction => transaction.CCY)
+     .map(transaction => transaction.CCYPair)
      .filter((x, i, a) => x && a.indexOf(x) === i)
 
    initialTransactions = [...this.transactions];
@@ -187,7 +187,7 @@ export class BlotterViewComponent implements OnInit {
         this.transactions = transactions
         this.initialTransactions = [...this.transactions];
         this.currencies = this.transactions
-          .map(transaction => transaction.CCY)
+          .map(transaction => transaction.CCYPair)
           .filter((x, i, a) => x && a.indexOf(x) === i)
       });
   }
@@ -212,7 +212,7 @@ export class BlotterViewComponent implements OnInit {
   filterBy(filterCriteria: any): void {
     this.transactions = this.initialTransactions
       .filter(transaction =>
-        this.filter.ccy && transaction.CCY === this.filter.ccy || !this.filter.ccy)
+        this.filter.CCYPair && transaction.CCYPair === this.filter.CCYPair || !this.filter.CCYPair)
       .filter(transaction =>
         this.filter.date && this.getDateWithoutHourAndMinuteAndSeconds(transaction.date).getTime() === this.getDateWithoutHourAndMinuteAndSeconds(this.filter.date).getTime() || !this.filter.date)
   }
