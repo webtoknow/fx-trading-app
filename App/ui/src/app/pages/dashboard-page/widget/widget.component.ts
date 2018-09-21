@@ -7,11 +7,11 @@ import { Widget } from 'src/app/models/widget';
   styleUrls: ['./widget.component.css']
 })
 export class WidgetComponent implements OnInit {
-  currencies = ['USD', 'EUR', 'GBP', 'JPY', 'RON'];
   tenors = ['Spot', '1M', '3M'];
 
   @Input() widget: Widget;
   @Input() index: number;
+  @Input() currencies: string[];
   @Output() deleted = new EventEmitter<number>();
 
   constructor() { }
@@ -23,11 +23,18 @@ export class WidgetComponent implements OnInit {
   }
 
   onCCYChange() {
-    
+    this.switchCCY()
+  }
+  
+  switchCCY() {
+    const tempCCY = this.widget.primaryCCY;
+    this.widget.primaryCCY = this.widget.secondaryCCY;
+    this.widget.secondaryCCY= tempCCY;
   }
 
   onSelectCurrency() {
-    if (this.widget.primaryCCY && this.widget.secondaryCCY) {
+    const { primaryCCY, secondaryCCY } = this.widget;
+    if (primaryCCY && secondaryCCY && primaryCCY !== secondaryCCY) {
       this.widget.pickCCYState = false;
     }
   }

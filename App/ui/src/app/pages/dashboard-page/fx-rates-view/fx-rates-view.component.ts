@@ -8,6 +8,7 @@ import { Widget } from 'src/app/models/widget';
 })
 export class FxRatesViewComponent implements OnInit {
   widgets: Widget[] = [];
+  currencies = ['USD', 'EUR', 'GBP', 'JPY', 'RON'];
 
   constructor() { }
 
