@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Transaction } from 'src/app/models/transaction';
 import { filter } from 'rxjs/internal/operators/filter';
+import { BlotterService } from 'src/app/services/blotter.service';
+
 
 @Component({
   selector: 'app-blotter-view',
@@ -10,6 +12,10 @@ import { filter } from 'rxjs/internal/operators/filter';
 export class BlotterViewComponent implements OnInit {
 
   private sorted = false;
+  private filter = {
+    ccy: '',
+    date: ''
+  };
 
   transactions: Transaction[] = [
     {
@@ -154,30 +160,40 @@ export class BlotterViewComponent implements OnInit {
     },
   ];
 
-  filter = {
-    ccy: '',
-    date: ''
-  };
+   currencies = this.transactions
+     .map(transaction => transaction.CCY)
+     .filter((x, i, a) => x && a.indexOf(x) === i)
 
-  currencies = this.transactions
-                .map(transaction => transaction.CCY)
-                .filter((x, i, a) => x && a.indexOf(x) === i)
-  
-  usernames = this.transactions
-                .map(transaction => transaction.username)
-                .filter((x, i, a) => x && a.indexOf(x) === i)
+   initialTransactions = [...this.transactions];
 
-  initialTransactions = [...this.transactions];
+  // Uncomment when BE is ready
 
-  constructor() { 
-   
-  }
+  /*private transactions: Transaction[]
+  private currencies: string[] = [];
+  private initialTransactions: Transaction[] = [];*/
+
+  constructor(
+    private blotterService: BlotterService
+  ) { }
+
   ngOnInit() {
+    // Uncomment when BE is ready
+    // this.getTransactions();
+  }
 
+  getTransactions(): void {
+    this.blotterService.getTransactions()
+      .subscribe(transactions => {
+        this.transactions = transactions
+        this.initialTransactions = [...this.transactions];
+        this.currencies = this.transactions
+          .map(transaction => transaction.CCY)
+          .filter((x, i, a) => x && a.indexOf(x) === i)
+      });
   }
 
   sortBy(sortCriteria: any): void {
-    this.transactions.sort((a:any, b:any) => {
+    this.transactions.sort((a: any, b: any) => {
       if (a[sortCriteria] < b[sortCriteria]) {
         return this.sorted ? 1 : -1;
       }
@@ -190,20 +206,15 @@ export class BlotterViewComponent implements OnInit {
   }
 
   getDateWithoutHourAndMinuteAndSeconds(date) {
-    return new Date(new Date(date).getFullYear(), new Date(date).getMonth(), new Date(date).getDay() );
+    return new Date(new Date(date).getFullYear(), new Date(date).getMonth(), new Date(date).getDay());
   }
 
-  filterBy(filterCriteria: any) : void {
-    console.log('filterCriteria', filterCriteria)
-    console.log('fitler', new Date(this.filter.date).getTime() )
-    debugger
+  filterBy(filterCriteria: any): void {
     this.transactions = this.initialTransactions
-    .filter(transaction => 
-      this.filter.ccy && transaction.CCY === this.filter.ccy || ! this.filter.ccy)
-    .filter(transaction => 
-      this.filter.date && this.getDateWithoutHourAndMinuteAndSeconds(transaction.date).getTime() === this.getDateWithoutHourAndMinuteAndSeconds(this.filter.date).getTime() || ! this.filter.date)
-
-    console.log('transactions', this.transactions)
+      .filter(transaction =>
+        this.filter.ccy && transaction.CCY === this.filter.ccy || !this.filter.ccy)
+      .filter(transaction =>
+        this.filter.date && this.getDateWithoutHourAndMinuteAndSeconds(transaction.date).getTime() === this.getDateWithoutHourAndMinuteAndSeconds(this.filter.date).getTime() || !this.filter.date)
   }
 
 }
