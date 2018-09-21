@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Transaction } from 'src/app/models/transaction';
+import { filter } from 'rxjs/internal/operators/filter';
 
 @Component({
   selector: 'app-blotter-view',
@@ -19,7 +20,7 @@ export class BlotterViewComponent implements OnInit {
       action: "SELL",
       notional: 1000000,
       tenor: "1M",
-      date: 1536606799000
+      date: 1537511800526
     },
     {
       dealId: 212,
@@ -29,7 +30,7 @@ export class BlotterViewComponent implements OnInit {
       action: "BUY",
       notional: 1000000,
       tenor: "1M",
-      date: 1536606771000
+      date: 1536560103000
     },
     {
       dealId: 34,
@@ -39,7 +40,7 @@ export class BlotterViewComponent implements OnInit {
       action: "SELL",
       notional: 1000000,
       tenor: "3M",
-      date: 1536605766000
+      date: 1537511800526
     },
     {
       dealId: 455,
@@ -49,7 +50,7 @@ export class BlotterViewComponent implements OnInit {
       action: "SELL",
       notional: 1000000,
       tenor: "1M",
-      date: 1536605766000
+      date: 1537511800526
     },
     {
       dealId: 55,
@@ -59,7 +60,7 @@ export class BlotterViewComponent implements OnInit {
       action: "SELL",
       notional: 1000000,
       tenor: "1M",
-      date: 1536605766000
+      date: 1536560103000
     },
     {
       dealId: 3133,
@@ -69,7 +70,7 @@ export class BlotterViewComponent implements OnInit {
       action: "BUY",
       notional: 1000000,
       tenor: "1M",
-      date: 1536605754000
+      date: 1537511800526
     },
     {
       dealId: 3123,
@@ -79,7 +80,7 @@ export class BlotterViewComponent implements OnInit {
       action: "BUY",
       notional: 1000000,
       tenor: "1M",
-      date: 1536605754000
+      date: 1536560103000
     },
     {
       dealId: 4523,
@@ -89,7 +90,7 @@ export class BlotterViewComponent implements OnInit {
       action: "SELL",
       notional: 1000000,
       tenor: "1M",
-      date: 1536605754000
+      date: 1537511800526
     },
     {
       dealId: 123,
@@ -99,7 +100,7 @@ export class BlotterViewComponent implements OnInit {
       action: "SELL",
       notional: 1000000,
       tenor: "3M",
-      date: 1536605747000
+      date: 1536560103000
     },
     {
       dealId: 12,
@@ -109,7 +110,7 @@ export class BlotterViewComponent implements OnInit {
       action: "SELL",
       notional: 1000000,
       tenor: "1M",
-      date: 1536605743000
+      date: 1537511800526
     },
     {
       dealId: 1,
@@ -119,7 +120,7 @@ export class BlotterViewComponent implements OnInit {
       action: "SELL",
       notional: 234324,
       tenor: "1M",
-      date: 1536605738000
+      date: 1537511800526
     },
     {
       dealId: 1234,
@@ -129,7 +130,7 @@ export class BlotterViewComponent implements OnInit {
       action: "BUY",
       notional: 10050000,
       tenor: "1M",
-      date: 1536605728000
+      date: 1536560103000
     },
     {
       dealId: 55,
@@ -139,7 +140,7 @@ export class BlotterViewComponent implements OnInit {
       action: "BUY",
       notional: 1234,
       tenor: "1M",
-      date: 1536605724000
+      date: 1536560103000
     },
     {
       dealId: 5234,
@@ -149,11 +150,14 @@ export class BlotterViewComponent implements OnInit {
       action: "BUY",
       notional: 555.23,
       tenor: "3M",
-      date: 1536604812000
+      date: 1536560103000
     },
   ];
 
-  filter = {};
+  filter = {
+    ccy: '',
+    date: ''
+  };
 
   currencies = this.transactions
                 .map(transaction => transaction.CCY)
@@ -163,9 +167,13 @@ export class BlotterViewComponent implements OnInit {
                 .map(transaction => transaction.username)
                 .filter((x, i, a) => x && a.indexOf(x) === i)
 
-  constructor() { }
+  initialTransactions = [...this.transactions];
+
+  constructor() { 
+   
+  }
   ngOnInit() {
-    
+
   }
 
   sortBy(sortCriteria: any): void {
@@ -179,6 +187,23 @@ export class BlotterViewComponent implements OnInit {
       return 0;
     })
     this.sorted = !this.sorted;
+  }
+
+  getDateWithoutHourAndMinuteAndSeconds(date) {
+    return new Date(new Date(date).getFullYear(), new Date(date).getMonth(), new Date(date).getDay() );
+  }
+
+  filterBy(filterCriteria: any) : void {
+    console.log('filterCriteria', filterCriteria)
+    console.log('fitler', new Date(this.filter.date).getTime() )
+    debugger
+    this.transactions = this.initialTransactions
+    .filter(transaction => 
+      this.filter.ccy && transaction.CCY === this.filter.ccy || ! this.filter.ccy)
+    .filter(transaction => 
+      this.filter.date && this.getDateWithoutHourAndMinuteAndSeconds(transaction.date).getTime() === this.getDateWithoutHourAndMinuteAndSeconds(this.filter.date).getTime() || ! this.filter.date)
+
+    console.log('transactions', this.transactions)
   }
 
 }
