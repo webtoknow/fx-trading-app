@@ -1,0 +1,100 @@
+.content-widget {
+  width: 100%;
+  position: relative;
+}
+
+.widget-title {
+  padding: 1rem 1rem 10px;
+  border-bottom: 1px solid #DDDDDD;
+  margin: 0;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.widget-subtitle {
+  font-size: 20px;
+  color: #7C7C7C;
+  font-weight: bold;
+}
+
+.widget-primary {
+  font-size: 24px;
+  color: #373A3C;
+}
+
+.widget-primary-currency {
+  color: #373A3C;
+  font-size: 24px;
+}
+
+.label-long {
+  width: 80px;
+  justify-content: flex-start;
+}
+
+.label-short {
+  width: 60px;
+  justify-content: flex-start;
+}
+
+.form-control {
+  display: flex;
+  flex-grow: 1;
+}
+
+.btn-wraper {
+  display: grid;
+  justify-content: flex-end;
+}
+
+.btns-wrapper {
+  display: flex;
+  justify-content: space-between;
+}
+
+.rates-container {
+  display: flex;
+  justify-content: space-between;
+  background: #F2F2F2;
+  padding: 10px 1rem;
+}
+
+.rate-up {
+  color: green;
+}
+
+.rate-down {
+  color: red;
+}
+
+.rate {
+  font-size: 30px;
+  font-weight: bold;
+}
+
+.content-container {
+  padding: 1rem;
+}
+
+.close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  font-size: 15px;
+}
+
+.no-border {
+  border:0;
+}
+
+.exchange {
+  color: #F0AD4E;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+@media only screen and (max-width: 1440px) {
+  .rate {
+    font-size: 26px;
+  }
+}

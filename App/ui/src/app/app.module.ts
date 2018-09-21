@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
@@ -13,6 +13,7 @@ import { DashboardPageComponent } from './pages/dashboard-page/dashboard-page.co
 import { NotFoundPageComponent } from './pages/not-found-page/not-found-page.component';
 import { FxRatesViewComponent } from './pages/dashboard-page/fx-rates-view/fx-rates-view.component';
 import { BlotterViewComponent } from './pages/dashboard-page/blotter-view/blotter-view.component';
+import { WidgetComponent } from './pages/dashboard-page/widget/widget.component';
 import { AlertComponent } from './../app/directives/alert.component';
 import { AuthGuard } from 'src/app/guards/auth.guard';
 import { AlertService } from 'src/app/services/alert.service';
@@ -42,6 +43,7 @@ const appRoutes: Routes = [
     NotFoundPageComponent,
     FxRatesViewComponent,
     BlotterViewComponent,
+    WidgetComponent,
     AlertComponent
   ],
   imports: [
