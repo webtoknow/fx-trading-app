@@ -1,9 +1,10 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 
 import { AppComponent } from './app.component';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
@@ -12,10 +13,12 @@ import { DashboardPageComponent } from './pages/dashboard-page/dashboard-page.co
 import { NotFoundPageComponent } from './pages/not-found-page/not-found-page.component';
 import { FxRatesViewComponent } from './pages/dashboard-page/fx-rates-view/fx-rates-view.component';
 import { BlotterViewComponent } from './pages/dashboard-page/blotter-view/blotter-view.component';
+import { WidgetComponent } from './pages/dashboard-page/widget/widget.component';
 import { AlertComponent } from './../app/directives/alert.component';
 import { AuthGuard } from 'src/app/guards/auth.guard';
 import { AlertService } from 'src/app/services/alert.service';
 import { AuthenticationService } from 'src/app/services/authentication.service';
+import { BlotterService } from 'src/app/services/blotter.service';
 import { UserService } from 'src/app/services/user.service';
 import { JwtInterceptor } from 'src/app/helpers/jwt.interceptor';
 import { ErrorInterceptor } from 'src/app/helpers/error.interceptor';
@@ -40,6 +43,7 @@ const appRoutes: Routes = [
     NotFoundPageComponent,
     FxRatesViewComponent,
     BlotterViewComponent,
+    WidgetComponent,
     AlertComponent
   ],
   imports: [
@@ -51,13 +55,15 @@ const appRoutes: Routes = [
     FormsModule,
     ReactiveFormsModule,
     HttpModule,
-    HttpClientModule
+    HttpClientModule,
+    BsDatepickerModule.forRoot()
   ],
   providers: [
     AuthGuard,
     AlertService,
     AuthenticationService,
     UserService,
+    BlotterService,
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
     fakeBackendProvider
