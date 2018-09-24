@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { Widget } from 'src/app/models/widget';
 import { TradeService } from 'src/app/services/trade.service';
 
@@ -7,7 +7,7 @@ import { TradeService } from 'src/app/services/trade.service';
   templateUrl: './widget.component.html',
   styleUrls: ['./widget.component.css']
 })
-export class WidgetComponent implements OnInit {
+export class WidgetComponent implements OnInit, OnDestroy {
   tenors = ['Spot', '1M', '3M'];
 
   @Input() widget: Widget;
@@ -37,9 +37,10 @@ export class WidgetComponent implements OnInit {
   }
 
   startPooling() {
-    // this.tradeService.poolingService(1000,this.tradeService.getFxRate).subscribe((response) => {
-    //   console.log(response)
-    // })
+    const { primaryCCY, secondaryCCY } = this.widget;
+    this.tradeService.getFxRatePolling(primaryCCY, secondaryCCY).subscribe((response) => {
+      console.log(response)
+    })
   }
 
   onPickCurrency() {
@@ -49,4 +50,8 @@ export class WidgetComponent implements OnInit {
       this.startPooling();
     }
   }
+
+  ngOnDestroy() {
+    // this.tradeService.getFxRatePolling('asd', 'asd').unsubscribe();
+    }
 }

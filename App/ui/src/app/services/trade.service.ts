@@ -26,18 +26,13 @@ export class TradeService {
         return this.http.get(backendUrl.quoteService.getCurrencies) as Observable<string[]>
     }
 
-    getFxRate(primaryCCY: string, secondaryCCY: string) {
-        return this.http.get(backendUrl.quoteService.getFxRate, { params: { primaryCCY, secondaryCCY } }) as Observable<Rate>
-    }
-
-    poolingService(timeInterval: number, service) {
-        let self = this;
-        return interval(timeInterval)
+    getFxRatePolling(primaryCCY: string, secondaryCCY: string) {
+        return interval(2000)
             .pipe(
                 startWith(0),
-                switchMap(() => service().bind(self)
+                switchMap(() => this.http.get(backendUrl.quoteService.getFxRate, { params: { primaryCCY, secondaryCCY } })
             )
-        ) as Observable<any>
+        ) as Observable<Rate>
     }
 
 }
