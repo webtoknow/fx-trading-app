@@ -1,1 +1,1 @@
-# Week 3 - Architecture
+# Week 3 - Design

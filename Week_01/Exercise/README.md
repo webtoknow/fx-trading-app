@@ -1,1 +1,1 @@
-# Week 1 - Introduction and analysis
+# Week 1 - Introduction

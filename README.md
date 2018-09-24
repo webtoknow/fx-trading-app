@@ -1,23 +1,23 @@
 # Forex Trading Application workshop
 
 During this workshop, we will learn about the whole process and all concepts involved in building an enterprise application from scratch. Starting with an idea and some wireframes, together we will analyze, develop, test and publish our app.
- 
+
 Each week will be an opportunity to understand theoretical concepts and apply them in punctual exercices. In the end, we will obtain a functional Forex trading application meant to help us to buy and sell currencies and also to view all transactions made by other users.
 
 ## The agenda
 
 The agenda has the following content:
 
-- Week 1 – Introduction and analysis
+- Week 1 – Introduction
   - [Introduction](Week_01/Theory/README.md)
   - [Exercise](Week_01/Exercise/README.md)
-- Week 2 – Design
+- Week 2 – Analysis
   - [Introduction](Week_02/Theory/README.md)
   - [Exercise](Week_02/Exercise/README.md)
-- Week 3 - Architecture
+- Week 3 - Design
   - [Introduction](Week_03/Theory/README.md)
   - [Exercise](Week_03/Exercise/README.md)
-- Week 4 – Development
+- Week 4 – Architecture
   - [Introduction](Week_04/Theory/README.md)
   - [Exercise](Week_04/Exercise/README.md)
 - Week 5 – Development
@@ -45,7 +45,7 @@ The agenda has the following content:
   - [Introduction](Week_12/Theory/README.md)
   - [Exercise](Week_12/Exercise/README.md)
 
-  ## Technical requirements
+## Technical requirements
 
 We just need:
 
