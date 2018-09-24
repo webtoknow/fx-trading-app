@@ -37,13 +37,13 @@
     <div class="rates-container">
       <div>
         <span class="widget-subtitle">SELL: </span>
-        <span class="rate">4.65</span>
-        <span class="fa fa-caret-up rate-up"></span>
+        <span class="rate">{{ widget.sellRate | number:'1.1-2' }}</span>
+        <span class='fa' [ngClass]="{'fa-caret-up rate-up': sellRateTrend === 'up', 'fa-caret-down rate-down': sellRateTrend === 'down' }"></span>
       </div>
       <div>
         <span class="widget-subtitle">BUY: </span>
-        <span class="rate">4.65</span>
-        <span class="fa fa-caret-down rate-down"></span>
+        <span class="rate">{{ widget.buyRate | number:'1.1-2' }}</span>
+        <span class="fa" [ngClass]="{'fa-caret-up rate-up': buyRateTrend === 'up', 'fa-caret-down rate-down': buyRateTrend === 'down' }"></span>
       </div>
     </div>
     <div class="content-container">

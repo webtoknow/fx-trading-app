@@ -1,6 +1,8 @@
 import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { Widget } from 'src/app/models/widget';
 import { TradeService } from 'src/app/services/trade.service';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-widget',
@@ -8,8 +10,11 @@ import { TradeService } from 'src/app/services/trade.service';
   styleUrls: ['./widget.component.css']
 })
 export class WidgetComponent implements OnInit, OnDestroy {
-  tenors = ['Spot', '1M', '3M'];
-
+  tenors = ['SP', '1M', '3M'];
+  unsubscribe = new Subject();
+  buyRateTrend: string;
+  sellRateTrend: string;
+  
   @Input() widget: Widget;
   @Input() index: number;
   @Input() currencies: string[];
@@ -38,9 +43,16 @@ export class WidgetComponent implements OnInit, OnDestroy {
 
   startPooling() {
     const { primaryCCY, secondaryCCY } = this.widget;
-    this.tradeService.getFxRatePolling(primaryCCY, secondaryCCY).subscribe((response) => {
-      console.log(response)
-    })
+    this.tradeService.getFxRatePolling(primaryCCY, secondaryCCY)
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+
+        this.buyRateTrend = this.widget.buyRate > response.buyRate ? 'down' : 'up'
+        this.sellRateTrend = this.widget.sellRate > response.sellRate ? 'down' : 'up'
+
+        this.widget.buyRate = response.buyRate;
+        this.widget.sellRate = response.sellRate;
+      });
   }
 
   onPickCurrency() {
@@ -52,6 +64,7 @@ export class WidgetComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    // this.tradeService.getFxRatePolling('asd', 'asd').unsubscribe();
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
     }
 }

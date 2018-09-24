@@ -26,6 +26,10 @@ export class TradeService {
         return this.http.get(backendUrl.quoteService.getCurrencies) as Observable<string[]>
     }
 
+    getFxRate(primaryCCY: string, secondaryCCY: string) {
+        return this.http.get(backendUrl.quoteService.getFxRate, { params: { primaryCCY, secondaryCCY } }) as Observable<Rate>
+    }
+
     getFxRatePolling(primaryCCY: string, secondaryCCY: string) {
         return interval(2000)
             .pipe(
@@ -34,5 +38,6 @@ export class TradeService {
             )
         ) as Observable<Rate>
     }
+
 
 }
