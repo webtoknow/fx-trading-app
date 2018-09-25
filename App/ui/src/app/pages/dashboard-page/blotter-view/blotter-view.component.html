@@ -7,9 +7,9 @@
   <div class="filter-input-container">
     <div class="flex-vertical-centered filter-group">
       <span for="CCYFilter">CCY&nbsp;Pair&nbsp;&nbsp;</span>
-      <select name="CCY" id="CCY" class="form-control form-control-sm" [(ngModel)]="filter.ccy" (ngModelChange)="filterBy($event)">
+      <select name="CCY" id="CCY" class="form-control form-control-sm" [(ngModel)]="filter.CCYPair" (ngModelChange)="filterBy($event)">
         <option value="" selected>Please select&nbsp;&nbsp;</option>
-        <option *ngFor="let currency of currencies" [value]="currency">{{ currency }}</option>
+        <option *ngFor="let currencyPair of currenciesPairs" [value]="currencyPair">{{ currencyPair }}</option>
       </select>
     </div>
 
@@ -65,9 +65,9 @@
     </thead>
     <tbody>
       <tr *ngFor="let transaction of transactions">
-        <td>{{ transaction.dealId }}</td>
+        <td>{{ transaction.transactionId }}</td>
         <td>{{ transaction.username }}</td>
-        <td>{{ transaction.CCY }}</td>
+        <td>{{ transaction.CCYPair }}</td>
         <td>{{ transaction.rate | number }}</td>
         <td>{{ transaction.action }}</td>
         <td>{{ transaction.notional }}</td>

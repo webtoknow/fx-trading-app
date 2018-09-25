@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Widget } from 'src/app/models/widget';
+import { TradeService } from 'src/app/services/trade.service';
 
 @Component({
   selector: 'app-fx-rates-view',
@@ -8,11 +9,16 @@ import { Widget } from 'src/app/models/widget';
 })
 export class FxRatesViewComponent implements OnInit {
   widgets: Widget[] = [];
-  currencies = ['USD', 'EUR', 'GBP', 'JPY', 'RON'];
+  currencies: string[] = [];
 
-  constructor() { }
+  constructor(
+    private tradeService: TradeService
+  ) { }
 
   ngOnInit() {
+    this.tradeService.getCurrencies().subscribe((response) => {
+      this.currencies = response;
+    })
   }
 
   onAddWidget() {

@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Transaction } from 'src/app/models/transaction';
 import { filter } from 'rxjs/internal/operators/filter';
-import { BlotterService } from 'src/app/services/blotter.service';
+import { TradeService } from '../../../services/trade.service';
+import { Subject } from 'rxjs';
+import { takeUntil, map } from 'rxjs/operators';
 
 
 @Component({
@@ -13,181 +15,33 @@ export class BlotterViewComponent implements OnInit {
 
   private sorted = false;
   private filter = {
-    ccy: '',
+    CCYPair: '',
     date: ''
   };
-
-  transactions: Transaction[] = [
-    {
-      dealId: 1234,
-      username: "Catalin Popescu",
-      CCY: "USD/EUR",
-      rate: "0.86",
-      action: "SELL",
-      notional: 1000000,
-      tenor: "1M",
-      date: 1537511800526
-    },
-    {
-      dealId: 212,
-      username: "Bogdan Pascu",
-      CCY: "USD/EUR",
-      rate: "0.15",
-      action: "BUY",
-      notional: 1000000,
-      tenor: "1M",
-      date: 1536560103000
-    },
-    {
-      dealId: 34,
-      username: "George Popescu",
-      CCY: "EUR/USD",
-      rate: "0.63",
-      action: "SELL",
-      notional: 1000000,
-      tenor: "3M",
-      date: 1537511800526
-    },
-    {
-      dealId: 455,
-      username: "Andrei Nare",
-      CCY: "USD/EUR",
-      rate: "1.11",
-      action: "SELL",
-      notional: 1000000,
-      tenor: "1M",
-      date: 1537511800526
-    },
-    {
-      dealId: 55,
-      username: "George Barbu",
-      CCY: "RON/EUR",
-      rate: "0.46",
-      action: "SELL",
-      notional: 1000000,
-      tenor: "1M",
-      date: 1536560103000
-    },
-    {
-      dealId: 3133,
-      username: "Maria Munteanu",
-      CCY: "USD/GBP",
-      rate: "1.04",
-      action: "BUY",
-      notional: 1000000,
-      tenor: "1M",
-      date: 1537511800526
-    },
-    {
-      dealId: 3123,
-      username: "Mihai Nedelcu",
-      CCY: "EUR/GBP",
-      rate: "0.86",
-      action: "BUY",
-      notional: 1000000,
-      tenor: "1M",
-      date: 1536560103000
-    },
-    {
-      dealId: 4523,
-      username: "Dan Purcarete",
-      CCY: "USD/GBP",
-      rate: "0.31",
-      action: "SELL",
-      notional: 1000000,
-      tenor: "1M",
-      date: 1537511800526
-    },
-    {
-      dealId: 123,
-      username: "Ileana Geo",
-      CCY: "RON/USD",
-      rate: "0.67",
-      action: "SELL",
-      notional: 1000000,
-      tenor: "3M",
-      date: 1536560103000
-    },
-    {
-      dealId: 12,
-      username: "Dana Popescu",
-      CCY: "EUR/USD",
-      rate: "0.61",
-      action: "SELL",
-      notional: 1000000,
-      tenor: "1M",
-      date: 1537511800526
-    },
-    {
-      dealId: 1,
-      username: "George Nicolae",
-      CCY: "USD/GBP",
-      rate: "1.23",
-      action: "SELL",
-      notional: 234324,
-      tenor: "1M",
-      date: 1537511800526
-    },
-    {
-      dealId: 1234,
-      username: "Piti Popescu",
-      CCY: "USD/RON",
-      rate: "1.01",
-      action: "BUY",
-      notional: 10050000,
-      tenor: "1M",
-      date: 1536560103000
-    },
-    {
-      dealId: 55,
-      username: "Adriana Popescu",
-      CCY: "USD/EUR",
-      rate: "0.12",
-      action: "BUY",
-      notional: 1234,
-      tenor: "1M",
-      date: 1536560103000
-    },
-    {
-      dealId: 5234,
-      username: "George Marcu",
-      CCY: "USD/RON",
-      rate: "0.45",
-      action: "BUY",
-      notional: 555.23,
-      tenor: "3M",
-      date: 1536560103000
-    },
-  ];
-
-   currencies = this.transactions
-     .map(transaction => transaction.CCY)
-     .filter((x, i, a) => x && a.indexOf(x) === i)
-
-   initialTransactions = [...this.transactions];
-
-  // Uncomment when BE is ready
-
-  /*private transactions: Transaction[]
-  private currencies: string[] = [];
-  private initialTransactions: Transaction[] = [];*/
+  unsubscribe = new Subject();
+  transactions: Transaction[] = [];
+  initialTransactions: Transaction[] = [];
+  currenciesPairs: string[] = [];
 
   constructor(
-    private blotterService: BlotterService
+    private tradeService: TradeService
   ) { }
 
   ngOnInit() {
-    // Uncomment when BE is ready
-    // this.getTransactions();
+    this.startPooling();
   }
 
-  getTransactions(): void {
-    this.blotterService.getTransactions()
-      .subscribe(transactions => {
-        this.transactions = transactions
-        this.initialTransactions = [...this.transactions];
-        this.currencies = this.transactions
-          .map(transaction => transaction.CCY)
+
+  startPooling(): void {
+    this.tradeService.getTransactionsPolling()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(response => {
+        const transactionsWithCCYPair: Transaction[] = response
+          .map(transaction => ({ ...transaction, CCYPair: `${transaction.primaryCCY}/${transaction.secondaryCCY}`}))
+        this.transactions = transactionsWithCCYPair;
+        this.initialTransactions = [...transactionsWithCCYPair];
+        this.currenciesPairs = this.transactions
+          .map(transaction => transaction.CCYPair)
           .filter((x, i, a) => x && a.indexOf(x) === i)
       });
   }
@@ -212,9 +66,13 @@ export class BlotterViewComponent implements OnInit {
   filterBy(filterCriteria: any): void {
     this.transactions = this.initialTransactions
       .filter(transaction =>
-        this.filter.ccy && transaction.CCY === this.filter.ccy || !this.filter.ccy)
+        this.filter.CCYPair && transaction.CCYPair === this.filter.CCYPair || !this.filter.CCYPair)
       .filter(transaction =>
         this.filter.date && this.getDateWithoutHourAndMinuteAndSeconds(transaction.date).getTime() === this.getDateWithoutHourAndMinuteAndSeconds(this.filter.date).getTime() || !this.filter.date)
   }
 
+  ngOnDestroy() {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
+    }
 }

@@ -1,0 +1,158 @@
+{
+    "transactions": [
+        {
+            "transactionId": 1234,
+            "username": "Catalin Popescu",
+            "primaryCCY": "USD",
+            "secondaryCCY": "EUR",
+            "rate": "0.86",
+            "action": "SELL",
+            "notional": 1000000,
+            "tenor": "1M",
+            "date": 1537511800526
+        },
+        {
+            "transactionId": 212,
+            "username": "Bogdan Pascu",
+            "primaryCCY": "USD",
+            "secondaryCCY": "EUR",
+            "rate": "0.15",
+            "action": "BUY",
+            "notional": 1000000,
+            "tenor": "1M",
+            "date": 1536560103000
+        },
+        {
+            "transactionId": 34,
+            "username": "George Popescu",
+            "primaryCCY": "EUR",
+            "secondaryCCY": "USD",
+            "rate": "0.63",
+            "action": "SELL",
+            "notional": 1000000,
+            "tenor": "3M",
+            "date": 1537511800526
+        },
+        {
+            "transactionId": 455,
+            "username": "Andrei Nare",
+            "primaryCCY": "USD",
+            "secondaryCCY": "EUR",
+            "rate": "1.11",
+            "action": "SELL",
+            "notional": 1000000,
+            "tenor": "1M",
+            "date": 1537511800526
+        },
+        {
+            "transactionId": 55,
+            "username": "George Barbu",
+            "primaryCCY": "RON",
+            "secondaryCCY": "EUR",
+            "rate": "0.46",
+            "action": "SELL",
+            "notional": 1000000,
+            "tenor": "1M",
+            "date": 1536560103000
+        },
+        {
+            "transactionId": 3133,
+            "username": "Maria Munteanu",
+            "primaryCCY": "USD",
+            "secondaryCCY": "GBP",
+            "rate": "1.04",
+            "action": "BUY",
+            "notional": 1000000,
+            "tenor": "1M",
+            "date": 1537511800526
+        },
+        {
+            "transactionId": 3123,
+            "username": "Mihai Nedelcu",
+            "primaryCCY": "EUR",
+            "secondaryCCY": "GBP",
+            "rate": "0.86",
+            "action": "BUY",
+            "notional": 1000000,
+            "tenor": "1M",
+            "date": 1536560103000
+        },
+        {
+            "transactionId": 4523,
+            "username": "Dan Purcarete",
+            "primaryCCY": "USD",
+            "secondaryCCY": "GBP",
+            "rate": "0.31",
+            "action": "SELL",
+            "notional": 1000000,
+            "tenor": "1M",
+            "date": 1537511800526
+        },
+        {
+            "transactionId": 123,
+            "username": "Ileana Geo",
+            "primaryCCY": "RON",
+            "secondaryCCY": "USD",
+            "rate": "0.67",
+            "action": "SELL",
+            "notional": 1000000,
+            "tenor": "3M",
+            "date": 1536560103000
+        },
+        {
+            "transactionId": 12,
+            "username": "Dana Popescu",
+            "primaryCCY": "EUR",
+            "secondaryCCY": "USD",
+            "rate": "0.61",
+            "action": "SELL",
+            "notional": 1000000,
+            "tenor": "1M",
+            "date": 1537511800526
+        },
+        {
+            "transactionId": 1,
+            "username": "George Nicolae",
+            "primaryCCY": "USD",
+            "secondaryCCY": "GBP",
+            "rate": "1.23",
+            "action": "SELL",
+            "notional": 234324,
+            "tenor": "1M",
+            "date": 1537511800526
+        },
+        {
+            "transactionId": 1234,
+            "username": "Piti Popescu",
+            "primaryCCY": "USD",
+            "secondaryCCY": "RON",
+            "rate": "1.01",
+            "action": "BUY",
+            "notional": 10050000,
+            "tenor": "1M",
+            "date": 1536560103000
+        },
+        {
+            "transactionId": 55,
+            "username": "Adriana Popescu",
+            "primaryCCY": "USD",
+            "secondaryCCY": "EUR",
+            "rate": "0.12",
+            "action": "BUY",
+            "notional": 1234,
+            "tenor": "1M",
+            "date": 1536560103000
+        },
+        {
+            "transactionId": 5234,
+            "username": "George Marcu",
+            "primaryCCY": "USD",
+            "secondaryCCY": "RON",
+            "rate": "0.45",
+            "action": "BUY",
+            "notional": 555.23,
+            "tenor": "3M",
+            "date": 1536560103000
+        }
+    ]
+}

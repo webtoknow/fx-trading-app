@@ -21,7 +21,7 @@
           </select>
         </div>
         <div class="btn-wraper">
-          <button class="btn btn-primary" (click)="onSelectCurrency()">Ok</button>
+          <button class="btn btn-primary" (click)="onPickCurrency()">Ok</button>
         </div>
     </div>
   </div>
@@ -37,20 +37,20 @@
     <div class="rates-container">
       <div>
         <span class="widget-subtitle">SELL: </span>
-        <span class="rate">4.65</span>
-        <span class="fa fa-caret-up rate-up"></span>
+        <span class="rate">{{ widget.sellRate | number:'1.1-2' }}</span>
+        <span class='fa' [ngClass]="{'fa-caret-up rate-up': sellRateTrend === 'up', 'fa-caret-down rate-down': sellRateTrend === 'down' }"></span>
       </div>
       <div>
         <span class="widget-subtitle">BUY: </span>
-        <span class="rate">4.65</span>
-        <span class="fa fa-caret-down rate-down"></span>
+        <span class="rate">{{ widget.buyRate | number:'1.1-2' }}</span>
+        <span class="fa" [ngClass]="{'fa-caret-up rate-up': buyRateTrend === 'up', 'fa-caret-down rate-down': buyRateTrend === 'down' }"></span>
       </div>
     </div>
     <div class="content-container">
       <!-- Form  -->
       <div class="form-inline form-group">
         <label class="label-short" for="amount">Amount</label>
-        <input type="text" class="form-control" id="amount" placeholder="Type the notional" [(ngModel)]="widget.notional"
+        <input type="number" class="form-control" id="amount" placeholder="Type the notional" [(ngModel)]="widget.notional"
           required>
       </div>
       <div class="form-inline form-inline-short form-group">
