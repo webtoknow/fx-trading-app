@@ -18,6 +18,15 @@ export class TradeService {
         return this.http.get(backendUrl.fxTradeService.getTransactions) as Observable<Transaction[]>
     }
 
+    getTransactionsPolling() {
+        return interval(2000)
+            .pipe(
+                startWith(0),
+                switchMap(() => this.http.get(backendUrl.fxTradeService.getTransactions)
+            )
+        ) as Observable<Transaction[]>
+    }
+
     saveTransaction(transaction: Transaction) {
         return this.http.post(backendUrl.fxTradeService.saveTransaction, { params: transaction }) as Observable<Transaction[]>
     }

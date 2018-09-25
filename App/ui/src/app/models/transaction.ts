@@ -1,10 +1,13 @@
 export interface Transaction {
-  dealId: number;
+  transactionId: number;
   username: string;
-  CCYPair: string;
+  primaryCCY: string
+  secondaryCCY: string;
   rate: string;
   action: string;
   notional: number;
   tenor: string;
   date: number;
+  CCYPair?: string
 }
+
