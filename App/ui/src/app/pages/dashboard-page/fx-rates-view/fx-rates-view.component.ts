@@ -22,7 +22,7 @@ export class FxRatesViewComponent implements OnInit {
   }
 
   onAddWidget() {
-    this.widgets = [...this.widgets, new Widget('', '', 0, 0, '', '', true)]
+    this.widgets = [...this.widgets, new Widget('', '', 0, 0, null, '', true)]
   }
   
   onDeleteWidget(index: number) {
