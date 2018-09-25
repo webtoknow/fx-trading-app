@@ -5,6 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { AlertModule } from 'ngx-bootstrap/alert';
 
 import { AppComponent } from './app.component';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
@@ -14,9 +15,7 @@ import { NotFoundPageComponent } from './pages/not-found-page/not-found-page.com
 import { FxRatesViewComponent } from './pages/dashboard-page/fx-rates-view/fx-rates-view.component';
 import { BlotterViewComponent } from './pages/dashboard-page/blotter-view/blotter-view.component';
 import { WidgetComponent } from './pages/dashboard-page/widget/widget.component';
-import { AlertComponent } from './../app/directives/alert.component';
 import { AuthGuard } from 'src/app/guards/auth.guard';
-import { AlertService } from 'src/app/services/alert.service';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { TradeService } from './services/trade.service';
 import { UserService } from 'src/app/services/user.service';
@@ -43,14 +42,14 @@ const appRoutes: Routes = [
     NotFoundPageComponent,
     FxRatesViewComponent,
     BlotterViewComponent,
-    WidgetComponent,
-    AlertComponent
+    WidgetComponent
   ],
   imports: [
     RouterModule.forRoot(
       appRoutes,
       { enableTracing: true } // <-- debugging purposes only
     ),
+    AlertModule.forRoot(),
     BrowserModule,
     FormsModule,
     ReactiveFormsModule,
@@ -60,7 +59,6 @@ const appRoutes: Routes = [
   ],
   providers: [
     AuthGuard,
-    AlertService,
     AuthenticationService,
     UserService,
     TradeService,

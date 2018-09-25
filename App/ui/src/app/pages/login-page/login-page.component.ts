@@ -3,7 +3,6 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 import { AuthenticationService } from 'src/app/services/authentication.service';
-import { AlertService } from 'src/app/services/alert.service';
 
 @Component({
   selector: 'app-login-page',
@@ -14,17 +13,20 @@ export class LoginPageComponent implements OnInit {
   loginForm: FormGroup;
   loading = false;
   submitted = false;
+  isModalOpen = false;
+  modalMessage = '';
+  modalType = '';
   returnUrl: string;
 
   constructor(
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private authenticationService: AuthenticationService,
-    private alertService: AlertService
+    private authenticationService: AuthenticationService
   ) { }
 
   ngOnInit() {
+
     this.loginForm = this.formBuilder.group({
       username: ['', Validators.required],
       password: ['', Validators.required]
@@ -56,7 +58,10 @@ export class LoginPageComponent implements OnInit {
           this.router.navigate([this.returnUrl]);
         }, 
         error => {
-          this.alertService.error(error);
+          this.isModalOpen = true;
+          this.modalType = 'danger';
+          this.modalMessage = error;
+    
           this.loading = false;
         }
       )

@@ -3,7 +3,6 @@ import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 
-import { AlertService } from '../../services/alert.service';
 import { UserService } from '../../services/user.service';
 
 @Component({
@@ -16,12 +15,14 @@ export class RegisterPageComponent implements OnInit {
   registerForm: FormGroup;
   loading = false;
   submitted = false;
+  isModalOpen = false;
+  modalMessage = '';
+  modalType = '';
 
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
-    private userService: UserService,
-    private alertService: AlertService
+    private userService: UserService
   ) { }
 
   ngOnInit() {
@@ -49,11 +50,15 @@ export class RegisterPageComponent implements OnInit {
       .pipe(first())
       .subscribe(
         data => {
-          this.alertService.success('Registration successful!', true);
-          this.router.navigate(['/login']);
+          this.isModalOpen = true;
+          this.modalType = 'success';
+          this.modalMessage = 'Registration successful!';
         },
         error => {
-          this.alertService.error(error);
+          this.isModalOpen = true;
+          this.modalType = 'danger';
+          this.modalMessage = error;
+          
           this.loading = false;
         }
       )
