@@ -30,7 +30,8 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 ```bash
 npm install json-server -g
 
-json-server --watch db.trade.json
+json-server --watch db.trade.json --port 7000
+json-server --watch db.quote.json --port 8000
 ```
 
 ## To resolve CORS

@@ -1,6 +1,6 @@
-export const authApi = 'http://localhost:4500'
-export const tradeApi = 'http://localhost:3000'
-export const quoteApi = 'http://localhost:8001'
+export const authApi = 'http://localhost:6000'
+export const tradeApi = 'http://localhost:7000'
+export const quoteApi = 'http://localhost:8000'
 
 export const backendUrl = {
   authService: {
@@ -9,7 +9,7 @@ export const backendUrl = {
   },
   fxTradeService: {
     getTransactions: `${tradeApi}/transactions`,
-    saveTransaction: `${tradeApi}/transaction`,
+    saveTransaction: `${tradeApi}/transactions`,
   },
   quoteService: {
     getCurrencies: `${quoteApi}/currencies`,

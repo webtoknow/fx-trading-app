@@ -28,7 +28,7 @@ export class TradeService {
     }
 
     saveTransaction(transaction: Transaction) {
-        return this.http.post(backendUrl.fxTradeService.saveTransaction, { params: transaction }) as Observable<Transaction[]>
+        return this.http.post(backendUrl.fxTradeService.saveTransaction, transaction) as Observable<any>
     }
 
     getCurrencies() {

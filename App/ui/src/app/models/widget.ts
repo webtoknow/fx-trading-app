@@ -5,7 +5,7 @@ export class Widget {
     public secondaryCCY: string,
     public buyRate: number,
     public sellRate: number,
-    public notional: string,
+    public notional: number,
     public tenor: string,
     public pickCCYState: boolean,
   ) {  }

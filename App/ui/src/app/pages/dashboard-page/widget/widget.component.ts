@@ -31,6 +31,37 @@ export class WidgetComponent implements OnInit, OnDestroy {
     this.deleted.emit(this.index);
   }
 
+  onSell() {
+    const username: string  = JSON.parse(localStorage.getItem('currentUser')).username;
+    this.tradeService.saveTransaction({
+      username: username,
+      primaryCCY: this.widget.primaryCCY,
+      secondaryCCY: this.widget.secondaryCCY,
+      rate: this.widget.sellRate,
+      action: 'sell',
+      notional: this.widget.notional,
+      tenor: this.widget.tenor,
+      date: Math.round(new Date().getTime()/1000)
+    }).subscribe(response => {
+      console.log('Transaction saved', response)
+    })
+  }
+  onBuy() {
+    const username: string  = JSON.parse(localStorage.getItem('currentUser')).username;
+    this.tradeService.saveTransaction({
+      username: username,
+      primaryCCY: this.widget.primaryCCY,
+      secondaryCCY: this.widget.secondaryCCY,
+      rate: this.widget.buyRate,
+      action: 'buy',
+      notional: this.widget.notional,
+      tenor: this.widget.tenor,
+      date: Math.round(new Date().getTime()/1000)
+    }).subscribe(response => {
+      console.log('Transaction saved', response)
+    })
+  }
+
   onCCYChange() {
     this.switchCCY()
   }

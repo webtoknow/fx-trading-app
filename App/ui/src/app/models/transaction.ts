@@ -1,9 +1,9 @@
 export interface Transaction {
-  transactionId: number;
+  transactionId?: number;
   username: string;
   primaryCCY: string
   secondaryCCY: string;
-  rate: string;
+  rate: number;
   action: string;
   notional: number;
   tenor: string;
