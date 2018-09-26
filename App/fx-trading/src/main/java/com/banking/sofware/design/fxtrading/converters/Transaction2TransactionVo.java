@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import org.springframework.core.convert.converter.Converter;
 
 import com.banking.sofware.design.fxtrading.entities.Transaction;
+import com.banking.sofware.design.fxtrading.util.MiscUtil;
 import com.banking.sofware.design.fxtrading.vo.TransactionVo;
 
 public class Transaction2TransactionVo implements Converter<Transaction, TransactionVo>{
@@ -16,7 +17,7 @@ public class Transaction2TransactionVo implements Converter<Transaction, Transac
 		vo.setUsername(source.getUsername());
 		vo.setPrimaryCCY(source.getPrimaryCcy());
 		vo.setSecondaryCCY(source.getSecondaryCcy());
-		vo.setRate(source.getRate().divide(BigDecimal.valueOf(10000)));
+		vo.setRate(source.getRate().divide(MiscUtil.RATE_MULTIPLIER));
 		vo.setAction(source.getAction());
 		vo.setNotional(source.getNotional());
 		vo.setTenor(source.getTenor());

@@ -13,7 +13,7 @@ import javax.persistence.Id;
 public class Transaction {
 
 	@Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="transactionid")
     BigDecimal transactionId;
 	
@@ -38,7 +38,7 @@ public class Transaction {
 	@Column(name="tenor")
 	String tenor;
 	
-	@Column(name="date")
+	@Column(name="date", insertable = false)
 	Date date;
 
 	public BigDecimal getTransactionId() {

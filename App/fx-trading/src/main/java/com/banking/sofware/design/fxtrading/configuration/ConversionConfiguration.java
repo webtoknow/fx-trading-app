@@ -1,4 +1,4 @@
-package com.banking.sofware.design.fxtrading.converters;
+package com.banking.sofware.design.fxtrading.configuration;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.converter.Converter;
+
+import com.banking.sofware.design.fxtrading.converters.Transaction2TransactionVo;
 
 @Configuration
 public class ConversionConfiguration {
