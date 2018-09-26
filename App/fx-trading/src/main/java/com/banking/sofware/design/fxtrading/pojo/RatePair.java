@@ -7,8 +7,6 @@ public class RatePair {
 	private BigDecimal buy;
 	private BigDecimal sell;
 	
-	
-	
 	public RatePair(BigDecimal buy, BigDecimal sell) {
 		this.buy = buy;
 		this.sell = sell;
@@ -25,6 +23,5 @@ public class RatePair {
 	public void setSell(BigDecimal sell) {
 		this.sell = sell;
 	}
-	
 	
 }

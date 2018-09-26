@@ -111,7 +111,5 @@ public class TransactionVo {
 	public void setDate(Long date) {
 		this.date = date;
 	}
-	
-	
-    
+
 }

@@ -9,6 +9,6 @@ import com.banking.sofware.design.fxtrading.entities.Transaction;
 
 
 @Repository
-public interface FxTradingRepository extends JpaRepository<Transaction, BigDecimal>{
+public interface FxTradingRepository extends JpaRepository<Transaction, BigDecimal> {
 
 }
