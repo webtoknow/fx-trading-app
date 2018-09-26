@@ -42,7 +42,8 @@ export class BlotterViewComponent implements OnInit {
         this.initialTransactions = [...transactionsWithCCYPair];
         this.currenciesPairs = this.transactions
           .map(transaction => transaction.CCYPair)
-          .filter((x, i, a) => x && a.indexOf(x) === i)
+          .filter((x, i, a) => x && a.indexOf(x) === i);
+        this.filterBy();
       });
   }
 
@@ -63,7 +64,7 @@ export class BlotterViewComponent implements OnInit {
     return new Date(new Date(date).getFullYear(), new Date(date).getMonth(), new Date(date).getDay());
   }
 
-  filterBy(filterCriteria: any): void {
+  filterBy(): void {
     this.transactions = this.initialTransactions
       .filter(transaction =>
         this.filter.CCYPair && transaction.CCYPair === this.filter.CCYPair || !this.filter.CCYPair)
