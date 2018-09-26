@@ -9,110 +9,108 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-@Entity(name="Transactions")
+@Entity(name = "Transactions")
 public class Transaction {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name="transactionid")
-    BigDecimal transactionId;
-	
-	@Column(name="username")
-	String username;
-	
-	@Column(name="primaryccy")
-	String primaryCcy;
-	
-	@Column(name="secondaryccy")
-	String secondaryCcy;
-	
-	@Column(name="rate")
-	BigDecimal rate; 
-	
-	@Column(name="action")
-	String action;
-	
-	@Column(name="notional")
-	BigDecimal notional; 
-	
-	@Column(name="tenor")
-	String tenor;
-	
-	@Column(name="date", insertable = false)
-	Date date;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "transactionid")
+  BigDecimal transactionId;
 
-	public BigDecimal getTransactionId() {
-		return transactionId;
-	}
+  @Column(name = "username")
+  String username;
 
-	public void setTransactionId(BigDecimal transactionId) {
-		this.transactionId = transactionId;
-	}
+  @Column(name = "primaryccy")
+  String primaryCcy;
 
-	public String getUsername() {
-		return username;
-	}
+  @Column(name = "secondaryccy")
+  String secondaryCcy;
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
+  @Column(name = "rate")
+  BigDecimal rate;
 
-	public String getPrimaryCcy() {
-		return primaryCcy;
-	}
+  @Column(name = "action")
+  String action;
 
-	public void setPrimaryCcy(String primaryCcy) {
-		this.primaryCcy = primaryCcy;
-	}
+  @Column(name = "notional")
+  BigDecimal notional;
 
-	public String getSecondaryCcy() {
-		return secondaryCcy;
-	}
+  @Column(name = "tenor")
+  String tenor;
 
-	public void setSecondaryCcy(String secondaryCcy) {
-		this.secondaryCcy = secondaryCcy;
-	}
+  @Column(name = "date", insertable = false)
+  Date date;
 
-	public BigDecimal getRate() {
-		return rate;
-	}
+  public BigDecimal getTransactionId() {
+    return transactionId;
+  }
 
-	public void setRate(BigDecimal rate) {
-		this.rate = rate;
-	}
+  public void setTransactionId(BigDecimal transactionId) {
+    this.transactionId = transactionId;
+  }
 
-	public String getAction() {
-		return action;
-	}
+  public String getUsername() {
+    return username;
+  }
 
-	public void setAction(String action) {
-		this.action = action;
-	}
+  public void setUsername(String username) {
+    this.username = username;
+  }
 
-	public BigDecimal getNotional() {
-		return notional;
-	}
+  public String getPrimaryCcy() {
+    return primaryCcy;
+  }
 
-	public void setNotional(BigDecimal notional) {
-		this.notional = notional;
-	}
+  public void setPrimaryCcy(String primaryCcy) {
+    this.primaryCcy = primaryCcy;
+  }
 
-	public String getTenor() {
-		return tenor;
-	}
+  public String getSecondaryCcy() {
+    return secondaryCcy;
+  }
 
-	public void setTenor(String tenor) {
-		this.tenor = tenor;
-	}
+  public void setSecondaryCcy(String secondaryCcy) {
+    this.secondaryCcy = secondaryCcy;
+  }
 
-	public Date getDate() {
-		return date;
-	}
+  public BigDecimal getRate() {
+    return rate;
+  }
 
-	public void setDate(Date date) {
-		this.date = date;
-	}
-	
-	
-	
+  public void setRate(BigDecimal rate) {
+    this.rate = rate;
+  }
+
+  public String getAction() {
+    return action;
+  }
+
+  public void setAction(String action) {
+    this.action = action;
+  }
+
+  public BigDecimal getNotional() {
+    return notional;
+  }
+
+  public void setNotional(BigDecimal notional) {
+    this.notional = notional;
+  }
+
+  public String getTenor() {
+    return tenor;
+  }
+
+  public void setTenor(String tenor) {
+    this.tenor = tenor;
+  }
+
+  public Date getDate() {
+    return date;
+  }
+
+  public void setDate(Date date) {
+    this.date = date;
+  }
+
 }

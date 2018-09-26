@@ -14,18 +14,18 @@ import com.banking.sofware.design.fxtrading.vo.TransactionVo;
 @RestController
 @RequestMapping("/transactions")
 public class FxTradingRestController {
-	
-	@Autowired
-	FxTradingService tradingService;
 
-	@RequestMapping(method = RequestMethod.GET, produces = "application/json")
-	public List<TransactionVo> getTransactions() {
-		return tradingService.getTransactions();
-	}
-	
-	@RequestMapping(method = RequestMethod.POST, consumes = "application/json")
-	public void makeTransaction(@RequestBody TransactionVo transaction) {
-		tradingService.makeTransaction(transaction);
-	}
-	
+  @Autowired
+  FxTradingService tradingService;
+
+  @RequestMapping(method = RequestMethod.GET, produces = "application/json")
+  public List<TransactionVo> getTransactions() {
+    return tradingService.getTransactions();
+  }
+
+  @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
+  public void makeTransaction(@RequestBody TransactionVo transaction) {
+    tradingService.makeTransaction(transaction);
+  }
+
 }

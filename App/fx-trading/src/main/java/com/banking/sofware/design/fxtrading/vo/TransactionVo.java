@@ -3,113 +3,99 @@ package com.banking.sofware.design.fxtrading.vo;
 import java.math.BigDecimal;
 
 public class TransactionVo {
-	
-	private BigDecimal id;
-	
-    private String username;
-    
-    private String primaryCCY;
-    
-    private String secondaryCCY;
-    
-    private BigDecimal rate;
-    
-    private String action;
-    
-    private BigDecimal notional;
-    
-    private String tenor;
-    
-    private Long date;
 
-	public TransactionVo(BigDecimal id, String username, String primaryCCY, String secondaryCCY,
-			BigDecimal rate, String action, BigDecimal notional, String tenor, Long date) {
-		super();
-		this.id = id;
-		this.username = username;
-		this.primaryCCY = primaryCCY;
-		this.secondaryCCY = secondaryCCY;
-		this.rate = rate;
-		this.action = action;
-		this.notional = notional;
-		this.tenor = tenor;
-		this.date = date;
-	}
+  private BigDecimal id;
 
-	public TransactionVo() {
-		
-	}
+  private String username;
 
-	public BigDecimal getId() {
-		return id;
-	}
+  private String primaryCCY;
 
-	public void setId(BigDecimal id) {
-		this.id = id;
-	}
+  private String secondaryCCY;
 
-	public String getUsername() {
-		return username;
-	}
+  private BigDecimal rate;
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
+  private String action;
 
-	public String getPrimaryCCY() {
-		return primaryCCY;
-	}
+  private BigDecimal notional;
 
-	public void setPrimaryCCY(String primaryCCY) {
-		this.primaryCCY = primaryCCY;
-	}
+  private String tenor;
 
-	public String getSecondaryCCY() {
-		return secondaryCCY;
-	}
+  private Long date;
 
-	public void setSecondaryCCY(String secondaryCCY) {
-		this.secondaryCCY = secondaryCCY;
-	}
+  public TransactionVo() {
 
-	public BigDecimal getRate() {
-		return rate;
-	}
+  }
 
-	public void setRate(BigDecimal rate) {
-		this.rate = rate;
-	}
+  public BigDecimal getId() {
+    return id;
+  }
 
-	public String getAction() {
-		return action;
-	}
+  public void setId(BigDecimal id) {
+    this.id = id;
+  }
 
-	public void setAction(String action) {
-		this.action = action;
-	}
+  public String getUsername() {
+    return username;
+  }
 
-	public BigDecimal getNotional() {
-		return notional;
-	}
+  public void setUsername(String username) {
+    this.username = username;
+  }
 
-	public void setNotional(BigDecimal notional) {
-		this.notional = notional;
-	}
+  public String getPrimaryCCY() {
+    return primaryCCY;
+  }
 
-	public String getTenor() {
-		return tenor;
-	}
+  public void setPrimaryCCY(String primaryCCY) {
+    this.primaryCCY = primaryCCY;
+  }
 
-	public void setTenor(String tenor) {
-		this.tenor = tenor;
-	}
+  public String getSecondaryCCY() {
+    return secondaryCCY;
+  }
 
-	public Long getDate() {
-		return date;
-	}
+  public void setSecondaryCCY(String secondaryCCY) {
+    this.secondaryCCY = secondaryCCY;
+  }
 
-	public void setDate(Long date) {
-		this.date = date;
-	}
+  public BigDecimal getRate() {
+    return rate;
+  }
+
+  public void setRate(BigDecimal rate) {
+    this.rate = rate;
+  }
+
+  public String getAction() {
+    return action;
+  }
+
+  public void setAction(String action) {
+    this.action = action;
+  }
+
+  public BigDecimal getNotional() {
+    return notional;
+  }
+
+  public void setNotional(BigDecimal notional) {
+    this.notional = notional;
+  }
+
+  public String getTenor() {
+    return tenor;
+  }
+
+  public void setTenor(String tenor) {
+    this.tenor = tenor;
+  }
+
+  public Long getDate() {
+    return date;
+  }
+
+  public void setDate(Long date) {
+    this.date = date;
+  }
 
 }
