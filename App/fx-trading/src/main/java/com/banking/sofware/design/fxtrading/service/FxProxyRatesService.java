@@ -30,30 +30,39 @@ public class FxProxyRatesService {
     sb = sb.append("?primaryCCY=").append(primaryCcy);
     sb = sb.append("&secondaryCCY=").append(secondaryCcy);
     URL url = new URL(sb.toString());
-    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-    conn.setRequestMethod("GET");
-    conn.setRequestProperty("Accept", "application/json");
+    
+    BufferedReader streamReader = null;
+    HttpURLConnection conn = null;
+    try {
+      conn = (HttpURLConnection) url.openConnection();
+      conn.setRequestMethod("GET");
+      conn.setRequestProperty("Accept", "application/json");
 
-    if (conn.getResponseCode() != 200) {
-      log.error("Rates service returned {} status code", conn.getResponseCode());
-      throw new RuntimeException("Failed with http error code: " + conn.getResponseCode());
+      if (conn.getResponseCode() != 200) {
+        log.error("Rates service returned {} status code", conn.getResponseCode());
+        throw new RuntimeException("Failed with http error code: " + conn.getResponseCode());
+      }
+
+      streamReader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+      StringBuilder responseStrBuilder = new StringBuilder();
+      String inputStr;
+      while ((inputStr = streamReader.readLine()) != null) {
+        responseStrBuilder.append(inputStr);
+      }
+      JacksonJsonParser jparse = new JacksonJsonParser();
+      Map<String, Object> obj = jparse.parseMap(responseStrBuilder.toString());
+      log.info("Received rate object from rates service: {}", obj);
+      
+      return new RatePair(BigDecimal.valueOf((Double) obj.get("buyRate")),
+              BigDecimal.valueOf((Double) obj.get("sellRate")));
+    } finally {
+      if (streamReader != null) {
+        streamReader.close();
+      } 
+      if (conn != null) {
+        conn.disconnect();
+      }
     }
-
-    BufferedReader streamReader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-    StringBuilder responseStrBuilder = new StringBuilder();
-    String inputStr;
-    while ((inputStr = streamReader.readLine()) != null) {
-      responseStrBuilder.append(inputStr);
-    }
-    JacksonJsonParser jparse = new JacksonJsonParser();
-    Map<String, Object> obj = jparse.parseMap(responseStrBuilder.toString());
-    log.info("Received rate object from rates service: {}", obj);
-
-    streamReader.close();
-    conn.disconnect();
-
-    return new RatePair(BigDecimal.valueOf((Double) obj.get("buyRate")),
-            BigDecimal.valueOf((Double) obj.get("sellRate")));
   }
 
 }
