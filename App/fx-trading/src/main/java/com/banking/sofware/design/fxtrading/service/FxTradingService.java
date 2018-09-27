@@ -44,9 +44,9 @@ public class FxTradingService {
 
     Transaction transaction = new Transaction();
     transaction.setUsername(vo.getUsername());
-    transaction.setPrimaryCcy(vo.getPrimaryCCY());
-    transaction.setSecondaryCcy(vo.getSecondaryCCY());
-    RatePair ratePair = getCurrentRate(vo.getPrimaryCCY(), vo.getSecondaryCCY());
+    transaction.setPrimaryCcy(vo.getPrimaryCcy());
+    transaction.setSecondaryCcy(vo.getSecondaryCcy());
+    RatePair ratePair = getCurrentRate(vo.getPrimaryCcy(), vo.getSecondaryCcy());
     BigDecimal rate = "BUY".equals(vo.getAction()) ? ratePair.getBuy() : ratePair.getSell();
     transaction.setRate(rate.multiply(MiscUtil.RATE_MULTIPLIER));
     transaction.setAction(vo.getAction());

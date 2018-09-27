@@ -1,7 +1,5 @@
 package com.banking.sofware.design.fxtrading.converters;
 
-import java.math.BigDecimal;
-
 import org.springframework.core.convert.converter.Converter;
 
 import com.banking.sofware.design.fxtrading.entities.Transaction;
@@ -13,10 +11,10 @@ public class Transaction2TransactionVo implements Converter<Transaction, Transac
   @Override
   public TransactionVo convert(Transaction source) {
     TransactionVo vo = new TransactionVo();
-    vo.setId(source.getTransactionId());
+    vo.setId(source.getId());
     vo.setUsername(source.getUsername());
-    vo.setPrimaryCCY(source.getPrimaryCcy());
-    vo.setSecondaryCCY(source.getSecondaryCcy());
+    vo.setPrimaryCcy(source.getPrimaryCcy());
+    vo.setSecondaryCcy(source.getSecondaryCcy());
     vo.setRate(source.getRate().divide(MiscUtil.RATE_MULTIPLIER));
     vo.setAction(source.getAction());
     vo.setNotional(source.getNotional());

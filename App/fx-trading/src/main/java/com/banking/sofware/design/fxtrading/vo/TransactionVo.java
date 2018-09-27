@@ -8,9 +8,9 @@ public class TransactionVo {
 
   private String username;
 
-  private String primaryCCY;
+  private String primaryCcy;
 
-  private String secondaryCCY;
+  private String secondaryCcy;
 
   private BigDecimal rate;
 
@@ -42,20 +42,20 @@ public class TransactionVo {
     this.username = username;
   }
 
-  public String getPrimaryCCY() {
-    return primaryCCY;
+  public String getPrimaryCcy() {
+    return primaryCcy;
   }
 
-  public void setPrimaryCCY(String primaryCCY) {
-    this.primaryCCY = primaryCCY;
+  public void setPrimaryCcy(String primaryCcy) {
+    this.primaryCcy = primaryCcy;
   }
 
-  public String getSecondaryCCY() {
-    return secondaryCCY;
+  public String getSecondaryCcy() {
+    return secondaryCcy;
   }
 
-  public void setSecondaryCCY(String secondaryCCY) {
-    this.secondaryCCY = secondaryCCY;
+  public void setSecondaryCcy(String secondaryCcy) {
+    this.secondaryCcy = secondaryCcy;
   }
 
   public BigDecimal getRate() {

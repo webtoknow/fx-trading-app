@@ -14,39 +14,38 @@ public class Transaction {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "transactionid")
-  BigDecimal transactionId;
+  BigDecimal id;
 
-  @Column(name = "username")
+  @Column
   String username;
 
-  @Column(name = "primaryccy")
+  @Column
   String primaryCcy;
 
-  @Column(name = "secondaryccy")
+  @Column
   String secondaryCcy;
 
-  @Column(name = "rate")
+  @Column
   BigDecimal rate;
 
-  @Column(name = "action")
+  @Column
   String action;
 
-  @Column(name = "notional")
+  @Column
   BigDecimal notional;
 
-  @Column(name = "tenor")
+  @Column
   String tenor;
 
-  @Column(name = "date", insertable = false)
+  @Column(insertable = false)
   Date date;
 
-  public BigDecimal getTransactionId() {
-    return transactionId;
+  public BigDecimal getId() {
+    return id;
   }
 
-  public void setTransactionId(BigDecimal transactionId) {
-    this.transactionId = transactionId;
+  public void setId(BigDecimal id) {
+    this.id = id;
   }
 
   public String getUsername() {
