@@ -37,7 +37,7 @@ export class BlotterViewComponent implements OnInit {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe(response => {
         const transactionsWithCCYPair: Transaction[] = response
-          .map(transaction => ({ ...transaction, CCYPair: `${transaction.primaryCCY}/${transaction.secondaryCCY}`}))
+          .map(transaction => ({ ...transaction, CCYPair: `${transaction.primaryCcy}/${transaction.secondaryCcy}`}))
         this.transactions = transactionsWithCCYPair;
         this.initialTransactions = [...transactionsWithCCYPair];
         this.currenciesPairs = this.transactions

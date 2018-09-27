@@ -35,8 +35,8 @@ export class WidgetComponent implements OnInit, OnDestroy {
     const username: string  = JSON.parse(localStorage.getItem('currentUser')).username;
     this.tradeService.saveTransaction({
       username: username,
-      primaryCCY: this.widget.primaryCCY,
-      secondaryCCY: this.widget.secondaryCCY,
+      primaryCcy: this.widget.primaryCcy,
+      secondaryCcy: this.widget.secondaryCcy,
       rate: this.widget.sellRate,
       action: 'sell',
       notional: this.widget.notional,
@@ -50,8 +50,8 @@ export class WidgetComponent implements OnInit, OnDestroy {
     const username: string  = JSON.parse(localStorage.getItem('currentUser')).username;
     this.tradeService.saveTransaction({
       username: username,
-      primaryCCY: this.widget.primaryCCY,
-      secondaryCCY: this.widget.secondaryCCY,
+      primaryCcy: this.widget.primaryCcy,
+      secondaryCcy: this.widget.secondaryCcy,
       rate: this.widget.buyRate,
       action: 'buy',
       notional: this.widget.notional,
@@ -67,14 +67,14 @@ export class WidgetComponent implements OnInit, OnDestroy {
   }
   
   switchCCY() {
-    const tempCCY = this.widget.primaryCCY;
-    this.widget.primaryCCY = this.widget.secondaryCCY;
-    this.widget.secondaryCCY= tempCCY;
+    const tempCCY = this.widget.primaryCcy;
+    this.widget.primaryCcy = this.widget.secondaryCcy;
+    this.widget.secondaryCcy= tempCCY;
   }
 
   startPooling() {
-    const { primaryCCY, secondaryCCY } = this.widget;
-    this.tradeService.getFxRatePolling(primaryCCY, secondaryCCY)
+    const { primaryCcy, secondaryCcy } = this.widget;
+    this.tradeService.getFxRatePolling(primaryCcy, secondaryCcy)
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
 
@@ -87,8 +87,8 @@ export class WidgetComponent implements OnInit, OnDestroy {
   }
 
   onPickCurrency() {
-    const { primaryCCY, secondaryCCY } = this.widget;
-    if (primaryCCY && secondaryCCY && primaryCCY !== secondaryCCY) {
+    const { primaryCcy, secondaryCcy } = this.widget;
+    if (primaryCcy && secondaryCcy && primaryCcy !== secondaryCcy) {
       this.widget.pickCCYState = false;
       this.startPooling();
     }

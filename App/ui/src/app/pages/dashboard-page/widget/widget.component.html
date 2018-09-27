@@ -7,15 +7,15 @@
     <h4 class="widget-title">Pick a currency</h4>
     <div class="content-container">
       <div class="form-inline form-inline-long form-group">
-          <label class="label-long" for="primaryCCY">Primary</label>
-          <select name="primaryCCY" id="primaryCCY" class="form-control" [(ngModel)]="widget.primaryCCY" required>
+          <label class="label-long" for="primaryCcy">Primary</label>
+          <select name="primaryCcy" id="primaryCcy" class="form-control" [(ngModel)]="widget.primaryCcy" required>
             <option value="" disabled selected>Please select</option>
             <option *ngFor="let currency of currencies" [value]="currency">{{ currency }}</option>
           </select>
         </div>
         <div class="form-inline form-inline-long form-group">
-          <label class="label-long" for="secondaryCCY">Secondary</label>
-          <select name="secondaryCCY" id="secondaryCCY" class="form-control" [(ngModel)]="widget.secondaryCCY" required>
+          <label class="label-long" for="secondaryCcy">Secondary</label>
+          <select name="secondaryCcy" id="secondaryCcy" class="form-control" [(ngModel)]="widget.secondaryCcy" required>
             <option value="" disabled selected>Please select</option>
             <option *ngFor="let currency of currencies" [value]="currency">{{ currency }}</option>
           </select>
@@ -30,7 +30,7 @@
   <div *ngIf="!widget.pickCCYState">
     <!-- Title -->
     <h4 class="widget-title no-border">
-      <span class="widget-primary">{{ widget.primaryCCY }}</span>/{{ widget.secondaryCCY }}
+      <span class="widget-primary">{{ widget.primaryCcy }}</span>/{{ widget.secondaryCcy }}
       <span class="fa fa-exchange-alt exchange" (click)="onCCYChange()"></span>
     </h4>
     <!-- Rates -->
@@ -54,7 +54,7 @@
           required>
       </div>
       <div class="form-inline form-inline-short form-group">
-        <label class="label-short" for="primaryCCY">Tenor</label>
+        <label class="label-short" for="primaryCcy">Tenor</label>
         <select name="tenor" id="tenor" class="form-control" [(ngModel)]="widget.tenor" required>
           <option value="" disabled selected>Please select</option>
           <option *ngFor="let tenor of tenors" [value]="tenor">{{ tenor }}</option>

@@ -1,8 +1,8 @@
 export class Widget {
   
   constructor(
-    public primaryCCY: string,
-    public secondaryCCY: string,
+    public primaryCcy: string,
+    public secondaryCcy: string,
     public buyRate: number,
     public sellRate: number,
     public notional: number,

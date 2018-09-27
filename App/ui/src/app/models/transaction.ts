@@ -1,8 +1,8 @@
 export interface Transaction {
-  transactionId?: number;
+  id?: number;
   username: string;
-  primaryCCY: string
-  secondaryCCY: string;
+  primaryCcy: string
+  secondaryCcy: string;
   rate: number;
   action: string;
   notional: number;
