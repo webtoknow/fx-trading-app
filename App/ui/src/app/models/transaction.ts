@@ -8,6 +8,6 @@ export interface Transaction {
   notional: number;
   tenor: string;
   date: number;
-  CCYPair?: string
+  CcyPair?: string
 }
 
