@@ -1,16 +1,16 @@
 package com.project.user.administration.vo;
 
-public class UserResponseVo {
+public class UserAuthorizeResponseVo {
 
     private String userName;
     private boolean isValid;
 
-    public UserResponseVo(String userName, boolean isValid){
+    public UserAuthorizeResponseVo(String userName, boolean isValid){
         this.userName = userName;
         this.isValid = isValid;
     }
 
-    public UserResponseVo(){
+    public UserAuthorizeResponseVo(){
     }
 
     public String getUserName() {

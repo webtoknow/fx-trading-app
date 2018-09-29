@@ -16,23 +16,16 @@ public class User {
     @Column(columnDefinition = "user_name")
     private String userName;
 
-    @Column(columnDefinition = "last_name")
-    private String lastName;
+    @Column(columnDefinition = "password")
+    private String password;
 
-    @Column(columnDefinition = "first_name")
-    private String firstName;
-
+    @Column(columnDefinition = "email")
+    private String email;
 
     @OneToMany(mappedBy = "user")
     private List<UserLogin> logins = new ArrayList<>();
 
     public User(){
-    }
-
-    public User(String userName,String firstName, String lastName ){
-        this.userName = userName;
-        this.firstName = firstName;
-        this.lastName = lastName;
     }
 
     public Long getUserId() {
@@ -51,27 +44,27 @@ public class User {
         this.userName = userName;
     }
 
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
     public List<UserLogin> getLogins() {
         return logins;
     }
 
     public void setLogins(List<UserLogin> logins) {
         this.logins = logins;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

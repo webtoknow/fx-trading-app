@@ -1,8 +1,9 @@
 package com.project.user.administration.controller;
 
 import com.project.user.administration.services.UserService;
-import com.project.user.administration.vo.UserResponseVo;
-import com.project.user.administration.vo.UserVo;
+import com.project.user.administration.vo.UserAuthorizeResponseVo;
+import com.project.user.administration.vo.UserTokenResponseVo;
+import com.project.user.administration.vo.UserRequestVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,23 +16,23 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("/user/{userId}")
-    public UserVo getAnswersByQuestionId(@PathVariable Long userId) {
+    public UserRequestVo getAnswersByQuestionId(@PathVariable Long userId) {
         return userService.findByUserId(userId);
     }
 
     @PostMapping("/user/register")
-    public void registerNewUser(@RequestBody UserVo userVo) {
-        userService.registerNewUser(userVo);
+    public void registerNewUser(@RequestBody UserRequestVo userRequestVo) {
+        userService.registerNewUser(userRequestVo);
     }
 
-    @PostMapping("/user/login")
-    public String login(@RequestBody UserVo userVo) {
-        return userService.validateUserCredentialsAndGenerateToken(userVo);
+    @PostMapping("/user/authenticate")
+    public UserTokenResponseVo login(@RequestBody UserRequestVo userRequestVo) {
+        return userService.validateUserCredentialsAndGenerateToken(userRequestVo);
     }
 
     @PostMapping("/user/authorize")
-    public UserResponseVo authorize(@RequestBody UserVo userVo) throws ParseException {
-        return userService.authorize(userVo);
+    public UserAuthorizeResponseVo authorize(@RequestBody UserRequestVo userRequestVo) throws ParseException {
+        return userService.authorize(userRequestVo);
     }
 
 }
