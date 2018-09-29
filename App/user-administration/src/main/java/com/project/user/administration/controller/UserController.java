@@ -10,27 +10,32 @@ import org.springframework.web.bind.annotation.*;
 import java.text.ParseException;
 
 @RestController
+//@CrossOrigin
 public class UserController {
 
     @Autowired
     private UserService userService;
 
     @GetMapping("/user/{userId}")
+    @CrossOrigin
     public UserRequestVo getAnswersByQuestionId(@PathVariable Long userId) {
         return userService.findByUserId(userId);
     }
 
     @PostMapping("/user/register")
+    @CrossOrigin
     public void registerNewUser(@RequestBody UserRequestVo userRequestVo) {
         userService.registerNewUser(userRequestVo);
     }
 
     @PostMapping("/user/authenticate")
+    @CrossOrigin
     public UserTokenResponseVo login(@RequestBody UserRequestVo userRequestVo) {
         return userService.validateUserCredentialsAndGenerateToken(userRequestVo);
     }
 
     @PostMapping("/user/authorize")
+    @CrossOrigin
     public UserAuthorizeResponseVo authorize(@RequestBody UserRequestVo userRequestVo) throws ParseException {
         return userService.authorize(userRequestVo);
     }

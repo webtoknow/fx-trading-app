@@ -32,14 +32,14 @@ public class UserService {
         User user = userRepository.findByUserId(userId);
 
         UserRequestVo uservo  = new UserRequestVo();
-        uservo.setUserName(user.getUserName());
+        uservo.setUsername(user.getUserName());
 
         return uservo;
     }
 
     public void registerNewUser(UserRequestVo userRequestVo) {
         User user = new User();
-        user.setUserName(userRequestVo.getUserName());
+        user.setUserName(userRequestVo.getUsername());
         user.setPassword(userRequestVo.getPassword());
         user.setEmail(userRequestVo.getEmail());
 
@@ -48,7 +48,7 @@ public class UserService {
 
     public UserTokenResponseVo validateUserCredentialsAndGenerateToken(UserRequestVo userRequestVo) {
 
-        User user = userRepository.findUserByStatusAndName(userRequestVo.getUserName(), userRequestVo.getPassword());
+        User user = userRepository.findUserByStatusAndName(userRequestVo.getUsername(), userRequestVo.getPassword());
 
         if( user != null) {
 
@@ -58,7 +58,7 @@ public class UserService {
 
             UserTokenResponseVo userTokenResponseVo = new UserTokenResponseVo();
             userTokenResponseVo.setToken(token);
-            userTokenResponseVo.setUserName(userRequestVo.getUserName());
+            userTokenResponseVo.setUserName(userRequestVo.getUsername());
 
             return userTokenResponseVo;
         } else {
@@ -67,18 +67,18 @@ public class UserService {
     }
 
     public UserAuthorizeResponseVo authorize(UserRequestVo userRequestVo) throws ParseException {
-        UserLogin userLogin = userLoginRepository.findByUserAndToken(userRequestVo.getUserName(), userRequestVo.getToken());
+        UserLogin userLogin = userLoginRepository.findByUserAndToken(userRequestVo.getUsername(), userRequestVo.getToken());
         if(userLogin != null){
             DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             Date date = format.parse(userLogin.getTokenExpireTime());
 
             if(new Date().compareTo(date) <1){
-                return new UserAuthorizeResponseVo(userRequestVo.getUserName(), true);
+                return new UserAuthorizeResponseVo(userRequestVo.getUsername(), true);
             } else {
-                return new UserAuthorizeResponseVo(userRequestVo.getUserName(), false);
+                return new UserAuthorizeResponseVo(userRequestVo.getUsername(), false);
             }
         }
-        return new UserAuthorizeResponseVo(userRequestVo.getUserName(), false);
+        return new UserAuthorizeResponseVo(userRequestVo.getUsername(), false);
     }
 
     public String getCurrentTimeStamp() {

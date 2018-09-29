@@ -2,7 +2,7 @@ package com.project.user.administration.vo;
 
 public class UserRequestVo {
 
-    private String userName;
+    private String username;
     private String email;
     private String password;
     private String token;
@@ -10,12 +10,12 @@ public class UserRequestVo {
     public UserRequestVo(){
     }
 
-    public String getUserName() {
-        return userName;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {
