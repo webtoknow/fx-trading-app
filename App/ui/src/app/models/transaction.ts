@@ -1,3 +1,9 @@
+export enum SortType {
+  ASC = 'asc',
+  DESC = 'desc',
+  DEFAULT = ''
+}
+
 export interface Transaction {
   id?: number;
   username: string;
@@ -8,6 +14,6 @@ export interface Transaction {
   notional: number;
   tenor: string;
   date: number;
-  CcyPair?: string
+  ccyPair?: string
 }
 
