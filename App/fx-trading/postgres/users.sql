@@ -1,0 +1,4 @@
+CREATE USER fxowner WITH ENCRYPTED PASSWORD 'password';
+
+GRANT ALL PRIVILEGES ON DATABASE fxtrading TO fxowner;
+GRANT ALL PRIVILEGES ON TABLE transactions TO fxowner;
