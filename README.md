@@ -17,10 +17,10 @@ The agenda has the following content:
 - Week 3 - Design
   - [Introduction](Week_03/Theory/README.md)
   - [Exercise](Week_03/Exercise/README.md)
-- Week 4 – Architecture
+- Week 4 – Architecture and setup
   - [Introduction](Week_04/Theory/README.md)
   - [Exercise](Week_04/Exercise/README.md)
-- Week 5 – Development
+- Week 5 – Create Login and Register pages with Angular
   - [Introduction](Week_05/Theory/README.md)
   - [Exercise](Week_05/Exercise/README.md)
 - Week 6 – Development
