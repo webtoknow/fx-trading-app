@@ -27,8 +27,8 @@ public class FxProxyRatesService {
   public RatePair getRate(String primaryCcy, String secondaryCcy) throws IOException {
 
     StringBuilder sb = new StringBuilder(fxratesUrl);
-    sb = sb.append("?primaryCCY=").append(primaryCcy);
-    sb = sb.append("&secondaryCCY=").append(secondaryCcy);
+    sb = sb.append("?primaryCcy=").append(primaryCcy);
+    sb = sb.append("&secondaryCcy=").append(secondaryCcy);
     URL url = new URL(sb.toString());
     
     BufferedReader streamReader = null;
