@@ -30,7 +30,7 @@ public class FxProxyRatesService {
     sb = sb.append("?primaryCcy=").append(primaryCcy);
     sb = sb.append("&secondaryCcy=").append(secondaryCcy);
     URL url = new URL(sb.toString());
-    
+
     BufferedReader streamReader = null;
     HttpURLConnection conn = null;
     try {
@@ -52,13 +52,13 @@ public class FxProxyRatesService {
       JacksonJsonParser jparse = new JacksonJsonParser();
       Map<String, Object> obj = jparse.parseMap(responseStrBuilder.toString());
       log.info("Received rate object from rates service: {}", obj);
-      
+
       return new RatePair(BigDecimal.valueOf((Double) obj.get("buyRate")),
               BigDecimal.valueOf((Double) obj.get("sellRate")));
     } finally {
       if (streamReader != null) {
         streamReader.close();
-      } 
+      }
       if (conn != null) {
         conn.disconnect();
       }

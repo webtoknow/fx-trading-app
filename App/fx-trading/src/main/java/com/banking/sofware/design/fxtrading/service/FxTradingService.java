@@ -39,23 +39,23 @@ public class FxTradingService {
   @Transactional
   public void makeTransaction(TransactionVo vo) {
     // TODO: validations
-	String action = vo.getAction();
-	if(StringUtils.isBlank(action) || !List.of("BUY", "SELL").contains(action.toUpperCase())) {
-		throw new IllegalArgumentException("Action not supported!");
-	}
-	
-	Transaction transaction = new Transaction();
-	transaction.setAction(action.toUpperCase());
-	RatePair ratePair = getCurrentRate(vo.getPrimaryCcy(), vo.getSecondaryCcy());
+    String action = vo.getAction();
+    if (StringUtils.isBlank(action) || !List.of("BUY", "SELL").contains(action.toUpperCase())) {
+      throw new IllegalArgumentException("Action not supported!");
+    }
+
+    Transaction transaction = new Transaction();
+    transaction.setAction(action.toUpperCase());
+    RatePair ratePair = getCurrentRate(vo.getPrimaryCcy(), vo.getSecondaryCcy());
     BigDecimal rate = "BUY".equalsIgnoreCase(action) ? ratePair.getBuy() : ratePair.getSell();
     transaction.setRate(rate.multiply(MiscUtil.RATE_MULTIPLIER));
-    
+
     transaction.setUsername(vo.getUsername());
     transaction.setPrimaryCcy(vo.getPrimaryCcy());
     transaction.setSecondaryCcy(vo.getSecondaryCcy());
     transaction.setNotional(vo.getNotional());
     transaction.setTenor(vo.getTenor());
-    
+
     repository.save(transaction);
   }
 
