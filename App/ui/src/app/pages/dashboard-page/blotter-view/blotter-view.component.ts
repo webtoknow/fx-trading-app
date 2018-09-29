@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Transaction } from 'src/app/models/transaction';
+import { Transaction, SortType } from 'src/app/models/transaction';
 import { filter } from 'rxjs/internal/operators/filter';
 import { TradeService } from '../../../services/trade.service';
 import { Subject } from 'rxjs';
@@ -14,13 +14,14 @@ import { takeUntil, map } from 'rxjs/operators';
 export class BlotterViewComponent implements OnInit {
 
   private filter = {
-    CcyPair: '',
+    ccyPair: '',
     date: ''
   };
   private sorter = {
     column: '',
     type: ''
   }
+  
   private unsubscribe = new Subject();
   private transactions: Transaction[] = [];
   private initialTransactions: Transaction[] = [];
@@ -39,14 +40,14 @@ export class BlotterViewComponent implements OnInit {
     this.tradeService.getTransactionsPolling()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe(response => {
-        // Create transaction transform list by adding CcyPair
+        // Create transaction transform list by adding ccyPair
         const transactionsWithCcyPair: Transaction[] = response
-          .map(transaction => ({ ...transaction, CcyPair: `${transaction.primaryCcy}/${transaction.secondaryCcy}`}))
+          .map(transaction => ({ ...transaction, ccyPair: `${transaction.primaryCcy}/${transaction.secondaryCcy}`}))
         this.transactions = transactionsWithCcyPair;
         this.initialTransactions = [...transactionsWithCcyPair];
         // Get all Ccy pairs for select
         this.currenciesPairs = this.transactions
-          .map(transaction => transaction.CcyPair)
+          .map(transaction => transaction.ccyPair)
           .filter((x, i, a) => x && a.indexOf(x) === i);
         this.filterBy();
         this.sortBy();
@@ -55,35 +56,37 @@ export class BlotterViewComponent implements OnInit {
 
   onSort(column: string) {
     this.sorter.column = column;
-    if (this.sorter.type) {
-      if (this.sorter.type === 'asc') {
-        this.sorter.type='dec'
-      } else {
-        this.sorter.type=''
-      }
-    } else {
-      this.sorter.type='asc'
+    if (this.sorter.type === SortType.DEFAULT) {
+      this.sorter.type = SortType.ASC;
     }
-    this.sortBy()
+    else if (this.sorter.type === SortType.ASC) {
+      this.sorter.type = SortType.DESC;
+    }
+    else {
+      this.sorter.type = SortType.DEFAULT;
+    }
+
+    this.sortBy();
   }
 
   sortBy(): void {
     const { column, type } = this.sorter;
 
-    if (type === '') {
-      this.transactions = this.initialTransactions
+    if (type === SortType.DEFAULT) {
+      this.transactions = [...this.initialTransactions];
       return
     }
+    
+    if (type === SortType.ASC) {
+      this.transactions.sort((a: any, b: any) => 0 - (a[column] > b[column] ? -1 : 1));
+      return;
+    }
+
+    if (type === SortType.DESC) {
+      this.transactions.sort((a: any, b: any) => 0 - (a[column] > b[column] ? 1 : -1));
+      return;
+    }
  
-    this.transactions.sort((a: any, b: any) => {
-      if (a[column] < b[column]) {
-        return type === 'asc' ? 1 : -1;
-      }
-      if (a[column] > b[column]) {
-        return type === 'des' ? -1 : 1;
-      }
-      return 0;
-    })
   }
 
   getDateWithoutHourAndMinuteAndSeconds(date) {
@@ -93,7 +96,7 @@ export class BlotterViewComponent implements OnInit {
   filterBy(): void {
     this.transactions = this.initialTransactions
       .filter(transaction =>
-        this.filter.CcyPair && transaction.CcyPair === this.filter.CcyPair || !this.filter.CcyPair)
+        this.filter.ccyPair && transaction.ccyPair === this.filter.ccyPair || !this.filter.ccyPair)
       .filter(transaction =>
         this.filter.date && this.getDateWithoutHourAndMinuteAndSeconds(transaction.date).getTime() === this.getDateWithoutHourAndMinuteAndSeconds(this.filter.date).getTime() || !this.filter.date)
   }
