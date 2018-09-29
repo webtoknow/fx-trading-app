@@ -35,15 +35,15 @@ export class TradeService {
         return this.http.get(backendUrl.quoteService.getCurrencies) as Observable<string[]>
     }
 
-    getFxRate(primaryCCY: string, secondaryCCY: string) {
-        return this.http.get(backendUrl.quoteService.getFxRate, { params: { primaryCCY, secondaryCCY } }) as Observable<Rate>
+    getFxRate(primaryCcy: string, secondaryCcy: string) {
+        return this.http.get(backendUrl.quoteService.getFxRate, { params: { primaryCcy, secondaryCcy } }) as Observable<Rate>
     }
 
-    getFxRatePolling(primaryCCY: string, secondaryCCY: string) {
+    getFxRatePolling(primaryCcy: string, secondaryCcy: string) {
         return interval(2000)
             .pipe(
                 startWith(0),
-                switchMap(() => this.http.get(backendUrl.quoteService.getFxRate, { params: { primaryCCY, secondaryCCY } })
+                switchMap(() => this.http.get(backendUrl.quoteService.getFxRate, { params: { primaryCcy, secondaryCcy } })
             )
         ) as Observable<Rate>
     }

@@ -45,10 +45,7 @@ const appRoutes: Routes = [
     WidgetComponent
   ],
   imports: [
-    RouterModule.forRoot(
-      appRoutes,
-      { enableTracing: true } // <-- debugging purposes only
-    ),
+    RouterModule.forRoot(appRoutes),
     AlertModule.forRoot(),
     BrowserModule,
     FormsModule,

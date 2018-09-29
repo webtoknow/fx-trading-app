@@ -13,15 +13,18 @@ import { takeUntil, map } from 'rxjs/operators';
 })
 export class BlotterViewComponent implements OnInit {
 
-  private sorted = false;
   private filter = {
-    CCYPair: '',
+    CcyPair: '',
     date: ''
   };
-  unsubscribe = new Subject();
-  transactions: Transaction[] = [];
-  initialTransactions: Transaction[] = [];
-  currenciesPairs: string[] = [];
+  private sorter = {
+    column: '',
+    type: ''
+  }
+  private unsubscribe = new Subject();
+  private transactions: Transaction[] = [];
+  private initialTransactions: Transaction[] = [];
+  private currenciesPairs: string[] = [];
 
   constructor(
     private tradeService: TradeService
@@ -36,37 +39,61 @@ export class BlotterViewComponent implements OnInit {
     this.tradeService.getTransactionsPolling()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe(response => {
-        const transactionsWithCCYPair: Transaction[] = response
-          .map(transaction => ({ ...transaction, CCYPair: `${transaction.primaryCCY}/${transaction.secondaryCCY}`}))
-        this.transactions = transactionsWithCCYPair;
-        this.initialTransactions = [...transactionsWithCCYPair];
+        // Create transaction transform list by adding CcyPair
+        const transactionsWithCcyPair: Transaction[] = response
+          .map(transaction => ({ ...transaction, CcyPair: `${transaction.primaryCcy}/${transaction.secondaryCcy}`}))
+        this.transactions = transactionsWithCcyPair;
+        this.initialTransactions = [...transactionsWithCcyPair];
+        // Get all Ccy pairs for select
         this.currenciesPairs = this.transactions
-          .map(transaction => transaction.CCYPair)
-          .filter((x, i, a) => x && a.indexOf(x) === i)
+          .map(transaction => transaction.CcyPair)
+          .filter((x, i, a) => x && a.indexOf(x) === i);
+        this.filterBy();
+        this.sortBy();
       });
   }
 
-  sortBy(sortCriteria: any): void {
-    this.transactions.sort((a: any, b: any) => {
-      if (a[sortCriteria] < b[sortCriteria]) {
-        return this.sorted ? 1 : -1;
+  onSort(column: string) {
+    this.sorter.column = column;
+    if (this.sorter.type) {
+      if (this.sorter.type === 'asc') {
+        this.sorter.type='dec'
+      } else {
+        this.sorter.type=''
       }
-      if (a[sortCriteria] > b[sortCriteria]) {
-        return this.sorted ? -1 : 1;
+    } else {
+      this.sorter.type='asc'
+    }
+    this.sortBy()
+  }
+
+  sortBy(): void {
+    const { column, type } = this.sorter;
+
+    if (type === '') {
+      this.transactions = this.initialTransactions
+      return
+    }
+ 
+    this.transactions.sort((a: any, b: any) => {
+      if (a[column] < b[column]) {
+        return type === 'asc' ? 1 : -1;
+      }
+      if (a[column] > b[column]) {
+        return type === 'des' ? -1 : 1;
       }
       return 0;
     })
-    this.sorted = !this.sorted;
   }
 
   getDateWithoutHourAndMinuteAndSeconds(date) {
     return new Date(new Date(date).getFullYear(), new Date(date).getMonth(), new Date(date).getDay());
   }
 
-  filterBy(filterCriteria: any): void {
+  filterBy(): void {
     this.transactions = this.initialTransactions
       .filter(transaction =>
-        this.filter.CCYPair && transaction.CCYPair === this.filter.CCYPair || !this.filter.CCYPair)
+        this.filter.CcyPair && transaction.CcyPair === this.filter.CcyPair || !this.filter.CcyPair)
       .filter(transaction =>
         this.filter.date && this.getDateWithoutHourAndMinuteAndSeconds(transaction.date).getTime() === this.getDateWithoutHourAndMinuteAndSeconds(this.filter.date).getTime() || !this.filter.date)
   }

@@ -6,8 +6,8 @@
   <span class="flex-vertical-centered filter-separator">|</span>
   <div class="filter-input-container">
     <div class="flex-vertical-centered filter-group">
-      <span for="CCYFilter">CCY&nbsp;Pair&nbsp;&nbsp;</span>
-      <select name="CCY" id="CCY" class="form-control form-control-sm" [(ngModel)]="filter.CCYPair" (ngModelChange)="filterBy($event)">
+      <label for="Ccy">Ccy&nbsp;Pair&nbsp;&nbsp;</label>
+      <select name="Ccy" id="Ccy" class="form-control form-control-sm" [(ngModel)]="filter.CcyPair" (ngModelChange)="filterBy($event)">
         <option value="" selected>Please select&nbsp;&nbsp;</option>
         <option *ngFor="let currencyPair of currenciesPairs" [value]="currencyPair">{{ currencyPair }}</option>
       </select>
@@ -39,25 +39,25 @@
     <thead class="blotter-table-header">
       <tr>
         <th>ID</th>
-        <th class="clickable" (click)="sortBy('username')">
+        <th class="clickable" (click)="onSort('username')">
           <span>Username&nbsp;</span>
           <i class="fas fa-sort"></i>
         </th>
-        <th class="clickable" (click)="sortBy('CCY')">
-          <span>CCY Pair&nbsp;</span>
+        <th class="clickable" (click)="onSort('Ccy')">
+          <span>Ccy Pair&nbsp;</span>
           <i class="fas fa-sort"></i>
         </th>
         <th>Rate</th>
-        <th class="clickable" (click)="sortBy('action')">
+        <th class="clickable" (click)="onSort('action')">
           <span>Action&nbsp;</span>
           <i class="fas fa-sort"></i>
         </th>
-        <th class="clickable" (click)="sortBy('notional')">
+        <th class="clickable" (click)="onSort('notional')">
           <span>Notional&nbsp;</span>
           <i class="fas fa-sort"></i>
         </th>
         <th>Tenor</th>
-        <th class="clickable" (click)="sortBy('date')">
+        <th class="clickable" (click)="onSort('date')">
           <span>Transaction Date&nbsp;</span>
           <i class="fas fa-sort"></i>
         </th>
@@ -65,9 +65,9 @@
     </thead>
     <tbody>
       <tr *ngFor="let transaction of transactions">
-        <td>{{ transaction.transactionId }}</td>
+        <td>{{ transaction.id }}</td>
         <td>{{ transaction.username }}</td>
-        <td>{{ transaction.CCYPair }}</td>
+        <td>{{ transaction.CcyPair }}</td>
         <td>{{ transaction.rate | number }}</td>
         <td>{{ transaction.action }}</td>
         <td>{{ transaction.notional }}</td>
