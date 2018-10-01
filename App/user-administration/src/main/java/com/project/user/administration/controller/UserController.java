@@ -37,7 +37,7 @@ public class UserController {
     @PostMapping("/user/authorize")
     @CrossOrigin
     public UserAuthorizeResponseVo authorize(@RequestBody UserRequestVo userRequestVo) throws ParseException {
-        return userService.authorize(userRequestVo);
+        return userService.authorizeV2(userRequestVo);
     }
 
 }

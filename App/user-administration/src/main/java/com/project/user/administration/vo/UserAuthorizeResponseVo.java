@@ -2,23 +2,23 @@ package com.project.user.administration.vo;
 
 public class UserAuthorizeResponseVo {
 
-    private String userName;
+    private String username;
     private boolean isValid;
 
-    public UserAuthorizeResponseVo(String userName, boolean isValid){
-        this.userName = userName;
+    public UserAuthorizeResponseVo(String username, boolean isValid){
+        this.username = username;
         this.isValid = isValid;
     }
 
     public UserAuthorizeResponseVo(){
     }
 
-    public String getUserName() {
-        return userName;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public boolean isValid() {

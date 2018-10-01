@@ -1,6 +1,11 @@
 package com.project.user.administration.services;
 
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.project.user.administration.model.User;
 import com.project.user.administration.model.UserLogin;
 import com.project.user.administration.repository.UserLoginRepository;
@@ -8,7 +13,6 @@ import com.project.user.administration.repository.UserRepository;
 import com.project.user.administration.vo.UserAuthorizeResponseVo;
 import com.project.user.administration.vo.UserTokenResponseVo;
 import com.project.user.administration.vo.UserRequestVo;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,13 +56,15 @@ public class UserService {
 
         if( user != null) {
 
-            String token=  RandomStringUtils.random(25, true, true);
+            //String token=  RandomStringUtils.random(25, true, true);
+            String token = createJsonWebToken(userRequestVo.getUsername());
+
             UserLogin userLogin= new UserLogin(user, token, getCurrentTimeStamp());
             userLoginRepository.save(userLogin);
 
             UserTokenResponseVo userTokenResponseVo = new UserTokenResponseVo();
             userTokenResponseVo.setToken(token);
-            userTokenResponseVo.setUserName(userRequestVo.getUsername());
+            userTokenResponseVo.setUsername(userRequestVo.getUsername());
 
             return userTokenResponseVo;
         } else {
@@ -66,7 +72,7 @@ public class UserService {
         }
     }
 
-    public UserAuthorizeResponseVo authorize(UserRequestVo userRequestVo) throws ParseException {
+    public UserAuthorizeResponseVo authorizeV1(UserRequestVo userRequestVo) throws ParseException {
         UserLogin userLogin = userLoginRepository.findByUserAndToken(userRequestVo.getUsername(), userRequestVo.getToken());
         if(userLogin != null){
             DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -81,8 +87,53 @@ public class UserService {
         return new UserAuthorizeResponseVo(userRequestVo.getUsername(), false);
     }
 
+    public UserAuthorizeResponseVo authorizeV2(UserRequestVo userRequestVo) throws ParseException {
+        UserLogin userLogin = userLoginRepository.findByUserAndToken(userRequestVo.getUsername(), userRequestVo.getToken());
+        if(userLogin != null){
+            return new UserAuthorizeResponseVo(userRequestVo.getUsername(),  verifyToken(userRequestVo.getUsername(), userRequestVo.getToken()));
+        }
+        return new UserAuthorizeResponseVo(userRequestVo.getUsername(), false);
+    }
+
+
     public String getCurrentTimeStamp() {
         Date newDate = DateUtils.addHours(new Date(), 3);
         return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(newDate);
+    }
+
+    public static String createJsonWebToken(String username){
+        String jwt = JWT.create()
+                    .withSubject(username)
+                    .withIssuer("auth0")
+                    .withExpiresAt(DateUtils.addHours(new Date(), 3))
+                    .sign(Algorithm.HMAC256(System.getProperty("aplication-secret")));
+        return jwt;
+    }
+
+    public static boolean verifyToken(String user, String token){
+        try{
+            Algorithm algorithm = Algorithm.HMAC256(System.getProperty("aplication-secret"));
+            JWTVerifier verifier =  JWT.require(algorithm)
+                                        .withIssuer("auth0")
+                                        .build();
+
+            DecodedJWT jwt = verifier.verify(token);
+            String subject = jwt.getSubject();
+
+            if(!user.equals(subject)){
+                return false;
+            }
+
+            Date dateTheTokenWillExpire = jwt.getExpiresAt();
+            if(new Date().compareTo(dateTheTokenWillExpire) <1){
+                return true;
+            } else {
+                return false;
+            }
+
+        } catch(JWTVerificationException exception){
+            return false;
+        }
+
     }
 }
