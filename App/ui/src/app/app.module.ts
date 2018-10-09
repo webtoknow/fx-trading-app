@@ -2,7 +2,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpModule } from '@angular/http';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { AlertModule } from 'ngx-bootstrap/alert';
@@ -50,7 +49,6 @@ const appRoutes: Routes = [
     BrowserModule,
     FormsModule,
     ReactiveFormsModule,
-    HttpModule,
     HttpClientModule,
     BsDatepickerModule.forRoot()
   ],
