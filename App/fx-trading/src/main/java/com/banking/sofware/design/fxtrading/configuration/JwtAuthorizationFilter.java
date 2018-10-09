@@ -7,6 +7,7 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.HttpMethod;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -31,6 +32,11 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
   protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain)
           throws IOException, ServletException {
     String header = req.getHeader(HEADER);
+
+    if(HttpMethod.OPTIONS.equals(req.getMethod())) {
+      chain.doFilter(req, res);
+      return;
+    }
 
     if (header == null || !header.startsWith(TOKEN_PREFIX)) {
       res.setStatus(401);
