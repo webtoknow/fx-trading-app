@@ -9,8 +9,6 @@ Each week will be an opportunity to understand theoretical concepts and apply th
 The agenda has the following content:
 
 - Week 1 – Introduction
-  - [Introduction](Week_01/Theory/README.md)
-  - [Exercise](Week_01/Exercise/README.md)
 - Week 2 – Analysis
   - [Introduction](Week_02/Theory/README.md)
   - [Exercise](Week_02/Exercise/README.md)
