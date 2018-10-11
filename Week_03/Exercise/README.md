@@ -2,8 +2,10 @@
 
 ## Table of contents
 - [Requirements](#requirements)
-- [Mind map Mindmeister](#mind-map---mindmeister)
-
+- [Mind map - Mindmeister](#mind-map---mindmeister)
+- [Wireframe - Balsamiq](#wireframe---balsamiq)
+- [Prototype - Axure RP](#prototype---axure-rp)
+- [Visual Design - Adobe XD](#visual-design---adobe-xd)
 
 ## Requirements
 
