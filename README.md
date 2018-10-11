@@ -9,18 +9,16 @@ Each week will be an opportunity to understand theoretical concepts and apply th
 The agenda has the following content:
 
 - Week 1 – Introduction
-  - [Introduction](Week_01/Theory/README.md)
-  - [Exercise](Week_01/Exercise/README.md)
 - Week 2 – Analysis
   - [Introduction](Week_02/Theory/README.md)
   - [Exercise](Week_02/Exercise/README.md)
 - Week 3 - Design
-  - [Introduction](Week_03/Theory/README.md)
+  - [Introduction](https://slides.com/denisacretu/fx-trading-app/fullscreen)
   - [Exercise](Week_03/Exercise/README.md)
-- Week 4 – Architecture
+- Week 4 – Architecture and setup
   - [Introduction](Week_04/Theory/README.md)
   - [Exercise](Week_04/Exercise/README.md)
-- Week 5 – Development
+- Week 5 – Create Login and Register pages with Angular
   - [Introduction](Week_05/Theory/README.md)
   - [Exercise](Week_05/Exercise/README.md)
 - Week 6 – Development
