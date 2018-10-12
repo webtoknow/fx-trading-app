@@ -13,7 +13,7 @@ import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.stereotype.Service;
 
 import com.banking.sofware.design.fxtrading.entities.Transaction;
-import com.banking.sofware.design.fxtrading.pojo.RatePair;
+import com.banking.sofware.design.fxtrading.pojo.QuoteResponse;
 import com.banking.sofware.design.fxtrading.repo.FxTradingRepository;
 import com.banking.sofware.design.fxtrading.util.MiscUtil;
 import com.banking.sofware.design.fxtrading.vo.TransactionVo;
@@ -28,8 +28,10 @@ public class FxTradingService {
   ConversionService conversionService;
 
   @Autowired
-  FxProxyRatesService proxyRatesService;
+  QuoteProxyService proxyRatesService;
 
+  
+  @SuppressWarnings("unchecked")
   public List<TransactionVo> getTransactions() {
     return (List<TransactionVo>) conversionService.convert(repository.findAll(),
             TypeDescriptor.collection(List.class, TypeDescriptor.valueOf(Transaction.class)),
@@ -39,27 +41,27 @@ public class FxTradingService {
   @Transactional
   public void makeTransaction(TransactionVo vo) {
     // TODO: validations
-	String action = vo.getAction();
-	if(StringUtils.isBlank(action) || !List.of("BUY", "SELL").contains(action.toUpperCase())) {
-		throw new IllegalArgumentException("Action not supported!");
-	}
-	
-	Transaction transaction = new Transaction();
-	transaction.setAction(action.toUpperCase());
-	RatePair ratePair = getCurrentRate(vo.getPrimaryCcy(), vo.getSecondaryCcy());
-    BigDecimal rate = "BUY".equalsIgnoreCase(action) ? ratePair.getBuy() : ratePair.getSell();
+    String action = vo.getAction();
+    if (StringUtils.isBlank(action) || !List.of("BUY", "SELL").contains(action.toUpperCase())) {
+      throw new IllegalArgumentException("Action not supported!");
+    }
+
+    Transaction transaction = new Transaction();
+    transaction.setAction(action.toUpperCase());
+    QuoteResponse ratePair = getCurrentRate(vo.getPrimaryCcy(), vo.getSecondaryCcy());
+    BigDecimal rate = "BUY".equalsIgnoreCase(action) ? ratePair.getBuyRate() : ratePair.getSellRate();
     transaction.setRate(rate.multiply(MiscUtil.RATE_MULTIPLIER));
-    
+
     transaction.setUsername(vo.getUsername());
     transaction.setPrimaryCcy(vo.getPrimaryCcy());
     transaction.setSecondaryCcy(vo.getSecondaryCcy());
     transaction.setNotional(vo.getNotional());
     transaction.setTenor(vo.getTenor());
-    
+
     repository.save(transaction);
   }
 
-  private RatePair getCurrentRate(String primaryCcy, String secondaryCcy) {
+  private QuoteResponse getCurrentRate(String primaryCcy, String secondaryCcy) {
     try {
       return proxyRatesService.getRate(primaryCcy, secondaryCcy);
     } catch (IOException e) {

@@ -22,7 +22,7 @@ import { JwtInterceptor } from 'src/app/helpers/jwt.interceptor';
 import { ErrorInterceptor } from 'src/app/helpers/error.interceptor';
 
 //fake BE
-import { fakeBackendProvider } from './helpers/fake-backend';
+// import { fakeBackendProvider } from './helpers/fake-backend';
 
 const appRoutes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full', canActivate: [AuthGuard] },
@@ -58,8 +58,8 @@ const appRoutes: Routes = [
     UserService,
     TradeService,
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
-    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
-    fakeBackendProvider
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }
+   // fakeBackendProvider
   ],
   bootstrap: [AppComponent],
 })
