@@ -52,7 +52,7 @@
     - by asynchronously loading modules and running them when they have finished loading
     - by combining all of the necessary files into a single JavaScript file that would be loaded via a **script** tag in the HTML.
     
-## Backend
+## Spring
 
 ### Spring Framework
 Spring is a framework for the Java platform comprising many modules. Among them are Spring Core, Spring Security and Spring Data.  
@@ -73,3 +73,11 @@ Example of benefits:
 
 Spring Boot is a project which helps with faster development speed.  
 It favors convention over configuration: you specify which Spring dependencies to use in the project and Spring Boot gives reasonable configuration defaults for them.
+
+## PostgreSQL
+- object relational database
+- open source
+- supports many data types including json, geometrical and arrays
+- supports user defined data types
+- high SQL standard compliance
+
