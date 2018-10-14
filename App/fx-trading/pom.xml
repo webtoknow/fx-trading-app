@@ -7,7 +7,7 @@
 	<groupId>com.banking.sofware.design</groupId>
 	<artifactId>fx-trading</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 
 	<name>fx-trading</name>
 	<description>FX trading service for Banking Software Design course Trading app</description>
