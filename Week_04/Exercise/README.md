@@ -27,7 +27,7 @@ cd ui
 ng serve
 ````
 
-## Setup Spring Boot
+## Setup Spring Boot App and database
 
 I. Generate a Spring Boot starter project with Maven as build tool  
 
