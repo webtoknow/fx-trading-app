@@ -75,7 +75,7 @@ const appRoutes: Routes = [
 ```
 
 The *appRoutes* array of routes describes how to navigate.
-Pass it to the RouterModule.forRoot method in the module imports to configure the router.
+Pass it to the *RouterModule.forRoot* method in the module imports to configure the router.
 
 ```JS
 {
@@ -88,7 +88,7 @@ Pass it to the RouterModule.forRoot method in the module imports to configure th
 }
 ```
 
-Add RouterOutlet directive to app *app.component.html* by removing the old markup.
+Add *RouterOutlet* directive to app *app.component.html* by removing the old markup.
 
 ```HTML
 <router-outlet></router-outlet>
@@ -234,9 +234,9 @@ We will need to communicate with Backend through some API's. Let's estabilish ho
 
 On server side, we will have 3 micro-services:
 
-- authService, running on port 8200
-- fxTradeService, running on port 8210
-- quoteService, running on port 8220
+- *authService*, running on port 8200
+- *fxTradeService*, running on port 8210
+- *quoteService*, running on port 8220
 
 Into *Week_05/Exercise/Code/ui/src/app*, we will create a new file, *contants.ts*, containing all API's needed:
 
@@ -287,17 +287,17 @@ export class UserService {
 }
 ```
 
-So, our service:
+So, the service:
 
 - will be marked as injectable through *@Injectable()* adnotation
 - will contain a constructor, in which we will inject *HTTPClient* in order to be able to make HTTP requests
-- will contain also the *register* method, receiving an *User* object - the one we want to save in order to create a new account - which will actually do the http request: a **POST** on the URL estabilished in *constants.ts* (*backendUrl.authService.register*) with *user* as *Request Body*
+- will contain also the *register* method, receiving an *User* object - the one we want to save in order to create a new account - which will actually do the HTTP request: a **POST** on the URL estabilished in *constants.ts* (*backendUrl.authService.register*) with *user* as *Request Body*
 
 ### Update Application Module
 
 In app.module.ts:
 
-- include Alert module from bootstrap:
+- include *Aler*t module from bootstrap:
 
 ```JavaScript
 import { AlertModule } from 'ngx-bootstrap/alert';
@@ -309,7 +309,7 @@ imports: [
 ]
 ```
 
-- add Forms module in order to use them:
+- add *Forms* module in order to use them:
 
 ```JavaScript
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -322,7 +322,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
  ]
 ```
 
-- include Http Client:
+- include *Http Client*:
 
 ```JavaScript
 import { HttpClientModule } from '@angular/common/http';
@@ -334,7 +334,7 @@ imports: [
   ]
 ```
 
-- include User Service:
+- include *User Service*:
 
 ```JavaScript
 import { UserService } from 'src/app/services/user.service';
@@ -424,7 +424,7 @@ We already created the necessary files for register functionality. Now we have t
 We can notice here:
 
 - fields are grouped in a form: *[formGroup]="registerForm"*
-- when we press on Register, the *onSubmit* function is triggered: *(ngSubmit)="onSubmit()"*
+- when we press on *Register*, the *onSubmit* function is triggered: *(ngSubmit)="onSubmit()"*
 - we have some validations here:
   - required validations:
     - *e.g.*:
@@ -441,7 +441,7 @@ We can notice here:
        </div>
     </div>
     ```
-- we have a link to Login Page:
+- we have a link to *Login Page*:
 
 ```HTML
 <div class="text-container">
@@ -578,7 +578,7 @@ export class RegisterPageComponent implements OnInit {
 We can notice here:
 
 - the component is declared through *@Component* adnotation, by specifying the selector, template and style files
-- the form, its fields and validations for them are specified in the class
+- the form, its fields and validations are specified in the class
 - in *onSubmit* function, if the form is valid, we use *userService.register* to send the entity to be saved. We display a message even if it is a successful request or not.
 
 ## Exercise 3 - Login page
@@ -632,14 +632,14 @@ This service:
 - will be marked as injectable as the previous one
 - in the constructor, we will inject *HTTPClient* in order to have the possibility to make HTTP requests
 - will contain 2 methods: *login* and *logout*
-- *login* method will receive as parameters 2 strings, username and password. It will make a *POST* HTTP request to the API responsible for this (*backendUrl.authService.authenticate*, as declared in *cconstants*) and will send a *Requst Body* as on object containing these 2 properties. If they are valid, the backend will put a token on the response, so we can set the *currentUser* on *localStorage* to log in.
+- *login* method will receive as parameters 2 strings, username and password. It will make a *POST* HTTP request to the API responsible for this (*backendUrl.authService.authenticate*, as declared in *constants*) and will send a *Request Body* as on object containing these 2 properties. If they are valid, the backend will put a token on the response and we will set the *currentUser* on *localStorage* to log in.
 - *logout* method will remove the *currentUser* property from localStorage
 
 ### Authentication guard
 
 We need a method to allow the user to view some pages only if he is logged in.
 
-For this, we will create a new folder into *Week_05/Exercise/Code/ui/src/app* named *guards* and, inside it, a new file, *auth.guard.ts*, This class will be responsible to check if the user has access to view the linked pages with some routes or not. It will be made by vwerifying if the *currentUser* property has been set on *localStorage*. If yes, the access is permitted, else, the user will be redirected to */login* page:
+For this purpose, we will create a new folder into *Week_05/Exercise/Code/ui/src/app* named *guards* and, inside it, a new file, *auth.guard.ts*. This class will be responsible to check if the user has access to view the  pages linked with some routes or not. It will be possible by verifying if the *currentUser* property has been set on *localStorage*. If yes, the access is permitted, else, the user will be redirected to */login* page:
 
 ```JavaScript
 import { Injectable } from '@angular/core';
@@ -712,7 +712,7 @@ export class JwtInterceptor implements HttpInterceptor {
 
 ### Error Interceptor
 
-We will also need a class which intercepts the errors and handle them.
+We will also need a class which intercepts the errors and handles them.
 
 Let's create a new file *error.interceptor.ts* into *Week_05/Exercise/Code/ui/src/app/helpers*, *error.interceptor.ts*:
 
@@ -755,9 +755,9 @@ So, the way we handle the errors into this class is:
 
 ### Update Application Module with the new added classes
 
-In app.module.ts:
+In *app.module.ts*:
 
-- include Authentication Service
+- include *Authentication Service*:
 
 ```JavaScript
 import { AuthenticationService } from 'src/app/services/authentication.service';
@@ -768,7 +768,7 @@ providers: [
     ...
 ```
 
-- include Authorization Guard:
+- include *Authorization Guard*:
 
 ```JavaScript
 import { AuthGuard } from 'src/app/guards/auth.guard';
@@ -778,7 +778,7 @@ providers: [
     ...
 ```
 
-- add JWT and Error Interceptors:
+- add *JWT* and *Error Interceptors*:
 
 ```JavaScript
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -848,7 +848,7 @@ Let's fill in the neccesary files for login functionality with some code in orde
 Here we have:
 
 - a form containing *username* and *password* fields, grouped in *[formGroup]="loginForm"*
-- when we press on Login, the *onSubmit* function is triggered: *(ngSubmit)="onSubmit()"*
+- when we press on *Login*, the *onSubmit* function is triggered: *(ngSubmit)="onSubmit()"*
 - we have here required validations:
   - *e.g.*:
 
@@ -859,7 +859,7 @@ Here we have:
   </span>
   ```
 
-- we have a link to Register Page:
+- we have a link to *Register Page*:
 
 ```HTML
 <div class="text-container">
@@ -1003,8 +1003,8 @@ export class LoginPageComponent implements OnInit {
 We can observe:
 
 - the component is declared through *@Component* adnotation
-- the form, its fields and validations for them are specified in the class
-- in *onSubmit* function, if the form is valid, we use *authenticationService.login* to send the username and password to the server. If the request is successful, we will be redirected to *Dashboard* page or the previos accessed page where we did not have access. Else, we will display an error message.
+- the form, its fields and validations are specified in the class
+- in *onSubmit* function, if the form is valid, we use *authenticationService.login* to send the username and password to the server. If the request is successful, we will be redirected to *Dashboard* page or the previous accessed page where we did not have access initially (*returnUrl*). Else, we will display an error message.
 
 ## Exercise 4 - Simulate the backend server to check login and register
 
@@ -1094,6 +1094,7 @@ export let fakeBackendProvider = {
 
 So, in this class, we intercept all HTTP requests.
 If the request url ends with */register*, we will simulate the register by adding to the existent *users* property from *localStorage* the new user, only if this does not duplicate some existent ones, and send the 200 status.
+
 If the request url ends with */authenticate*, we will simulate the login by putting the token on the response, like the server will do.
 
 Now, we have to include it into *app.module.ts*:
