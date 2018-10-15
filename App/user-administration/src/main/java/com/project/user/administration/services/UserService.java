@@ -133,10 +133,6 @@ public class UserService {
             DecodedJWT jwt = verifier.verify(token);
             String subject = jwt.getSubject();
 
-            if(!user.equals(subject)){
-                return false;
-            }
-
             Date dateTheTokenWillExpire = jwt.getExpiresAt();
             if(new Date().compareTo(dateTheTokenWillExpire) <1){
                 return true;
