@@ -51,3 +51,33 @@
 - module bundlers were built to bring this capability in a couple forms: 
     - by asynchronously loading modules and running them when they have finished loading
     - by combining all of the necessary files into a single JavaScript file that would be loaded via a **script** tag in the HTML.
+    
+## Spring
+
+### Spring Framework
+Spring is a framework for the Java platform comprising many modules. Among them are Spring Core, Spring Security and Spring Data.  
+
+- Central to the framework is Spring Core which comes with the IoC container.  
+IoC stands for Inversion of Control and is a software design principle. A related design pattern is Dependency Injection.  
+With the help of the IoC container, applications using Spring can be decoupled from object dependencies(**beans**) instantiation.  
+Application code will declare and use beans and Spring Core will take care of their instantiation - with the help of xml or java(annotations or code) configuration.  
+- uses Aspect Oriented Programming  
+- provides bean life cycle and scopes
+
+Example of benefits:   
+-  allows for more modular and loosely coupled code
+-  allows for easier testing
+-  when we need to replace a concrete implementation with another one, our application code should not need to change.
+
+### Spring Boot
+
+Spring Boot is a project which helps with faster development speed.  
+It favors convention over configuration: you specify which Spring dependencies to use in the project and Spring Boot gives reasonable configuration defaults for them.
+
+## PostgreSQL
+- object relational database
+- open source
+- supports many data types including json, geometrical and arrays
+- supports user defined data types
+- high SQL standard compliance
+
