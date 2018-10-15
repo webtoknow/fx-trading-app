@@ -2,7 +2,7 @@ package com.banking.sofware.design.fxtrading.rest;
 
 import java.util.List;
 
-import javax.ws.rs.BadRequestException;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -23,23 +23,23 @@ public class FxTradingRestController {
 
   @CrossOrigin
   @RequestMapping(method = RequestMethod.GET, produces = "application/json")
-  public List<TransactionVo> getTransactions() {
-	try {
-		return tradingService.getTransactions();
-	} catch(Exception e) {
-		throw new BadRequestException("There was an unexpected error when trying to obtain transactions list."
-				+ " Please contact the administrator if the problem persists");
-	}
+  public List<TransactionVo> getTransactions(HttpServletResponse response) {
+    try {
+      return tradingService.getTransactions();
+    } catch (Exception e) {
+      response.setStatus(400);
+      return null;
+    }
   }
 
   @CrossOrigin
   @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
-  public void makeTransaction(@RequestBody TransactionVo transaction) {
-	try {
-		tradingService.makeTransaction(transaction);
-	} catch (Exception e) {
-		throw new BadRequestException("Error while making transaction. Please contact the administrator");
-	}
+  public void makeTransaction(@RequestBody TransactionVo transaction, HttpServletResponse response) {
+    try {
+      tradingService.makeTransaction(transaction);
+    } catch (Exception e) {
+      response.setStatus(400);
+    }
   }
 
 }
