@@ -12,12 +12,16 @@ import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { NotFoundPageComponent } from './pages/not-found-page/not-found-page.component';
 import { RegisterPageComponent } from './pages/register-page/register-page.component';
 import { UserService } from 'src/app/services/user.service';
+import { TradeService } from './services/trade.service';
 import { AuthGuard } from 'src/app/guards/auth.guard';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { JwtInterceptor } from 'src/app/helpers/jwt.interceptor';
 import { ErrorInterceptor } from 'src/app/helpers/error.interceptor';
 
 import { fakeBackendProvider } from './helpers/fake-backend';
+import { FxRatesViewComponent } from './pages/dashboard-page/fx-rates-view/fx-rates-view.component';
+import { BlotterViewComponent } from './pages/dashboard-page/blotter-view/blotter-view.component';
+import { WidgetComponent } from './pages/dashboard-page/widget/widget.component';
 
 const appRoutes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full', canActivate: [AuthGuard] },
@@ -33,7 +37,10 @@ const appRoutes: Routes = [
     DashboardPageComponent,
     LoginPageComponent,
     NotFoundPageComponent,
-    RegisterPageComponent
+    RegisterPageComponent,
+    FxRatesViewComponent,
+    BlotterViewComponent,
+    WidgetComponent
   ],
   imports: [
     BrowserModule,
@@ -48,6 +55,7 @@ const appRoutes: Routes = [
     AuthGuard,
     AuthenticationService,
     UserService,
+    TradeService,
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
     fakeBackendProvider

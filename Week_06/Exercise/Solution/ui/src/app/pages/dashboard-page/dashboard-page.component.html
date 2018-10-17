@@ -1,3 +1,17 @@
-<p>
-  dashboard-page works!
-</p>
+<header>
+    <nav class="navbar">
+      <img class="fx-main-logo" alt="fx-main-logo" src="./assets/img/logo-main.svg">
+      <a href="#" class="btn btn-logout">Log out</a>
+    </nav>
+  </header>
+  
+  <div class="dashboard-container">
+    <div class="row">
+      <div class="col-sm">
+        <app-fx-rates-view></app-fx-rates-view>
+      </div>
+      <div class="col-sm">
+        <app-blotter-view></app-blotter-view>
+      </div>
+    </div>
+  </div>
