@@ -5,6 +5,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { AlertModule } from 'ngx-bootstrap/alert';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ToastrModule } from 'ngx-toastr';
 
 import { AppComponent } from './app.component';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
@@ -22,7 +24,7 @@ import { JwtInterceptor } from 'src/app/helpers/jwt.interceptor';
 import { ErrorInterceptor } from 'src/app/helpers/error.interceptor';
 
 //fake BE
-// import { fakeBackendProvider } from './helpers/fake-backend';
+import { fakeBackendProvider } from './helpers/fake-backend';
 
 const appRoutes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full', canActivate: [AuthGuard] },
@@ -50,7 +52,9 @@ const appRoutes: Routes = [
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
-    BsDatepickerModule.forRoot()
+    BsDatepickerModule.forRoot(),
+    BrowserAnimationsModule, 
+    ToastrModule.forRoot()
   ],
   providers: [
     AuthGuard,
@@ -58,8 +62,8 @@ const appRoutes: Routes = [
     UserService,
     TradeService,
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
-    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }
-   // fakeBackendProvider
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
+    fakeBackendProvider
   ],
   bootstrap: [AppComponent],
 })
