@@ -278,7 +278,7 @@ import {startWith, switchMap} from "rxjs/operators";
         <td>{{ transaction.username }}</td>
         <td>{{ transaction.ccyPair }}</td>
         <td>{{ transaction.rate | number }}</td>
-        <td>{{ transaction.action }}</td>
+        <td>{{ transaction.action | uppercase }}</td>
         <td>{{ transaction.notional | number }}</td>
         <td>{{ transaction.tenor }}</td>
         <td>{{ transaction.date | date:'dd/MM/yyyy HH:mm' }}</td>

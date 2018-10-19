@@ -6,7 +6,7 @@
       "primaryCcy": "USD",
       "secondaryCcy": "EUR",
       "rate": "0.86",
-      "action": "SELL",
+      "action": "sell",
       "notional": 1000000,
       "tenor": "1M",
       "date": 1537511800526
@@ -17,7 +17,7 @@
       "primaryCcy": "USD",
       "secondaryCcy": "EUR",
       "rate": "0.15",
-      "action": "BUY",
+      "action": "buy",
       "notional": 1000000,
       "tenor": "1M",
       "date": 1536560103000
@@ -28,7 +28,7 @@
       "primaryCcy": "EUR",
       "secondaryCcy": "USD",
       "rate": "0.63",
-      "action": "SELL",
+      "action": "sell",
       "notional": 1000000,
       "tenor": "3M",
       "date": 1537511800526
@@ -39,7 +39,7 @@
       "primaryCcy": "USD",
       "secondaryCcy": "EUR",
       "rate": "1.11",
-      "action": "SELL",
+      "action": "sell",
       "notional": 1000000,
       "tenor": "1M",
       "date": 1537511800526
@@ -50,7 +50,7 @@
       "primaryCcy": "RON",
       "secondaryCcy": "EUR",
       "rate": "0.46",
-      "action": "SELL",
+      "action": "sell",
       "notional": 1000000,
       "tenor": "1M",
       "date": 1536560103000
@@ -61,7 +61,7 @@
       "primaryCcy": "USD",
       "secondaryCcy": "GBP",
       "rate": "1.04",
-      "action": "BUY",
+      "action": "buy",
       "notional": 1000000,
       "tenor": "1M",
       "date": 1537511800526
@@ -72,7 +72,7 @@
       "primaryCcy": "EUR",
       "secondaryCcy": "GBP",
       "rate": "0.86",
-      "action": "BUY",
+      "action": "buy",
       "notional": 1000000,
       "tenor": "1M",
       "date": 1536560103000
@@ -83,7 +83,7 @@
       "primaryCcy": "USD",
       "secondaryCcy": "GBP",
       "rate": "0.31",
-      "action": "SELL",
+      "action": "sell",
       "notional": 1000000,
       "tenor": "1M",
       "date": 1537511800526
@@ -94,7 +94,7 @@
       "primaryCcy": "RON",
       "secondaryCcy": "USD",
       "rate": "0.67",
-      "action": "SELL",
+      "action": "sell",
       "notional": 1000000,
       "tenor": "3M",
       "date": 1536560103000
@@ -105,7 +105,7 @@
       "primaryCcy": "EUR",
       "secondaryCcy": "USD",
       "rate": "0.61",
-      "action": "SELL",
+      "action": "sell",
       "notional": 1000000,
       "tenor": "1M",
       "date": 1537511800526
@@ -116,7 +116,7 @@
       "primaryCcy": "USD",
       "secondaryCcy": "GBP",
       "rate": "1.23",
-      "action": "SELL",
+      "action": "sell",
       "notional": 234324,
       "tenor": "1M",
       "date": 1537511800526
@@ -127,7 +127,7 @@
       "primaryCcy": "USD",
       "secondaryCcy": "RON",
       "rate": "1.01",
-      "action": "BUY",
+      "action": "buy",
       "notional": 10050000,
       "tenor": "1M",
       "date": 1536560103000
@@ -138,7 +138,7 @@
       "primaryCcy": "USD",
       "secondaryCcy": "EUR",
       "rate": "0.12",
-      "action": "BUY",
+      "action": "buy",
       "notional": 1234,
       "tenor": "1M",
       "date": 1536560103000
@@ -149,7 +149,7 @@
       "primaryCcy": "USD",
       "secondaryCcy": "RON",
       "rate": "0.45",
-      "action": "BUY",
+      "action": "buy",
       "notional": 555.23,
       "tenor": "3M",
       "date": 1536560103000
