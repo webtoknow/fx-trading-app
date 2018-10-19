@@ -50,12 +50,3 @@ h1,h2,h3,h4,h5,h6 {
     cursor: pointer;
     opacity: 0.8;
 }
-
-.alert {
-    margin-bottom: 0;
-}
-.alert-container {
-    text-align: center;
-    height: 48px;
-    margin-top: 10px;
-}

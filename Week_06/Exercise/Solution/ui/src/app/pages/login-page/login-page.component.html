@@ -35,9 +35,6 @@
               <a [routerLink]="['/register']" class="btn btn-link">Register</a>
             </div>
           </form>
-          <div class="alert-container">
-            <alert *ngIf="isModalOpen" [type]="modalType" dismissOnTimeout="5000" (onClosed)="isModalOpen = false">{{modalMessage}}</alert>
-          </div>
         </div>
       </div>
     </div>

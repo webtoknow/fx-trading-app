@@ -4,7 +4,8 @@ import { RouterModule, Routes } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
-import { AlertModule } from 'ngx-bootstrap/alert';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ToastrModule } from 'ngx-toastr';
 
 import { AppComponent } from './app.component';
 import { DashboardPageComponent } from './pages/dashboard-page/dashboard-page.component';
@@ -45,11 +46,12 @@ const appRoutes: Routes = [
   imports: [
     BrowserModule,
     RouterModule.forRoot(appRoutes),
-    AlertModule.forRoot(),
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
-    BsDatepickerModule.forRoot()
+    BsDatepickerModule.forRoot(),
+    BrowserAnimationsModule, 
+    ToastrModule.forRoot()
   ],
   providers: [
     AuthGuard,

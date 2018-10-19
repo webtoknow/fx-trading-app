@@ -4,7 +4,6 @@ import { RouterModule, Routes } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
-import { AlertModule } from 'ngx-bootstrap/alert';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
 
@@ -47,7 +46,6 @@ const appRoutes: Routes = [
   ],
   imports: [
     RouterModule.forRoot(appRoutes),
-    AlertModule.forRoot(),
     BrowserModule,
     FormsModule,
     ReactiveFormsModule,

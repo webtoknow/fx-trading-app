@@ -54,16 +54,9 @@ export class RegisterPageComponent implements OnInit {
         data => {
           this.toastr.success('Registration successful!');
           this.router.navigate(['/login']);
-          // this.isModalOpen = true;
-          // this.modalType = 'success';
-          // this.modalMessage = 'Registration successful!';
         },
         error => {
           this.toastr.error(error);
-          // this.isModalOpen = true;
-          // this.modalType = 'danger';
-          // this.modalMessage = error;
-          
           this.loading = false;
         }
       )

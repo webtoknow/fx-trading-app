@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
+import { ToastrService } from 'ngx-toastr';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 
 @Component({
@@ -22,7 +23,8 @@ export class LoginPageComponent implements OnInit {
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private authenticationService: AuthenticationService
+    private authenticationService: AuthenticationService,
+    private toastr: ToastrService
   ) { }
 
   ngOnInit() {
@@ -58,10 +60,7 @@ export class LoginPageComponent implements OnInit {
           this.router.navigate([this.returnUrl]);
         }, 
         error => {
-          this.isModalOpen = true;
-          this.modalType = 'danger';
-          this.modalMessage = error;
-    
+          this.toastr.error(error);
           this.loading = false;
         }
       )

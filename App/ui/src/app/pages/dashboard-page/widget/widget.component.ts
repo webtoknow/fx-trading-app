@@ -3,6 +3,7 @@ import { Widget } from 'src/app/models/widget';
 import { TradeService } from 'src/app/services/trade.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-widget',
@@ -21,7 +22,8 @@ export class WidgetComponent implements OnInit, OnDestroy {
   @Output() deleted = new EventEmitter<number>();
 
   constructor(
-    private tradeService: TradeService
+    private tradeService: TradeService,
+    private toastr: ToastrService
   ) { }
 
   ngOnInit() {
@@ -40,13 +42,16 @@ export class WidgetComponent implements OnInit, OnDestroy {
       primaryCcy: this.widget.primaryCcy,
       secondaryCcy: this.widget.secondaryCcy,
       rate: this.widget.sellRate,
-      action: 'sell',
+      action: 'SELL',
       notional: this.widget.notional,
       tenor: this.widget.tenor,
       date: Math.round(new Date().getTime()/1000)
       }).subscribe(response => {
-        console.log('Transaction saved', response)
+        this.toastr.success('Transaction saved!');
       })
+    }
+    else {
+      this.toastr.error('Please fill in both Amount and Tenor!');
     } 
   }
   
@@ -59,13 +64,16 @@ export class WidgetComponent implements OnInit, OnDestroy {
       primaryCcy: this.widget.primaryCcy,
       secondaryCcy: this.widget.secondaryCcy,
       rate: this.widget.buyRate,
-      action: 'buy',
+      action: 'BUY',
       notional: this.widget.notional,
       tenor: this.widget.tenor,
       date: Math.round(new Date().getTime()/1000)
       }).subscribe(response => {
-        console.log('Transaction saved', response)
+        this.toastr.success('Transaction saved!');
       })
+    }
+    else {
+      this.toastr.error('Please fill in both Amount and Tenor!');
     }
   }
 
@@ -98,6 +106,12 @@ export class WidgetComponent implements OnInit, OnDestroy {
     if (primaryCcy && secondaryCcy && primaryCcy !== secondaryCcy) {
       this.widget.pickCCYState = false;
       this.startPooling();
+    }
+    else if (!primaryCcy || !secondaryCcy) {
+      this.toastr.error('Please select both Primary and Secondary Currencies!');
+    }
+    else {
+      this.toastr.error('Please select different Primary and Secondary Currencies!');
     }
   }
 
