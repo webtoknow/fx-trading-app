@@ -32,8 +32,10 @@ export class WidgetComponent implements OnInit, OnDestroy {
   }
 
   onSell() {
-    const username: string  = JSON.parse(localStorage.getItem('currentUser')).username;
-    this.tradeService.saveTransaction({
+    const { notional, tenor } = this.widget;
+    if (notional && tenor) {
+      const username: string  = JSON.parse(localStorage.getItem('currentUser')).username;
+      this.tradeService.saveTransaction({
       username: username,
       primaryCcy: this.widget.primaryCcy,
       secondaryCcy: this.widget.secondaryCcy,
@@ -42,13 +44,17 @@ export class WidgetComponent implements OnInit, OnDestroy {
       notional: this.widget.notional,
       tenor: this.widget.tenor,
       date: Math.round(new Date().getTime()/1000)
-    }).subscribe(response => {
-      console.log('Transaction saved', response)
-    })
+      }).subscribe(response => {
+        console.log('Transaction saved', response)
+      })
+    } 
   }
+  
   onBuy() {
-    const username: string  = JSON.parse(localStorage.getItem('currentUser')).username;
-    this.tradeService.saveTransaction({
+    const { notional, tenor } = this.widget;
+    if (notional && tenor) {
+      const username: string  = JSON.parse(localStorage.getItem('currentUser')).username;
+      this.tradeService.saveTransaction({
       username: username,
       primaryCcy: this.widget.primaryCcy,
       secondaryCcy: this.widget.secondaryCcy,
@@ -57,9 +63,10 @@ export class WidgetComponent implements OnInit, OnDestroy {
       notional: this.widget.notional,
       tenor: this.widget.tenor,
       date: Math.round(new Date().getTime()/1000)
-    }).subscribe(response => {
-      console.log('Transaction saved', response)
-    })
+      }).subscribe(response => {
+        console.log('Transaction saved', response)
+      })
+    }
   }
 
   onCCYChange() {
