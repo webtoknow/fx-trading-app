@@ -480,3 +480,492 @@ So, in this file:
 - *sortBy* method sorts by column and sorting type
 - *filterBy* method does the filtering functionality - by ccyPair and/or date
 - *ngOnDestroy* unsubscribes from getting transactions
+
+## Exercise 4 - FX Rates View page
+
+### Rate model
+
+Into *Week_06/Exercise/Code/ui/src/app/models*, let's make a new file, named *rate.ts*, representing the *Rate* model:
+
+```JavaScript
+export interface Rate {
+  buyRate: number;
+  sellRate: number;
+  ts: number;
+}
+```
+
+### Widget model
+
+At same path, *Week_06/Exercise/Code/ui/src/app/models*, we want to have the *widget* class (a new file is required, *widget.ts*):
+
+```JavaScript
+export class Widget {
+  
+  constructor(
+    public primaryCcy: string,
+    public secondaryCcy: string,
+    public buyRate: number,
+    public sellRate: number,
+    public notional: number,
+    public tenor: string,
+    public pickCCYState: boolean,
+  ) {  }
+
+}
+```
+
+### Update Trade service
+
+We need some more methods in *trade.service.ts*:
+
+- one for saving the transaction (if the user press *Sell* or *Buy* buttons):
+
+```JavaScript
+ saveTransaction(transaction: Transaction) {
+        return this.http.post(backendUrl.fxTradeService.saveTransaction, transaction) as Observable<any>
+  }
+```
+
+- in order to add a new widget, the user should pick 2 currencies (*Primary* and *Secondary*), then he will be able to view the rates also. For this purpose, 2 new methods will be created:
+
+```JavaScript
+  import { Rate } from 'src/app/models/rate';
+
+  getCurrencies() {
+        return this.http.get(backendUrl.quoteService.getCurrencies) as Observable<string[]>
+  }
+
+  getFxRate(primaryCcy: string, secondaryCcy: string) {
+        return this.http.get(backendUrl.quoteService.getFxRate, { params: { primaryCcy, secondaryCcy } }) as Observable<Rate>
+  }
+```
+
+- as we have simulated a real-time behavior for getting and displaying the transactions, we will do the same for getting FX Rates:
+
+```JavaScript
+  getFxRatePolling(primaryCcy: string, secondaryCcy: string) {
+        return interval(2000)
+            .pipe(
+                startWith(0),
+                switchMap(() => this.http.get(backendUrl.quoteService.getFxRate, { params: { primaryCcy, secondaryCcy } })
+            )
+        ) as Observable<Rate>
+  }
+```
+
+### Widget component
+
+- **widget.component.html**:
+
+```HTML
+<div class="content-widget">
+  <!-- Close -->
+  <span class="fa fa-times close" (click)="onDelete()"></span>
+
+  <!-- Select currency step -->
+  <div *ngIf="widget.pickCCYState">
+    <h4 class="widget-title">Pick a currency</h4>
+    <div class="content-container">
+      <div class="form-inline form-inline-long form-group">
+          <label class="label-long" for="primaryCcy">Primary</label>
+          <select name="primaryCcy" id="primaryCcy" class="form-control" [(ngModel)]="widget.primaryCcy" required>
+            <option value="" disabled selected>Please select</option>
+            <option *ngFor="let currency of currencies" [value]="currency">{{ currency }}</option>
+          </select>
+        </div>
+        <div class="form-inline form-inline-long form-group">
+          <label class="label-long" for="secondaryCcy">Secondary</label>
+          <select name="secondaryCcy" id="secondaryCcy" class="form-control" [(ngModel)]="widget.secondaryCcy" required>
+            <option value="" disabled selected>Please select</option>
+            <option *ngFor="let currency of currencies" [value]="currency">{{ currency }}</option>
+          </select>
+        </div>
+        <div class="btn-wraper">
+          <button class="btn btn-primary" (click)="onPickCurrency()">Ok</button>
+        </div>
+    </div>
+  </div>
+
+  <!-- Trade step -->
+  <div *ngIf="!widget.pickCCYState">
+    <!-- Title -->
+    <h4 class="widget-title no-border">
+      <span class="widget-primary">{{ widget.primaryCcy }}</span>/{{ widget.secondaryCcy }}
+      <span class="fa fa-exchange-alt exchange" (click)="onCCYChange()"></span>
+    </h4>
+    <!-- Rates -->
+    <div class="rates-container">
+      <div>
+        <span class="widget-subtitle">SELL: </span>
+        <span class="rate">{{ widget.sellRate | number:'1.1-2' }}</span>
+        <span class='fa' [ngClass]="{'fa-caret-up rate-up': sellRateTrend === 'up', 'fa-caret-down rate-down': sellRateTrend === 'down' }"></span>
+      </div>
+      <div>
+        <span class="widget-subtitle">BUY: </span>
+        <span class="rate">{{ widget.buyRate | number:'1.1-2' }}</span>
+        <span class="fa" [ngClass]="{'fa-caret-up rate-up': buyRateTrend === 'up', 'fa-caret-down rate-down': buyRateTrend === 'down' }"></span>
+      </div>
+    </div>
+    <div class="content-container">
+      <!-- Form  -->
+      <div class="form-inline form-group">
+        <label class="label-short" for="amount">Amount</label>
+        <input type="number" class="form-control" id="amount" placeholder="Type the notional" [(ngModel)]="widget.notional"
+          required>
+      </div>
+      <div class="form-inline form-inline-short form-group">
+        <label class="label-short" for="primaryCcy">Tenor</label>
+        <select name="tenor" id="tenor" class="form-control" [(ngModel)]="widget.tenor" required>
+          <option value="" disabled selected>Please select</option>
+          <option *ngFor="let tenor of tenors" [value]="tenor">{{ tenor }}</option>
+        </select>
+      </div>
+      <!-- Buttons  -->
+      <div class="btns-wrapper">
+        <button class="btn btn-primary" (click)="onSell()">Sell</button>
+        <button class="btn btn-success" (click)="onBuy()">Buy</button>
+      </div>
+    </div>
+  </div>
+</div>
+```
+
+We can notice here:
+
+- a widget can be deleting by pressing the close icon from top-right corner of it
+- there are 2 types of widgets:
+  - one which allows adding a new currency pair to allow the user to follow SELL and BUY rates. This contains 2 dropdowns where *Primary* and *Secondary* currencies can be selected - the ones obtained by calling the backend through *getCurrencies()* method from *trade.service.ts*
+  - one which allows saving a transaction. For this, the user have to enter the amount he wants to trade, the tenor (*SP* - now, *1M* - in a month or *3M* - in three months) and then press on the button which describes the action he want to do: *Sell* or *Buy*
+
+- **widget.component.css**:
+
+```CSS
+.content-widget {
+  width: 100%;
+  position: relative;
+}
+
+.widget-title {
+  padding: 1rem 1rem 10px;
+  border-bottom: 1px solid #DDDDDD;
+  margin: 0;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.widget-subtitle {
+  font-size: 20px;
+  color: #7C7C7C;
+  font-weight: bold;
+}
+
+.widget-primary {
+  font-size: 24px;
+  color: #373A3C;
+}
+
+.widget-primary-currency {
+  color: #373A3C;
+  font-size: 24px;
+}
+
+.label-long {
+  width: 80px;
+  justify-content: flex-start;
+}
+
+.label-short {
+  width: 60px;
+  justify-content: flex-start;
+}
+
+.form-control {
+  display: flex;
+  flex-grow: 1;
+}
+
+.btn-wraper {
+  display: grid;
+  justify-content: flex-end;
+}
+
+.btns-wrapper {
+  display: flex;
+  justify-content: space-between;
+}
+
+.rates-container {
+  display: flex;
+  justify-content: space-between;
+  background: #F2F2F2;
+  padding: 10px 1rem;
+}
+
+.rate-up {
+  color: green;
+}
+
+.rate-down {
+  color: red;
+}
+
+.rate {
+  font-size: 30px;
+  font-weight: bold;
+}
+
+.content-container {
+  padding: 1rem;
+}
+
+.close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  font-size: 15px;
+}
+
+.no-border {
+  border:0;
+}
+
+.exchange {
+  color: #F0AD4E;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+@media only screen and (max-width: 1440px) {
+  .rate {
+    font-size: 26px;
+  }
+}
+```
+
+- **widget.component.ts**:
+
+```JavaScript
+import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
+import { Widget } from 'src/app/models/widget';
+import { TradeService } from 'src/app/services/trade.service';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+
+@Component({
+  selector: 'app-widget',
+  templateUrl: './widget.component.html',
+  styleUrls: ['./widget.component.css']
+})
+export class WidgetComponent implements OnInit, OnDestroy {
+  tenors = ['SP', '1M', '3M'];
+  unsubscribe = new Subject();
+  buyRateTrend: string;
+  sellRateTrend: string;
+  
+  @Input() widget: Widget;
+  @Input() index: number;
+  @Input() currencies: string[];
+  @Output() deleted = new EventEmitter<number>();
+
+  constructor(
+    private tradeService: TradeService
+  ) { }
+
+  ngOnInit() {
+  }
+
+  onDelete() {
+    this.deleted.emit(this.index);
+  }
+
+  onSell() {
+    const username: string  = JSON.parse(localStorage.getItem('currentUser')).username;
+    this.tradeService.saveTransaction({
+      username: username,
+      primaryCcy: this.widget.primaryCcy,
+      secondaryCcy: this.widget.secondaryCcy,
+      rate: this.widget.sellRate,
+      action: 'sell',
+      notional: this.widget.notional,
+      tenor: this.widget.tenor,
+      date: Math.round(new Date().getTime()/1000)
+    }).subscribe(response => {
+      console.log('Transaction saved', response)
+    })
+  }
+  onBuy() {
+    const username: string  = JSON.parse(localStorage.getItem('currentUser')).username;
+    this.tradeService.saveTransaction({
+      username: username,
+      primaryCcy: this.widget.primaryCcy,
+      secondaryCcy: this.widget.secondaryCcy,
+      rate: this.widget.buyRate,
+      action: 'buy',
+      notional: this.widget.notional,
+      tenor: this.widget.tenor,
+      date: Math.round(new Date().getTime()/1000)
+    }).subscribe(response => {
+      console.log('Transaction saved', response)
+    })
+  }
+
+  onCCYChange() {
+    this.switchCCY()
+  }
+  
+  switchCCY() {
+    const tempCCY = this.widget.primaryCcy;
+    this.widget.primaryCcy = this.widget.secondaryCcy;
+    this.widget.secondaryCcy= tempCCY;
+  }
+
+  startPooling() {
+    const { primaryCcy, secondaryCcy } = this.widget;
+    this.tradeService.getFxRatePolling(primaryCcy, secondaryCcy)
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+
+        this.buyRateTrend = this.widget.buyRate > response.buyRate ? 'down' : 'up'
+        this.sellRateTrend = this.widget.sellRate > response.sellRate ? 'down' : 'up'
+
+        this.widget.buyRate = response.buyRate;
+        this.widget.sellRate = response.sellRate;
+      });
+  }
+
+  onPickCurrency() {
+    const { primaryCcy, secondaryCcy } = this.widget;
+    if (primaryCcy && secondaryCcy && primaryCcy !== secondaryCcy) {
+      this.widget.pickCCYState = false;
+      this.startPooling();
+    }
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
+    }
+}
+
+```
+
+In *Widget Component*, we can see many functionalities implemented:
+
+- *onDelete*: when the user removes a widget
+- *onSell*: save the transaction with *sell* action
+- *onBuy*: save the transaction with *buy* action
+- *onCCYChange*: switch the primary currency with the secondary one
+- *startPooling*: get FX Rates through pooling to simulate real-time behavior
+- *onPickCurrency*: when a new widget is added with primary and secondary currencies, start pooling FX Rates
+
+### FX Rates View component
+
+FX Rates View component is the right-side of the screen, containing all *Widget* Components.
+
+- **fx-rates-view.component.html**:
+
+```HTML
+<h4 class="title">Fx Rates View</h4>
+<div class="container-widget">
+  <app-widget
+    *ngFor="let widget of widgets; let i=index"
+    class="widget"
+    [widget]="widget"
+    [index]="i"
+    [currencies]="currencies"
+    (deleted)="onDeleteWidget($event)"
+  >
+  </app-widget>
+  <button class="button-widget" (click)="onAddWidget()">
+    <span class="fa fa-plus button-plus"></span>
+  </button>
+</div>
+
+```
+
+So, as we can see:
+
+- we use *Widget* Component (*app-widget*) for all widgets we have
+- we have the possibility to add a new widget by clicking on a button
+
+- **fx-rates-view.component.css**:
+
+```CSS
+.container-widget {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding-right: 2rem;
+}
+
+.button-widget {
+  width: 47%;
+  height: 250px;
+  border: 1px solid grey;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.button-plus {
+  font-size: 60px;
+  color: grey;
+}
+
+.widget {
+  display: flex;
+  flex-basis: 47%;
+  border: 1px solid grey;
+  border-radius: 5px;
+  margin-bottom: 2.5rem;
+  height: 297px;
+}
+
+@media only screen and (max-width: 1440px) {
+  .rate {
+    font-size: 26px;
+  }
+}
+```
+
+- **fx-rates-view.component.ts**:
+
+```JavaScript
+import { Component, OnInit } from '@angular/core';
+import { Widget } from 'src/app/models/widget';
+import { TradeService } from 'src/app/services/trade.service';
+
+@Component({
+  selector: 'app-fx-rates-view',
+  templateUrl: './fx-rates-view.component.html',
+  styleUrls: ['./fx-rates-view.component.css']
+})
+export class FxRatesViewComponent implements OnInit {
+  widgets: Widget[] = [];
+  currencies: string[] = [];
+
+  constructor(
+    private tradeService: TradeService
+  ) { }
+
+  ngOnInit() {
+    this.tradeService.getCurrencies().subscribe((response) => {
+      this.currencies = response;
+    })
+  }
+
+  onAddWidget() {
+    this.widgets = [...this.widgets, new Widget('', '', 0, 0, null, '', true)]
+  }
+  
+  onDeleteWidget(index: number) {
+    this.widgets.splice(index, 1);
+  }
+}
+```
+
+In this class:
+
+- we get all currencies from backend at initialization
+- when a new widget is added, a new *Widget* component is created with default/empty values
+- when a widget is removed, *onDeleteWidget* method is called, which uses the JavaScript *splice* method
