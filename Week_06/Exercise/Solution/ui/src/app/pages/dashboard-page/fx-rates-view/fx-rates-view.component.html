@@ -1,0 +1,15 @@
+<h4 class="title">Fx Rates View</h4>
+<div class="container-widget">
+  <app-widget
+    *ngFor="let widget of widgets; let i=index"
+    class="widget"
+    [widget]="widget"
+    [index]="i"
+    [currencies]="currencies"
+    (deleted)="onDeleteWidget($event)"
+  >
+  </app-widget>
+  <button class="button-widget" (click)="onAddWidget()">
+    <span class="fa fa-plus button-plus"></span>
+  </button>
+</div>

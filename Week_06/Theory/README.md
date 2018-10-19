@@ -142,10 +142,9 @@ subscription.unsubscribe();
 #### Forms State
 
 - forms state are giving us information about:
-  - if the form was changed (pristine/dirty)
-  - is data is valid (valid/errors)
-  - if a field has been visited (touched/untouched)
-- FormControl handles the states and values of the fields
-- FormGroup is the form itself, but we can group also some fields in a form
-- FormControl and FormGroup are classes (from Forms module)
-
+  - if the form was changed (*pristine*/*dirty*)
+  - is data is valid (*valid*/*errors*)
+  - if a field has been visited (*touched*/*untouched*)
+- *FormControl* handles the states and values of the fields
+- *FormGroup* is the form itself, but we can group also some fields in a form
+- *FormControl* and *FormGroup* are classes (from *Forms* module)

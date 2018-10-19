@@ -4,28 +4,28 @@
 
 Install [Angular CLI](https://cli.angular.io/)
 
-````bash
+```bash
 npm install -g @angular/cli
-````
+```
 
 Got to *Week_04\Exercise\Code*
 
-````bash
+```bash
 cd fx-trading-app\Week_04\Exercise\Code
-````
+```
 
 Let's generate a new Angular project using CLI
 
-````bash
+```bash
 ng new ui
-````
+```
 
 Start the project
 
-````bash
+```bash
 cd ui
 ng serve
-````
+```
 
 ## Setup Spring Boot App and database
 

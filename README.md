@@ -21,7 +21,7 @@ The agenda has the following content:
 - Week 5 – Create Login and Register pages with Angular
   - [Introduction](Week_05/Theory/README.md)
   - [Exercise](Week_05/Exercise/README.md)
-- Week 6 – Development
+- Week 6 – Create Dashboard page with Angular
   - [Introduction](Week_06/Theory/README.md)
   - [Exercise](Week_06/Exercise/README.md)
 - Week 7 – Development
