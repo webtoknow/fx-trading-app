@@ -18,13 +18,13 @@
 
 ## Exercise 1 - Create blotter-view, fx-rates-view and widget components
 
-Go to *Week_06/Exercise/Code/ui*
+Go to *Week_06/Exercise/Code/ui*:
 
 ```bash
 cd fx-trading-app\Week_06\Exercise\Code\ui
 ```
 
-Run *npm install* to download all dependencies
+Run *npm install* to download all dependencies:
 
 ```bash
 npm install
@@ -106,7 +106,7 @@ and in *dashboard-page.component.css*:
 
 ## Exercise 2 - Install and use JSON Server
 
-Because we do not have a backend server and a link to a real database at this moment, we will simulate having some data using JSON Server.
+Because we do not have a backend server and a link to a real database at this moment, we will simulate having some data using *JSON Server*.
 
 The first step is to install it (globally), using the following command:
 
@@ -198,7 +198,7 @@ providers: [
 
 ### Implement pooling mechanism
 
-We want to simulate the real-time behavior for getting the transactions. THis is the reason why we implement pooling mechanish.
+We want to simulate the real-time behavior for getting the transactions. This is the reason why we implement pooling mechanism.
 
 So, we should add a new method in *trade.service.ts*, which will make a call to get all transactions every 2 seconds:
 
@@ -647,9 +647,9 @@ We need some more methods in *trade.service.ts*:
 
 We can notice here:
 
-- a widget can be deleting by pressing the close icon from top-right corner of it
+- a widget can be deleted by pressing the close icon from top-right corner of it
 - there are 2 types of widgets:
-  - one which allows adding a new currency pair to allow the user to follow SELL and BUY rates. This contains 2 dropdowns where *Primary* and *Secondary* currencies can be selected - the ones obtained by calling the backend through *getCurrencies()* method from *trade.service.ts*
+  - one which allows adding a new currency pair to let the user follow SELL and BUY rates. This contains 2 dropdowns where *Primary* and *Secondary* currencies can be selected - the ones obtained by calling the backend through *getCurrencies()* method from *trade.service.ts*
   - one which allows saving a transaction. For this, the user have to enter the amount he wants to trade, the tenor (*SP* - now, *1M* - in a month or *3M* - in three months) and then press on the button which describes the action he want to do: *Sell* or *Buy*
 
 - **widget.component.css**:
