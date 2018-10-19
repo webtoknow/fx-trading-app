@@ -2,6 +2,20 @@
 
 ## Table of contents
 
+- [Exercise 1 - Create blotter-view, fx-rates-view and widget components](#exercise-1---create-blotter-view-fx-rates-view-and-widget-components)
+- [Exercise 2 - Install and use JSON Server](#exercise-2---install-and-use-json-server)
+- [Exercise 3 - Blotter View page](#exercise-3---blotter-view-page)
+  - [Transaction model](#transaction-model)
+  - [Trade service](#trade-service)
+  - [Update Application Module](#update-application-module)
+  - [Implement pooling mechanism](#implement-pooling-mechanism)
+  - [Blotter View component](#blotter-view-component)
+- [Exercise 4 - FX Rates View page](#exercise-4---fx-rates-view-page)
+  - [Rate model](#rate-model)
+  - [Update Trade service](#update-trade-service)
+  - [Widget component](#widget-component)
+  - [FX Rates View component](#fx-rates-view-component)
+
 ## Exercise 1 - Create blotter-view, fx-rates-view and widget components
 
 Go to *Week_06/Exercise/Code/ui*
