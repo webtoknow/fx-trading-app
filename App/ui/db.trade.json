@@ -153,6 +153,17 @@
       "notional": 555.23,
       "tenor": "3M",
       "date": 1536560103000
+    },
+    {
+      "username": "dana",
+      "primaryCcy": "EUR",
+      "secondaryCcy": "GBP",
+      "rate": 1.3,
+      "action": "buy",
+      "notional": 62,
+      "tenor": "SP",
+      "date": 1539969795,
+      "id": 5235
     }
   ]
 }

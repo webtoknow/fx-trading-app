@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
+import { ToastrService } from 'ngx-toastr';
 
 import { UserService } from '../../services/user.service';
 
@@ -22,7 +23,8 @@ export class RegisterPageComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
-    private userService: UserService
+    private userService: UserService,
+    private toastr: ToastrService
   ) { }
 
   ngOnInit() {
@@ -50,15 +52,11 @@ export class RegisterPageComponent implements OnInit {
       .pipe(first())
       .subscribe(
         data => {
-          this.isModalOpen = true;
-          this.modalType = 'success';
-          this.modalMessage = 'Registration successful!';
+          this.toastr.success('Registration successful!');
+          this.router.navigate(['/login']);
         },
         error => {
-          this.isModalOpen = true;
-          this.modalType = 'danger';
-          this.modalMessage = error;
-          
+          this.toastr.error(error);
           this.loading = false;
         }
       )
