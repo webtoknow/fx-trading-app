@@ -28,31 +28,31 @@
 
 Go to *Week_05/Exercise/Code/ui*
 
-````bash
+```bash
 cd fx-trading-app\Week_05\Exercise\Code\ui
-````
+```
 
 Run *npm install* to download all dependencies
 
-````bash
+```bash
 npm install
-````
+```
 
 Create a folder for pages in *ui/src/app*
 
-````bash
+```bash
 cd src\app
 mkdir pages
-````
+```
 
 Generate page components using CLI:
 
-````bash
+```bash
 ng generate component dashboard-page
 ng generate component login-page
 ng generate component not-found-page
 ng generate component register-page
-````
+```
 
 ### Add routes
 
