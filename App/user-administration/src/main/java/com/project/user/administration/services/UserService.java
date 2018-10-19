@@ -88,7 +88,8 @@ public class UserService {
     }
 
     public UserAuthorizeResponseVo authorizeV2(UserRequestVo userRequestVo) throws ParseException {
-        UserLogin userLogin = userLoginRepository.findByUserAndToken(userRequestVo.getUsername(), userRequestVo.getToken());
+        String userName = extractUserNameFromToken(userRequestVo.getToken());
+        UserLogin userLogin = userLoginRepository.findByUserAndToken(userName, userRequestVo.getToken());
         if(userLogin != null){
             return new UserAuthorizeResponseVo(userRequestVo.getUsername(),  verifyToken(userRequestVo.getUsername(), userRequestVo.getToken()));
         }
@@ -110,6 +111,18 @@ public class UserService {
         return jwt;
     }
 
+    public static String extractUserNameFromToken( String token) throws JWTVerificationException{
+
+            Algorithm algorithm = Algorithm.HMAC256(System.getProperty("aplication-secret"));
+            JWTVerifier verifier =  JWT.require(algorithm)
+                    .withIssuer("auth0")
+                    .build();
+
+            DecodedJWT jwt = verifier.verify(token);
+            return  jwt.getSubject();
+
+    }
+
     public static boolean verifyToken(String user, String token){
         try{
             Algorithm algorithm = Algorithm.HMAC256(System.getProperty("aplication-secret"));
@@ -119,10 +132,6 @@ public class UserService {
 
             DecodedJWT jwt = verifier.verify(token);
             String subject = jwt.getSubject();
-
-            if(!user.equals(subject)){
-                return false;
-            }
 
             Date dateTheTokenWillExpire = jwt.getExpiresAt();
             if(new Date().compareTo(dateTheTokenWillExpire) <1){

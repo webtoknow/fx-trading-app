@@ -51,7 +51,7 @@
     <td>{{ transaction.username }}</td>
     <td>{{ transaction.CcyPair }}</td>
     <td>{{ transaction.rate | number }}</td>
-    <td>{{ transaction.action }}</td>
+    <td>{{ transaction.action | uppercase }}</td>
     <td>{{ transaction.notional }}</td>
     <td>{{ transaction.tenor }}</td>
     <td>{{ transaction.date | date:'dd/MM/yyyy HH:mm' }}</td>

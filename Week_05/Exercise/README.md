@@ -26,43 +26,43 @@
 
 ### Create pages
 
-Go to *Week_05/Exercise/Code/ui*
+Go to *Week_05/Exercise/Code/ui*:
 
-````bash
+```bash
 cd fx-trading-app\Week_05\Exercise\Code\ui
-````
+```
 
-Run *npm install* to download all dependencies
+Run *npm install* to download all dependencies:
 
-````bash
+```bash
 npm install
-````
+```
 
-Create a folder for pages in *ui/src/app*
+Create a folder for pages in *ui/src/app*:
 
-````bash
+```bash
 cd src\app
 mkdir pages
-````
+```
 
 Generate page components using CLI:
 
-````bash
+```bash
 ng generate component dashboard-page
 ng generate component login-page
 ng generate component not-found-page
 ng generate component register-page
-````
+```
 
 ### Add routes
 
-Import *RouterModule, Routes* from *@angular/router*
+Import *RouterModule, Routes* from *@angular/router*:
 
 ```JS
 import { RouterModule, Routes } from '@angular/router';
 ```
 
-Create routes by linking the components
+Create routes by linking the components:
 
 ```JS
 const appRoutes: Routes = [
@@ -75,7 +75,7 @@ const appRoutes: Routes = [
 ```
 
 The *appRoutes* array of routes describes how to navigate.
-Pass it to the *RouterModule.forRoot* method in the module imports to configure the router.
+Pass it to the *RouterModule.forRoot* method in the module imports to configure the router:
 
 ```JS
 {
@@ -88,13 +88,13 @@ Pass it to the *RouterModule.forRoot* method in the module imports to configure 
 }
 ```
 
-Add *RouterOutlet* directive to app *app.component.html* by removing the old markup.
+Add *RouterOutlet* directive to app *app.component.html* by removing the old markup:
 
 ```HTML
 <router-outlet></router-outlet>
 ```
 
-Remove title from *app.component.ts*
+Remove title from *app.component.ts*:
 
 ```JS
 title = 'ui';
@@ -230,7 +230,7 @@ export class User {
 
 ### Constants file
 
-We will need to communicate with Backend through some API's. Let's estabilish how they will look like.
+We will need to communicate with backend through some API's. Let's estabilish how they will look like.
 
 On server side, we will have 3 micro-services:
 
@@ -295,7 +295,7 @@ So, the service:
 
 ### Update Application Module
 
-In app.module.ts:
+In *app.module.ts*:
 
 - include *Aler*t module from bootstrap:
 
