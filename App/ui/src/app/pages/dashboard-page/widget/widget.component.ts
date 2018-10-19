@@ -42,7 +42,7 @@ export class WidgetComponent implements OnInit, OnDestroy {
       primaryCcy: this.widget.primaryCcy,
       secondaryCcy: this.widget.secondaryCcy,
       rate: this.widget.sellRate,
-      action: 'sell',
+      action: 'SELL',
       notional: this.widget.notional,
       tenor: this.widget.tenor,
       date: Math.round(new Date().getTime()/1000)
@@ -64,7 +64,7 @@ export class WidgetComponent implements OnInit, OnDestroy {
       primaryCcy: this.widget.primaryCcy,
       secondaryCcy: this.widget.secondaryCcy,
       rate: this.widget.buyRate,
-      action: 'buy',
+      action: 'BUY',
       notional: this.widget.notional,
       tenor: this.widget.tenor,
       date: Math.round(new Date().getTime()/1000)

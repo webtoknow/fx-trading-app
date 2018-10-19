@@ -292,7 +292,7 @@ import {startWith, switchMap} from "rxjs/operators";
         <td>{{ transaction.username }}</td>
         <td>{{ transaction.ccyPair }}</td>
         <td>{{ transaction.rate | number }}</td>
-        <td>{{ transaction.action | uppercase }}</td>
+        <td>{{ transaction.action }}</td>
         <td>{{ transaction.notional | number }}</td>
         <td>{{ transaction.tenor }}</td>
         <td>{{ transaction.date | date:'dd/MM/yyyy HH:mm' }}</td>
@@ -804,7 +804,7 @@ export class WidgetComponent implements OnInit, OnDestroy {
       primaryCcy: this.widget.primaryCcy,
       secondaryCcy: this.widget.secondaryCcy,
       rate: this.widget.sellRate,
-      action: 'sell',
+      action: 'SELL',
       notional: this.widget.notional,
       tenor: this.widget.tenor,
       date: Math.round(new Date().getTime()/1000)
@@ -826,7 +826,7 @@ export class WidgetComponent implements OnInit, OnDestroy {
       primaryCcy: this.widget.primaryCcy,
       secondaryCcy: this.widget.secondaryCcy,
       rate: this.widget.buyRate,
-      action: 'buy',
+      action: 'BUY',
       notional: this.widget.notional,
       tenor: this.widget.tenor,
       date: Math.round(new Date().getTime()/1000)
