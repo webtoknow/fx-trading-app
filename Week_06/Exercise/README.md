@@ -625,7 +625,7 @@ We need some more methods in *trade.service.ts*:
       <!-- Form  -->
       <div class="form-inline form-group">
         <label class="label-short" for="amount">Amount</label>
-        <input type="number" class="form-control" id="amount" placeholder="Type the notional" [(ngModel)]="widget.notional"
+        <input type="number" class="form-control" id="amount" placeholder="Type the amount" [(ngModel)]="widget.notional"
           required>
       </div>
       <div class="form-inline form-inline-short form-group">

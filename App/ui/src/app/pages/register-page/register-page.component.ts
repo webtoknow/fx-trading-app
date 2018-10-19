@@ -60,10 +60,6 @@ export class RegisterPageComponent implements OnInit {
         },
         error => {
           this.toastr.error(error);
-          // this.isModalOpen = true;
-          // this.modalType = 'danger';
-          // this.modalMessage = error;
-          
           this.loading = false;
         }
       )
