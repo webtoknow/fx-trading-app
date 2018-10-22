@@ -1,0 +1,18 @@
+.fx-not-found-container {
+    background-color: rgb(141,213,170);
+    padding-top: 120px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.fx-not-found-logo {
+    margin-bottom: 40px;
+    width: 395px;
+}
+
+.fx-not-found-text {
+    font-size: 16px;
+    color: #7C7C7C;
+    margin-left: 60px;
+}
