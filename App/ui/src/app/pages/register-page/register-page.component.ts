@@ -16,9 +16,6 @@ export class RegisterPageComponent implements OnInit {
   registerForm: FormGroup;
   loading = false;
   submitted = false;
-  isModalOpen = false;
-  modalMessage = '';
-  modalType = '';
 
   constructor(
     private formBuilder: FormBuilder,

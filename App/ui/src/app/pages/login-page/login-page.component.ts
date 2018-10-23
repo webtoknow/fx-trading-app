@@ -14,9 +14,6 @@ export class LoginPageComponent implements OnInit {
   loginForm: FormGroup;
   loading = false;
   submitted = false;
-  isModalOpen = false;
-  modalMessage = '';
-  modalType = '';
   returnUrl: string;
 
   constructor(

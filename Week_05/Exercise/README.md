@@ -720,9 +720,6 @@ export class RegisterPageComponent implements OnInit {
   registerForm: FormGroup;
   loading = false;
   submitted = false;
-  isModalOpen = false;
-  modalMessage = '';
-  modalType = '';
 
   constructor(
     private formBuilder: FormBuilder,
@@ -755,14 +752,11 @@ export class RegisterPageComponent implements OnInit {
       .pipe(first())
       .subscribe(
         data => {
-          this.isModalOpen = true;
-          this.modalType = 'success';
-          this.modalMessage = 'Registration successful!';
+          this.toastr.success('Registration successful!');
+          this.router.navigate(['/login']);
         },
         error => {
-          this.isModalOpen = true;
-          this.modalType = 'danger';
-          this.modalMessage = error;
+          this.toastr.error(error);
           this.loading = false;
         }
       )
@@ -1128,9 +1122,6 @@ export class LoginPageComponent implements OnInit {
   loginForm: FormGroup;
   loading = false;
   submitted = false;
-  isModalOpen = false;
-  modalMessage = '';
-  modalType = '';
   returnUrl: string;
 
   constructor(
@@ -1173,9 +1164,7 @@ export class LoginPageComponent implements OnInit {
           this.router.navigate([this.returnUrl]);
         }, 
         error => {
-          this.isModalOpen = true;
-          this.modalType = 'danger';
-          this.modalMessage = error;
+          this.toastr.error(error);
           this.loading = false;
         }
       )
