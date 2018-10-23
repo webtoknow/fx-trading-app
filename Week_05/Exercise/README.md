@@ -457,7 +457,7 @@ On server side, we will have 3 micro-services:
 - *fxTradeService*, running on port 8210
 - *quoteService*, running on port 8220
 
-Into *Week_05/Exercise/Code/ui/src/app*, we will create a new file, *contants.ts*, containing all API's needed:
+Into *Week_05/Exercise/Code/ui/src/app*, we will create a new file, *constants.ts*, containing all API's needed:
 
 ```JavaScript
 export const authApi = 'http://localhost:8200'
@@ -707,6 +707,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
+import { ToastrService } from 'ngx-toastr';
 
 import { UserService } from '../../services/user.service';
 
@@ -724,7 +725,8 @@ export class RegisterPageComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
-    private userService: UserService
+    private userService: UserService,
+    private toastr: ToastrService
   ) { }
 
   ngOnInit() {
