@@ -769,7 +769,7 @@ We can notice here:
 
 - the component is declared through *@Component* adnotation, by specifying the selector, template and style files
 - the form, its fields and validations are specified in the class
-- in *onSubmit* function, if the form is valid, we use *userService.register* to send the entity to be saved. We display a message even if it is a successful request or not.
+- in *onSubmit* function, if the form is valid, we use *userService.register* to send the entity to be saved. If the request is successful, We display a message and redirect the user to *login* page, but if it is not, we just display ond appropriate message.
 
 ## Exercise 3 - Login page
 
