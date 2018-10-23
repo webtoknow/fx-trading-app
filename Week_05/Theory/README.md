@@ -59,7 +59,20 @@
 ```
 
 - this process is called **interpolation**
-- Angular supports **two-way data binding** - a mechanism for coordinating parts of a template with parts of a component
+- Angular supports **two-way data binding** - a mechanism for coordinating parts of a template with parts of a component:
+
+```HTML
+<input [(ngModel)]="username">
+
+<p>Hello {{username}}!</p>
+````
+
+```HTML
+<input [value]="username" (input)="username = $event.target.value">
+
+<p>Hello {{username}}!</p>
+```
+
 - plays an important role in communication between:
   - a template and its component
   - a parent and its child components
