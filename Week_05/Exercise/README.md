@@ -64,13 +64,13 @@ ng generate component register-page
 
 ### Add routes
 
-Import *RouterModule, Routes* from *@angular/router*:
+In *app.module.ts*, import *RouterModule, Routes* from *@angular/router*:
 
 ```JS
 import { RouterModule, Routes } from '@angular/router';
 ```
 
-Create routes by linking the components:
+and then reate routes by linking the components:
 
 ```JS
 const appRoutes: Routes = [
