@@ -755,6 +755,7 @@ export class RegisterPageComponent implements OnInit {
       .subscribe(
         data => {
           this.toastr.success('Registration successful!');
+          this.loading = false;
           this.router.navigate(['/login']);
         },
         error => {
