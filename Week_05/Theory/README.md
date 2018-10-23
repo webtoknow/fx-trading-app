@@ -110,7 +110,7 @@ export class ExponentialStrengthPipe implements PipeTransform {
 ### Directives
 
 - templates are dynamic - when Angular renders them, it transforms the DOM according to the instructions given by directives
-- a directive is a class with a **@Directive** deorator
+- a directive is a class with a **@Directive** decorator
 - each component is a directive - but components are distinctive
 - there are two kinds of directives besides components: **structural** and **attribute** directives
 
@@ -188,9 +188,9 @@ export class AppModule { }
 
 ### Services
 
-- if we are in a situation where we need some code to be used everywhere on the page, we should use services *e.g. : Data connections*)
+- if we are in a situation where we need some code to be used everywhere on the page, we should use services 
 - through services, methods and components can be accessed across other components in the whole project
-- a service should look like this: 
+- a service should look like this:
 
 ```JavaScript
 @Injectable()
