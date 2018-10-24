@@ -111,4 +111,6 @@ Analyse the user requirements and based on them try and sketch a prototype for t
 
 ![Dashboard](Img/Dashboard-VD.png "Dashboard")
 
+![404Page](Img/404.png "Error 404 - Page not found")
+
 ![Assets](Img/Assets-VD.png "Assets")
