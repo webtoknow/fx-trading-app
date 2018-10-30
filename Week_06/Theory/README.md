@@ -29,7 +29,7 @@
   import { Observable } from 'rxjs';
   ```
 
-  - then, we have to subscribe to the Observable in the application which will allow us to listen to the data that is comeing along with it:
+  - then, we have to subscribe to the Observable in the application which will allow us to listen to the data that is coming along with it:
 
   ```JavaScript
    getCurrencies() {
