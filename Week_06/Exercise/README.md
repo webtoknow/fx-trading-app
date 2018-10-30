@@ -895,7 +895,7 @@ In *Widget Component*, we can see many functionalities implemented:
 
 ### FX Rates View component
 
-FX Rates View component is the right-side of the screen, containing all *Widget* Components.
+FX Rates View component is the left-side of the screen, containing all *Widget* Components.
 
 - **fx-rates-view.component.html**:
 
