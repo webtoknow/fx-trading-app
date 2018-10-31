@@ -1,4 +1,4 @@
-# Week 6 - Development
+# Week 6 - Create Dashboard page with Angular
 
 ## Table of contents
 
