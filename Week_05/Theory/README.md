@@ -1,4 +1,4 @@
-# Week 5 - Development
+# Week 5 - Create Login and Register pages with Angular
 
 ## Table of contents
 
