@@ -12,7 +12,7 @@
 
 
 
-#### About
+### About
 
 Spring Boot is an open source Java-based framework used to create a Micro Services.
 It is easy to create a stand-alone and production ready spring application.
@@ -53,7 +53,7 @@ It retrieves all the beans that were created either by your app or were automati
 
 
 
-#### Code Example
+### Code Example
 
 
 ```Java
@@ -98,9 +98,9 @@ public class HelloController {
 }
 ```
 
-#### Jpa
+### Jpa
 
-##### Jpa Introduction
+#### Jpa Introduction
 
 #What?
 Java Persistence API is a collection of classes and methods to persistently store the vast amounts of data into a database which is provided by the Oracle Corporation.
