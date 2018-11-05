@@ -12,7 +12,7 @@
 
 
 
-### About
+## About
 
 Spring Boot is an open source Java-based framework used to create a Micro Services.
 It is easy to create a stand-alone and production ready spring application.
@@ -27,7 +27,7 @@ The Spring Boot Maven plugin provides many convenient features:
 You can override any version you wish, but it will default to Boot’s chosen set of versions.
 
 
-### Annotations
+## Annotations
 
 
 
@@ -53,7 +53,7 @@ It retrieves all the beans that were created either by your app or were automati
 
 
 
-### Code Example
+## Code Example
 
 
 ```Java
@@ -98,17 +98,17 @@ public class HelloController {
 }
 ```
 
-### Jpa
+## Jpa
 
-#### Jpa Introduction
+## Jpa Introduction
 
-# What?
+### What?
 Java Persistence API is a collection of classes and methods to persistently store the vast amounts of data into a database which is provided by the Oracle Corporation.
 
-# Why?
+### Why?
 To reduce the burden of writing codes for relational object management, a programmer follows the ‘JPA Provider’ framework, which allows easy interaction with database instance. Here the required framework is taken over by JPA.
 
-# Who?
+### Who?
 JPA is an open source API, therefore various enterprise vendors such as Oracle, Redhat, Eclipse, etc. provide new products by adding the JPA persistence flavor in them. Some of these products include:
 Hibernate, Eclipselink, Toplink, Spring Data JPA, etc.
 
