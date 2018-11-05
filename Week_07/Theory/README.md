@@ -98,7 +98,6 @@ public class HelloController {
 }
 ```
 
-## Jpa
 
 ## Jpa Introduction
 
