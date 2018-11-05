@@ -410,9 +410,91 @@ public class UserController {
  }   
  
  ```
-
+ 
+Now lets test with PostMan.
 
  ## Exercise 4 - Read all users
  
- Do this exercise alone this time :) .
+ Do this exercise alone this time :).
  
+
+ ## Exercise 5 - User Registration
+ 
+ Create a new value object class for the request.
+ 
+ 
+```Java
+package com.project.user.administration.vo;
+
+public class UserRequestVo {
+
+    private String username;
+    private String email;
+    private String password;
+    private String token;
+
+    public UserRequestVo(){
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+}
+```
+
+Update user-service with the register method.
+
+```Java
+
+public void registerNewUser(UserRequestVo userRequestVo) {
+        User user = new User();
+        user.setUserName(userRequestVo.getUsername());
+        user.setPassword(userRequestVo.getPassword());
+        user.setEmail(userRequestVo.getEmail());
+
+        userRepository.save(user);
+    }
+
+
+```
+
+Update user-controller with the request part.
+
+
+```Java
+@PostMapping("/user/register")
+    @CrossOrigin
+    public void registerNewUser(@RequestBody UserRequestVo userRequestVo) {
+        userService.registerNewUser(userRequestVo);
+    }
+```
+
+Now lets test with PostMan.
