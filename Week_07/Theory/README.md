@@ -10,6 +10,7 @@
 - [Jpa](#Jpa)
   - [Jpa Introduction](#jpa-introduction)
   - [Jpa Entity](#jpa-entity)
+  - [Spring Data](#spring-data)
 
 
 
@@ -119,54 +120,102 @@ Hibernate, Eclipselink, Toplink, Spring Data JPA, etc.
 ```Java
 
 @Entity
-@Table(name = "ROOM")
-public class Room implements Serializable {
+@Table(name = "employee")
+public class Employee implements Serializable {
 
+	private static final long serialVersionUID = -3009157732242241606L;
+  
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name="id")
+	private long id;
 
-    @Id
-    @GeneratedValue
-    @Column(name = "room_id")
-    private Integer id;
+	@Column(name = "firstname")
+	private String firstName;
 
-    @Column(name = "number") 
-    private String number; 
+	@Column(name = "lastname")
+	private String lastName;
+	
+	@Column(name = "age")
+	private int age;
 
-    @Column(name = "capacity")
-    private Integer capacity;
+	protected Employee() {
+	}
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "building_id")
-    private Building building; 
+	public Employee(String firstName, String lastName,int age) {
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.age = age;
+	}
+	
+	public long getId() {
+		return id;
+	}
 
-    Room() {
-        // default constructor
-    }
+	public void setId(long id) {
+		this.id = id;
+	}
 
-    public Room(Building building, String number) {
-        notNull(building, "Method called with null parameter (application)");
-        notNull(number, "Method called with null parameter (name)");
+	public String getFirstName() {
+		return firstName;
+	}
 
-        this.building = building;
-        this.number = number;
-    }
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
 
+	public String getLastName() {
+		return lastName;
+	}
 
-    public Building getBuilding() {
-        return building;
-    }
+	public void setLast_Name(String lastName) {
+		this.lastName = lastName;
+	}
 
+	public int getAge() {
+		return age;
+	}
 
-    public Integer getId() {
-        return id;
-    }
-
-    public String getNumber() {
-        return number;
-    }
-
-
-    public void setCapacity(Integer capacity) {
-        this.capacity = capacity;
-    }
+	public void setAge(int age) {
+		this.age = age;
+	}
 }
+
+```
+
+### Spring Data
+
+This spring-module provides spring data repository interfaces which are implemented to create JPA repositories.
+
+#### No More DAO Implementations
+
+Spring data provides a base class JpaRepository that helps us from writting the following methods:
+
+- findAll
+- count, delete, deleteAll, deleteAll, deleteById, existsById, findById, save
+- exists, findOne
+- deleteAllInBatch()
+- deleteInBatch(Iterable<T> entities)
+  
+  
+The repository interface is used for extending the CRUD interface. This interface adds the layer of a repository in the program. Spring Data JPA provides two major ways of creating queries. These queries are then used in the repository interface to fetch the data from the database.
+
+
+
+```Java
+
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface EmployeeRepository extends CrudRepository<Employee, Long>{
+	List findByLastName(String lastName);
+	
+@Query("SELECT e FROM Employee e WHERE e.age = :age")
+    public List findByAge(@Param("age") int age);
+}
+
+
 ```
