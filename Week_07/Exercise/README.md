@@ -670,3 +670,15 @@ public interface UserLoginRepository extends JpaRepository<UserLogin, Long> {
     }
  
   ```
+  
+  Update user-controller for the authenticate http method.
+  
+ ```Java
+   @PostMapping("/user/authenticate")
+   @CrossOrigin
+    public UserTokenResponseVo login(@RequestBody UserRequestVo userRequestVo) {
+        return userService.validateUserCredentialsAndGenerateToken(userRequestVo);
+    }
+```
+
+Test with post man.
