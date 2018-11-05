@@ -122,7 +122,6 @@ Hibernate, Eclipselink, Toplink, Spring Data JPA, etc.
 @Table(name = "ROOM")
 public class Room implements Serializable {
 
-    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue
@@ -130,7 +129,7 @@ public class Room implements Serializable {
     private Integer id;
 
     @Column(name = "number") 
-    private String number; //immutable
+    private String number; 
 
     @Column(name = "capacity")
     private Integer capacity;
