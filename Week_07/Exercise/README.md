@@ -498,3 +498,175 @@ Update user-controller with the request part.
 ```
 
 Now lets test with PostMan.
+
+
+ ## Exercise 6 - User Authentication
+ 
+ Create a new class for the token response: UserTokenResponseVo.java
+ 
+ 
+ ```Java
+ package com.project.user.administration.vo;
+
+public class UserTokenResponseVo {
+
+    private String username;
+    private String token;
+
+    public UserTokenResponseVo(){
+
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+}
+ ```
+ 
+ Update user repository class with the method for retrieving the user.
+ 
+  ```Java
+  
+  @Query("SELECT u FROM User u WHERE u.userName = ?1 and u.password = ?2")
+  public User findUserByStatusAndName(String userName, String password);
+   
+ ```
+ 
+ 
+ Create user-login Jpa class and repository class
+ 
+ ```Java
+ 
+ package com.project.user.administration.model;
+
+import javax.persistence.*;
+
+@Entity
+@Table(name = "user_login")
+public class UserLogin {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_login_id", updatable = false, nullable = false)
+    private Long userLoginId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @Column(columnDefinition = "token")
+    private String token;
+
+    @Column(columnDefinition = "token_expire_time")
+    private String tokenExpireTime;
+
+    public UserLogin(){
+    }
+
+    public UserLogin(User user, String token, String tokenExpireTime){
+        this.user=user;
+        this.token=token;
+        this.tokenExpireTime= tokenExpireTime;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public Long getUserLoginId() {
+        return userLoginId;
+    }
+
+    public void setUserLoginId(Long userLoginId) {
+        this.userLoginId = userLoginId;
+    }
+
+    public String getTokenExpireTime() {
+        return tokenExpireTime;
+    }
+
+    public void setTokenExpireTime(String tokenExpireTime) {
+        this.tokenExpireTime = tokenExpireTime;
+    }
+}
+```
+
+```Java
+package com.project.user.administration.repository;
+
+import com.project.user.administration.model.UserLogin;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface UserLoginRepository extends JpaRepository<UserLogin, Long> {
+
+    @Query("SELECT u FROM UserLogin u WHERE u.user.userName = ?1  and u.token = ?2")
+    public UserLogin findByUserAndToken(String userName, String token);
+
+}
+ 
+ ```
+  
+ Update user-service class with validation, user-login save and token generation logick.
+ 
+ 
+ ```Java
+  public static String createJsonWebToken(String username){
+        String jwt = JWT.create()
+                    .withSubject(username)
+                    .withIssuer("auth0")
+                    .withExpiresAt(DateUtils.addHours(new Date(), 3))
+                    .sign(Algorithm.HMAC256(System.getProperty("aplication-secret")));
+        return jwt;
+    }
+    
+    
+      public UserTokenResponseVo validateUserCredentialsAndGenerateToken(UserRequestVo userRequestVo) {
+
+        User user = userRepository.findUserByStatusAndName(userRequestVo.getUsername(), userRequestVo.getPassword());
+
+        if( user != null) {
+
+            //String token=  RandomStringUtils.random(25, true, true);
+            String token = createJsonWebToken(userRequestVo.getUsername());
+
+            UserLogin userLogin= new UserLogin(user, token, getCurrentTimeStamp());
+            userLoginRepository.save(userLogin);
+
+            UserTokenResponseVo userTokenResponseVo = new UserTokenResponseVo();
+            userTokenResponseVo.setToken(token);
+            userTokenResponseVo.setUsername(userRequestVo.getUsername());
+
+            return userTokenResponseVo;
+        } else {
+            throw new RuntimeException("User not found");
+        }
+    }
+ 
+  ```
