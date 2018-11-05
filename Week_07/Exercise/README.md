@@ -257,7 +257,7 @@ public class User {
 ```
  
  
-Create the user repository for the read an user
+Create the user repository for the read an user.
  
  ```Java
  
@@ -324,7 +324,7 @@ public class UserRequestVo {
 }
  ```
  
-Create the user service for the database operations
+Create the user service for the database operations.
  
  
  ```Java
@@ -376,3 +376,34 @@ private UserRepository userRepository;
  
 ```
  
+ Create the user controller.
+ 
+ 
+ ```Java
+ 
+package com.project.user.administration.controller;
+
+import com.project.user.administration.services.UserService;
+import com.project.user.administration.vo.UserAuthorizeResponseVo;
+import com.project.user.administration.vo.UserTokenResponseVo;
+import com.project.user.administration.vo.UserRequestVo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.text.ParseException;
+
+@RestController
+
+public class UserController {
+
+    @Autowired
+    private UserService userService;
+
+    @GetMapping("/user/{userId}")
+    @CrossOrigin
+    public UserRequestVo getAnswersByQuestionId(@PathVariable Long userId) {
+        return userService.findByUserId(userId);
+    }
+ }   
+ 
+ ```
