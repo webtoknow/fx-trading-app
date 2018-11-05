@@ -637,6 +637,12 @@ public interface UserLoginRepository extends JpaRepository<UserLogin, Long> {
  
  
  ```Java
+ 
+  public String getCurrentTimeStamp() {
+        Date newDate = DateUtils.addHours(new Date(), 3);
+        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(newDate);
+  }
+    
   public static String createJsonWebToken(String username){
         String jwt = JWT.create()
                     .withSubject(username)
@@ -644,10 +650,10 @@ public interface UserLoginRepository extends JpaRepository<UserLogin, Long> {
                     .withExpiresAt(DateUtils.addHours(new Date(), 3))
                     .sign(Algorithm.HMAC256(System.getProperty("aplication-secret")));
         return jwt;
-    }
+  }
     
     
-      public UserTokenResponseVo validateUserCredentialsAndGenerateToken(UserRequestVo userRequestVo) {
+ public UserTokenResponseVo validateUserCredentialsAndGenerateToken(UserRequestVo userRequestVo) {
 
         User user = userRepository.findUserByStatusAndName(userRequestVo.getUsername(), userRequestVo.getPassword());
 
