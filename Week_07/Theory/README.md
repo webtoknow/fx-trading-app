@@ -9,6 +9,7 @@
   - [Code Example](#code-example)
 - [Jpa](#Jpa)
   - [Jpa Introduction](#jpa-introduction)
+  - [Jpa Entity](#jpa-entity)
 
 
 
@@ -111,3 +112,67 @@ To reduce the burden of writing codes for relational object management, a progra
 JPA is an open source API, therefore various enterprise vendors such as Oracle, Redhat, Eclipse, etc. provide new products by adding the JPA persistence flavor in them. Some of these products include:
 Hibernate, Eclipselink, Toplink, Spring Data JPA, etc.
 
+
+### Jpa Entity
+
+
+```Java
+
+@Entity
+@Table(name = "ROOM")
+public class Room implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @GeneratedValue
+    @Column(name = "room_id")
+    private Integer id;
+
+    @Column(name = "number") 
+    private String number; //immutable
+
+    @Column(name = "capacity")
+    private Integer capacity;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "building_id")
+    private Building building; //immutable
+
+    Room() {
+        // default constructor
+    }
+
+    public Room(Building building, String number) {
+        // constructor with required field
+        notNull(building, "Method called with null parameter (application)");
+        notNull(number, "Method called with null parameter (name)");
+
+        this.building = building;
+        this.number = number;
+    }
+
+
+    public Building getBuilding() {
+        return building;
+    }
+
+
+    public Integer getId() {
+        return id;
+    }
+
+    public String getNumber() {
+        return number;
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(getNumber()).append(getBuilding().getId()).toHashCode();
+    }
+
+    public void setCapacity(Integer capacity) {
+        this.capacity = capacity;
+    }
+}
+```
