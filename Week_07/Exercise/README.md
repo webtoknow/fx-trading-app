@@ -164,3 +164,9 @@ VALUES('mihai', 'mihai@gmail.com', 'mihaiPassword');
 INSERT INTO user_table (user_name , email , password)
 VALUES('andrei', 'andrei@gmail.com','AndreisPassword');
 ```
+
+Now user Grant Wizzard to grant access of your db to your db-user.
+
+
+
+ ## Exercise 3 - Read data to controller
