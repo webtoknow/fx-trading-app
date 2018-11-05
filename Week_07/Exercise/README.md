@@ -687,4 +687,121 @@ public interface UserLoginRepository extends JpaRepository<UserLogin, Long> {
     }
 ```
 
-Test with post man.
+Test it with post man.
+
+
+## Exercise 7 - User Autherization
+
+Create the TokenResponse class.
+
+ ```Java
+ 
+ package com.project.user.administration.vo;
+
+public class UserTokenResponseVo {
+
+    private String username;
+    private String token;
+
+    public UserTokenResponseVo(){
+
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+}
+
+ ```
+ 
+ Update User Service class with the autherization logick.
+ 
+ 
+ 
+  ```Java
+  public UserAuthorizeResponseVo authorizeV1(UserRequestVo userRequestVo) throws ParseException {
+        UserLogin userLogin = userLoginRepository.findByUserAndToken(userRequestVo.getUsername(), userRequestVo.getToken());
+        if(userLogin != null){
+            DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Date date = format.parse(userLogin.getTokenExpireTime());
+
+            if(new Date().compareTo(date) <1){
+                return new UserAuthorizeResponseVo(userRequestVo.getUsername(), true);
+            } else {
+                return new UserAuthorizeResponseVo(userRequestVo.getUsername(), false);
+            }
+        }
+        return new UserAuthorizeResponseVo(userRequestVo.getUsername(), false);
+    }
+
+    public UserAuthorizeResponseVo authorizeV2(UserRequestVo userRequestVo) throws ParseException {
+        String userName = extractUserNameFromToken(userRequestVo.getToken());
+        UserLogin userLogin = userLoginRepository.findByUserAndToken(userName, userRequestVo.getToken());
+        if(userLogin != null){
+            return new UserAuthorizeResponseVo(userRequestVo.getUsername(),  verifyToken(userRequestVo.getUsername(), userRequestVo.getToken()));
+        }
+        return new UserAuthorizeResponseVo(userRequestVo.getUsername(), false);
+    }
+
+
+    public static String extractUserNameFromToken( String token) throws JWTVerificationException{
+
+            Algorithm algorithm = Algorithm.HMAC256(System.getProperty("aplication-secret"));
+            JWTVerifier verifier =  JWT.require(algorithm)
+                    .withIssuer("auth0")
+                    .build();
+
+            DecodedJWT jwt = verifier.verify(token);
+            return  jwt.getSubject();
+
+    }
+
+    public static boolean verifyToken(String user, String token){
+        try{
+            Algorithm algorithm = Algorithm.HMAC256(System.getProperty("aplication-secret"));
+            JWTVerifier verifier =  JWT.require(algorithm)
+                                        .withIssuer("auth0")
+                                        .build();
+
+            DecodedJWT jwt = verifier.verify(token);
+            String subject = jwt.getSubject();
+
+            Date dateTheTokenWillExpire = jwt.getExpiresAt();
+            if(new Date().compareTo(dateTheTokenWillExpire) <1){
+                return true;
+            } else {
+                return false;
+            }
+
+        } catch(JWTVerificationException exception){
+            return false;
+        }
+
+    }
+}
+```
+
+Update controller for the authorize request
+
+ ```Java
+ @PostMapping("/user/authorize")
+    @CrossOrigin
+    public UserAuthorizeResponseVo authorize(@RequestBody UserRequestVo userRequestVo) throws ParseException {
+        return userService.authorizeV2(userRequestVo);
+    }
+ ```
+ 
+ 
+ Test it with post man.
