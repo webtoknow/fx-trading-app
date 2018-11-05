@@ -265,14 +265,14 @@ eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJiMDhmODZhZi0zNWRhLTQ4ZjItOGZ
 
 ### References
 
-[cgisecurity.com]
-[contrastsecurity.com]
-[developer.com]
-[ietf.org]
-[jwt.io]
-[martinfowler.com]
-[owasp.org]
-[spring.io]
-[stackoverflow.com](https://stackoverflow.com/questions/201479/what-is-base-64-encoding-used-for/201510#201510)
-[synopsys.com]
-[wikipedia.org]
+[cgisecurity.com](cgisecurity.com)
+[contrastsecurity.com](contrastsecurity.com)
+[developer.com](developer.com)
+[ietf.org](https://tools.ietf.org/html/rfc7519)
+[jwt.io](jwt.io)
+[martinfowler.com](martinfowler.com)
+[owasp.org](wasp.org)
+[spring.io](spring.io)
+[stackoverflow.com](stackoverflow.com)(https://stackoverflow.com/questions/201479/what-is-base-64-encoding-used-for/201510#201510)
+[synopsys.com](synopsys.com)
+[wikipedia.org](wikipedia.org)
