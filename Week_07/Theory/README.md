@@ -56,7 +56,7 @@ It retrieves all the beans that were created either by your app or were automati
 #### Code Example
 
 
-
+```Java
 package hello;
 
 
@@ -92,3 +92,4 @@ public class HelloController {
         return "Greetings from Spring Boot!";
     }
 }
+```
