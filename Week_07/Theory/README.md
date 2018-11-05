@@ -137,14 +137,13 @@ public class Room implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "building_id")
-    private Building building; //immutable
+    private Building building; 
 
     Room() {
         // default constructor
     }
 
     public Room(Building building, String number) {
-        // constructor with required field
         notNull(building, "Method called with null parameter (application)");
         notNull(number, "Method called with null parameter (name)");
 
@@ -166,10 +165,6 @@ public class Room implements Serializable {
         return number;
     }
 
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().append(getNumber()).append(getBuilding().getId()).toHashCode();
-    }
 
     public void setCapacity(Integer capacity) {
         this.capacity = capacity;
