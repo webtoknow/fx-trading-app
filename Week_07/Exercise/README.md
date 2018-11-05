@@ -731,12 +731,16 @@ public class UserTokenResponseVo {
  
  
   ```Java
+  
   public UserAuthorizeResponseVo authorizeV1(UserRequestVo userRequestVo) throws ParseException {
         UserLogin userLogin = userLoginRepository.findByUserAndToken(userRequestVo.getUsername(), userRequestVo.getToken());
+	
+	// check user-login in database
         if(userLogin != null){
             DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             Date date = format.parse(userLogin.getTokenExpireTime());
 
+	    // check if token expired	
             if(new Date().compareTo(date) <1){
                 return new UserAuthorizeResponseVo(userRequestVo.getUsername(), true);
             } else {
@@ -749,8 +753,10 @@ public class UserTokenResponseVo {
     public UserAuthorizeResponseVo authorizeV2(UserRequestVo userRequestVo) throws ParseException {
         String userName = extractUserNameFromToken(userRequestVo.getToken());
         UserLogin userLogin = userLoginRepository.findByUserAndToken(userName, userRequestVo.getToken());
+	
+	// check user-login in database
         if(userLogin != null){
-            return new UserAuthorizeResponseVo(userRequestVo.getUsername(),  verifyToken(userRequestVo.getUsername(), userRequestVo.getToken()));
+            return new UserAuthorizeResponseVo(userRequestVo.getUsername(),  verifyToken(userRequestVo.getUsername(),     userRequestVo.getToken()));
         }
         return new UserAuthorizeResponseVo(userRequestVo.getUsername(), false);
     }
