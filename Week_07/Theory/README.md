@@ -6,7 +6,7 @@
 - [SpringBoot](#spring-boot)
   - [About](#about)
   - [Annotations](#annotations)
-  - [Example](#example)
+  - [Code Example](#example)
 - [Jpa](#Jpa)
   - [Jpa Introduction](#jpa-introduction)
 
@@ -50,3 +50,8 @@ The main() method uses Spring Boot’s SpringApplication.run() method to launch 
 
 There is also a CommandLineRunner method marked as a @Bean and this runs on start up. 
 It retrieves all the beans that were created either by your app or were automatically added thanks to Spring Boot. 
+
+
+
+
+### Code Example
