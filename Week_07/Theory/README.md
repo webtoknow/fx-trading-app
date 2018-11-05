@@ -10,7 +10,7 @@
 	+ [Main features](#main-features)
 	+ [Authentication](#authentication)
 	+ [Authorization](#authorization)
-	+ [Building blocks](#building-blocks)
+	+ [Building blocks](#building-blocks-for-java)
 - [JWT approach](#jwt-approach)
 	- [Overview](#overview)	
 
@@ -103,8 +103,114 @@ This is a mix of other testing techniques, including SAST and DAST. It uses the 
 
 
 
-### Building blocks
-> 
+### Building blocks for Java
+> Sprint Security is quite developer friendly, to start using it there is little what a developer needs to do.
+
+>*Step A* Add the necessary libraries to your project. Using Spring Boot you just need to add **sprint-boot-starter-security** to you Maven configuration. That will take care of the related dependencies.
+```xml
+<dependencies>
+	<!-- ... other dependency elements ... -->
+	<dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-security</artifactId>
+	</dependency>
+</dependencies>
+```
+>*Step B* Add the minimum configuration
+```java
+@EnableWebSecurity
+public class WebSecurityConfig implements WebMvcConfigurer {
+
+    @Bean
+    public UserDetailsService userDetailsService() throws Exception {
+        InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
+        manager.createUser(User.withDefaultPasswordEncoder().username("user").password("password").roles("USER").build());
+        return manager;
+    }
+}
+```
+>Some important takeaways from the code above:
+>>Require authentication for every URL in the application.
+>>Generates a basic login form.
+>>Allow 'user' with 'password' to authenticate via form base authentication.
+>>Allow user to logout.
+>>Help with other ten plus features (cache control, prevents well know attacks).
+>How Spring knows that every URL needs to be authenticated? Or how does it know to support form based authentication? All is based on the default configuration of the *WebSecurityConfigurerAdapter* via *configure* method:
+```java
+protected void configure(HttpSecurity http) throws Exception {
+    http
+        .authorizeRequests()
+            .anyRequest().authenticated()
+            .and()
+        .formLogin()
+            .and()
+        .httpBasic();
+}
+```
+> The above basically says that all requests require user to be authenticated, it allows form based login and also allow basic Http authentication. The *and()* method is a helper method that basically close the section above. E.g. *fromLogin* ends with the second *and()*. Is like the closing tag of a XML tag.
+
+>*Step C* Configure more detailed Http Security
+>What if you want a different login page? It can be configured like this:
+```java
+protected void configure(HttpSecurity http) throws Exception {
+    http
+        .authorizeRequests()
+            .anyRequest().authenticated()
+            .and()
+        .formLogin()
+            .loginPage("/login") 1
+            .permitAll();        2
+}
+``` 
+>All user are authenticated via */login* page, whose access is permitted for all.
+
+>*Step D* Configure authorization
+>So for we've dealt only with authentication. Only one role was created, USER. But what if some resources are freely accessible and some other should be really kept away. This approach requires multiple roles to be created and configured for different resource types using multiple children of *http.authorizeRequests()*:
+```java
+protected void configure(HttpSecurity http) throws Exception {
+    http
+        .authorizeRequests()
+            .antMatchers("/resources/**", "/signup", "/about").permitAll()
+            .antMatchers("/admin/**").hasRole("ADMIN")
+            .antMatchers("/db/**").access("hasRole('ADMIN') and hasRole('DBA')")
+            .anyRequest().authenticated()
+            .and()
+        // ...
+        .formLogin();
+}
+```
+>Using the code above:
+>>All URLs under */resources* and URLs equal with */signup* and equal to */about* are free to access.
+>>All URLs under */admin* require the user to have an *ADMIN* role.
+>>All URLs under */db* require the user to have both *ADMIN* and *DBA* roles.
+>>All others require user to be authenticated via form login.
+
+
+>*Step E* Deal with custom logout
+> A few important things happen once the user is logged out. These are default actions built in Spring.
+>>Invalidate the HTTP session.
+>>Clear the SecurityContextHolder.
+>>Clean up RememberMe authentication is it was configured.
+>>Redirect to /login?logout.
+>If custom changes are needed they can be added, in the same method as above, like this:
+```java
+    http
+        .logout()
+            .logoutUrl("/my/logout")
+            .logoutSuccessUrl("/my/index")
+            .logoutSuccessHandler(logoutSuccessHandler)
+            .addLogoutHandler(logoutHandler)
+            .deleteCookies(cookieNamesToClear)
+            .and()
+        ...
+}
+```
+>These changes add, starting with *logoutUrl* line above: 
+>>a custom logout page, 
+>>a custom logout redirect page, 
+>>a new logout handler on successful logout, 
+>>a custom general logout handler,
+>>deletes user named cookies. 
 
 ## JWT approach
 
