@@ -2,7 +2,7 @@
 
 ## Table of contents
 
-- [Exercise 1 - Create project](#exercise-1-create-project)
+- [Exercise 1 - Create project](#exercise-1---create-project)
 - [Exercise 2 - Database Setup](#exercise-2-database-setup)
 - [Exercise 3 - Read data to controller](#exercise-3-read-data-to-controller)
 - [Exercise 4 - Read all users](#exercise-4-read-all-users)
