@@ -6,7 +6,7 @@
 - [SpringBoot](#spring-boot)
   - [About](#about)
   - [Annotations](#annotations)
-  - [Code Example](#example)
+  - [Code Example](#code-example)
 - [Jpa](#Jpa)
   - [Jpa Introduction](#jpa-introduction)
 
@@ -53,5 +53,42 @@ It retrieves all the beans that were created either by your app or were automati
 
 
 
-
 #### Code Example
+
+
+
+package hello;
+
+
+@SpringBootApplication
+public class Application {
+
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+
+    @Bean
+    public CommandLineRunner commandLineRunner(ApplicationContext ctx) {
+        return args -> {
+
+            System.out.println("Let's inspect the beans provided by Spring Boot:");
+
+            String[] beanNames = ctx.getBeanDefinitionNames();
+            Arrays.sort(beanNames);
+
+            for (String beanName : beanNames) {
+                System.out.println(beanName);
+            }
+        };
+    }
+}
+
+
+@RestController
+public class HelloController {
+
+    @RequestMapping("/")
+    public String index() {
+        return "Greetings from Spring Boot!";
+    }
+}
