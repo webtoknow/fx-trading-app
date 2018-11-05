@@ -1,20 +1,20 @@
 # Week 7 - Development : software security
 ### Table of contents
 
-- [Security in today context] (#security-in-today-context)
-	+ [Digital security] (#digital-security)
-	+ [Application security] (#application-security)
-	+ [Software security] (#software-security)
-- [Spring Security] (#spring-security)
-	+ What is it
-	+ Main features
-	+ Authentication
-	+ Authorizaiton
-	+ Building blocks
-- [JWT approach] (#jwt_approach)
-	- ??	
+- [Security in today context](#security-in-today-context)
+	+ [Digital security](#digital-security)
+	+ [Application security](#application-security)
+	+ [Software security](#software-security)
+- [Spring Security](#spring-security)
+	+ [What is it](#what-is-it)
+	+ [Main features](#main-features)
+	+ [Authentication](#authentication)
+	+ [Authorizaiton](#authorization)
+	+ [Building blocks](#building-blocks)
+- [JWT approach](#jwt-approach)
+	- [Overview](#overview)	
 
-- [References] (#references)
+- [References](#references)
 
 ## Security in today context
 
