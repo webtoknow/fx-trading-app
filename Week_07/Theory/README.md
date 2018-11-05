@@ -273,6 +273,6 @@ eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJiMDhmODZhZi0zNWRhLTQ4ZjItOGZ
 * [martinfowler.com](martinfowler.com)
 * [owasp.org](wasp.org)
 * [spring.io](spring.io)
-* [stackoverflow.com](stackoverflow.com)(https://stackoverflow.com/questions/201479/what-is-base-64-encoding-used-for/201510#201510)
+* [stackoverflow.com](https://stackoverflow.com/questions/201479/what-is-base-64-encoding-used-for/201510#201510)
 * [synopsys.com](synopsys.com)
 * [wikipedia.org](wikipedia.org)
