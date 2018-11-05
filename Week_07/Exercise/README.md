@@ -82,11 +82,10 @@
 		</plugins>
 	</build>
 
-
 ```
 
 
-Create the following package in src/main/java;
+Create the following package in src/main/java:
 com.project.user.administration
 
 
@@ -128,3 +127,5 @@ server.port=8200
 
 ```
 
+
+Now run the main class.
