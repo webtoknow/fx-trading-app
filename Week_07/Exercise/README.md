@@ -5,7 +5,10 @@
 - [Exercise 1 - Create project](#exercise-1-create-project)
 - [Exercise 2 - Database Setup](#exercise-2-database-setup)
 - [Exercise 3 - Read data to controller](#exercise-3-read-data-to-controller)
- 
+- [Exercise 4 - Read all users](#exercise-4-read-all-users)
+- [Exercise 5 - User Registration](#exercise-5-user-registration)
+- [Exercise 6 - User Authentication](#exercise-6-user-authentication)
+- [Exercise 7 - User Autherization](#exercise-7-user-autherization)
  
  
  
@@ -407,3 +410,9 @@ public class UserController {
  }   
  
  ```
+
+
+ ## Exercise 4 - Read all users
+ 
+ Do this exercise alone this time :) .
+ 
