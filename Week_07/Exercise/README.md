@@ -540,7 +540,7 @@ public class UserTokenResponseVo {
   ```Java
   
   @Query("SELECT u FROM User u WHERE u.userName = ?1 and u.password = ?2")
-  public User findUserByStatusAndName(String userName, String password);
+  public User findUser(String userName, String password);
    
  ```
  
@@ -655,7 +655,7 @@ public interface UserLoginRepository extends JpaRepository<UserLogin, Long> {
     
  public UserTokenResponseVo validateUserCredentialsAndGenerateToken(UserRequestVo userRequestVo) {
 
-        User user = userRepository.findUserByStatusAndName(userRequestVo.getUsername(), userRequestVo.getPassword());
+        User user = userRepository.findUser(userRequestVo.getUsername(), userRequestVo.getPassword());
 
         if( user != null) {
 
