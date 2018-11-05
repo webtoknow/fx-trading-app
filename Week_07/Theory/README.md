@@ -97,3 +97,18 @@ public class HelloController {
     }
 }
 ```
+
+#### Jpa
+
+##### Jpa Introduction
+
+#What?
+Java Persistence API is a collection of classes and methods to persistently store the vast amounts of data into a database which is provided by the Oracle Corporation.
+
+#Why?
+To reduce the burden of writing codes for relational object management, a programmer follows the ‘JPA Provider’ framework, which allows easy interaction with database instance. Here the required framework is taken over by JPA.
+
+#Who?
+JPA is an open source API, therefore various enterprise vendors such as Oracle, Redhat, Eclipse, etc. provide new products by adding the JPA persistence flavor in them. Some of these products include:
+Hibernate, Eclipselink, Toplink, Spring Data JPA, etc.
+
