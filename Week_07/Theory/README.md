@@ -16,7 +16,7 @@
 
 ## About
 
-Spring Boot is an open source Java-based framework used to create a Micro Services.
+Spring Boot is an open source Java-based framework used to create Micro Services.
 It is easy to create a stand-alone and production ready spring application.
 
 
@@ -41,7 +41,7 @@ You can override any version you wish, but it will default to Boot’s chosen se
 
 Normally you would add @EnableWebMvc for a Spring MVC app, but Spring Boot adds it automatically when it sees spring-webmvc on the classpath. 
 
-This flags the application as a web application and activates key behaviors such as setting up a DispatcherServlet.(primeste request si mapeaza la clasele potrivite)
+This flags the application as a web application and activates key behaviors such as setting up a DispatcherServlet.(receives requests and maps to the coresponding classes)
 
 
 3) @ComponentScan tells Spring to look for other components, configurations, and services in the hello package, allowing it to find the controllers.
@@ -104,10 +104,10 @@ public class HelloController {
 ## Jpa Introduction
 
 ### What?
-Java Persistence API is a collection of classes and methods to persistently store the vast amounts of data into a database which is provided by the Oracle Corporation.
+Java Persistence API is a collection of classes and methods to persistently store the vast amounts of data into a database ,
 
 ### Why?
-To reduce the burden of writing codes for relational object management, a programmer follows the ‘JPA Provider’ framework, which allows easy interaction with database instance. Here the required framework is taken over by JPA.
+To reduce the burden of writting code for relational object management, a programmer follows the ‘JPA Provider’ framework, which allows easy interaction with database instance. Here the required framework is taken over by JPA.
 
 ### Who?
 JPA is an open source API, therefore various enterprise vendors such as Oracle, Redhat, Eclipse, etc. provide new products by adding the JPA persistence flavor in them. Some of these products include:
