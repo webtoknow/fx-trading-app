@@ -13,7 +13,7 @@
 	+ [Building blocks](#building-blocks-for-java)
 - [JWT approach](#jwt-approach)
 	- [Overview](#overview)	
-
+	- [Creation and usage](#creation-and-usage)
 - [References](#references)
 
 ## Security in today context
@@ -62,22 +62,29 @@ This is a mix of other testing techniques, including SAST and DAST. It uses the 
 
 > As a software developer you are designing your software to be secure from scratch.
 > As a software developer you always validate your user's input and use the right encoding for the input.
+
 > As a software developer you handle user authentication and authorization.
+
 > As a software developer you handle correctly user sessions.
+
 > As a software developer you use the strongest available cryptography to secure data at rest and in transit.
+
 > As a software developer you ensure that all third party components are validated against your entity/company policies.
+
 > As a software developer you challenge any flaws in software design or architecture.
+
 > As a software developer you have and improve recurrently the 'Secure coding guidelines' for developers. The entire internal development community is participating here.
+
 > As a software developer you help your colleagues in DevOvs and Release Management to secure the configuration procedures and to securely deploy your application.
 
 > One the most unknown field of today software development is security design patterns. Let's add a few here:
->> * Single access point for login in.
->> * Clear distinction between authentication and authorization, also known as access control.
->> * Always use sessions to isolate information in multi-user environment.
->> * Limit the view using the principle 'access is allowed per need'. Default user has very limited access, usually at login page, general policy guide, user rights page and alike.
->> * Work with multi-layered security. Firewalls, anti-viruses, self-protection, etc.
->> * Sanitize your data by removing expired, duplicate or unnecessary data.
->> * Design to fail in a secure manner.
+* Single access point for login in.
+* Clear distinction between authentication and authorization, also known as access control.
+* Always use sessions to isolate information in multi-user environment.
+* Limit the view using the principle 'access is allowed per need'. Default user has very limited access, usually at login page, general policy guide, user rights page and alike.
+* Work with multi-layered security. Firewalls, anti-viruses, self-protection, etc.
+* Sanitize your data by removing expired, duplicate or unnecessary data.
+* Design to fail in a secure manner.
 
 ## Spring Security
 
@@ -90,11 +97,11 @@ This is a mix of other testing techniques, including SAST and DAST. It uses the 
 ### Authentication
 > Authentication is about ensuring that the entity/principal called in Spring accessing your protected resources is allowed to access it. First step is to identify the principal. Simplest form of identification is via username and password. Others, more sophisticated ways, are via LDAP (Lightweight Directory Access Protocol) or via CAS (Central Authentication Service) which is a single sign-on protocol.
 > Authentications supported:
->> HTTP Basic
->> Form-based authentication
->> LDAP 
->> Java Authentication and Authorization Service
->> Kerberos
+* HTTP Basic;
+* Form-based authentication
+* LDAP 
+* Java Authentication and Authorization Service
+* Kerberos
 
 ### Authorization
 > If the authentication is successful the principal goes to the second step. Now that we know who our user is what are the actions that is allowed to perform? Which are the areas where is allowed to navigate? If you are an admin you are probably allowed to do whatever you want, if you are an user you probably has much more limited access.
@@ -130,11 +137,11 @@ public class WebSecurityConfig implements WebMvcConfigurer {
 }
 ```
 >Some important takeaways from the code above:
->>Require authentication for every URL in the application.
->>Generates a basic login form.
->>Allow 'user' with 'password' to authenticate via form base authentication.
->>Allow user to logout.
->>Help with other ten plus features (cache control, prevents well know attacks).
+* Require authentication for every URL in the application.
+* Generates a basic login form.
+* Allow 'user' with 'password' to authenticate via form base authentication.
+* Allow user to logout.
+* Help with other ten plus features (cache control, prevents well know attacks).
 >How Spring knows that every URL needs to be authenticated? Or how does it know to support form based authentication? All is based on the default configuration of the *WebSecurityConfigurerAdapter* via *configure* method:
 ```java
 protected void configure(HttpSecurity http) throws Exception {
@@ -180,18 +187,21 @@ protected void configure(HttpSecurity http) throws Exception {
 }
 ```
 >Using the code above:
->>All URLs under */resources* and URLs equal with */signup* and equal to */about* are free to access.
->>All URLs under */admin* require the user to have an *ADMIN* role.
->>All URLs under */db* require the user to have both *ADMIN* and *DBA* roles.
->>All others require user to be authenticated via form login.
+* All URLs under */resources* and URLs equal with */signup* and equal to */about* are free to access.
+* All URLs under */admin* require the user to have an *ADMIN* role.
+
+* All URLs under */db* require the user to have both *ADMIN* and *DBA* roles.
+
+* All others require user to be authenticated via form login.
 
 
 >*Step E* Deal with custom logout
 > A few important things happen once the user is logged out. These are default actions built in Spring.
->>Invalidate the HTTP session.
->>Clear the SecurityContextHolder.
->>Clean up RememberMe authentication is it was configured.
->>Redirect to /login?logout.
+* Invalidate the HTTP session.
+* Clear the SecurityContextHolder.
+* Clean up RememberMe authentication is it was configured.
+* Redirect to /login?logout.
+
 >If custom changes are needed they can be added, in the same method as above, like this:
 ```java
     http
@@ -206,13 +216,51 @@ protected void configure(HttpSecurity http) throws Exception {
 }
 ```
 >These changes add, starting with *logoutUrl* line above: 
->>a custom logout page, 
->>a custom logout redirect page, 
->>a new logout handler on successful logout, 
->>a custom general logout handler,
->>deletes user named cookies. 
+* a custom logout page, 
+* a custom logout redirect page, 
+* a new logout handler on successful logout, 
+* a custom general logout handler,
+* deletes user named cookies. 
+
 
 ## JWT approach
+
+### Overview
+>A JSON Web Token (JWT) is a JSON object used to exchange information between parties. The exchange is done in a save way and it contains:
+* Header:
+	```json
+	{
+		"typ": "JWT",
+		"alg": "HS256"
+	}
+	```
+* Payload:
+	```json
+	{
+		"userId": "b08f86af-35da-48f2-8fab-cef3904660bd"
+	}
+	```
+* Signature:
+	```json
+	-xN_h82PHVTCMA9vdoHrcZxH-x5mb11y1537t3rGzcM
+	```
+
+### Creation and usage
+>*How to create a ready-to-transport header*
+>> The header contains information about how JWT signature should be computed. The "alg" key in our example says that HMAC-SHA256 algorithm should be used to create the signature. Before being transported header is Base64Url encoded.
+
+>*How to create a ready-to-transport payload*
+>> The data included in payload is also known as 'claims' of the JWT. There are a few standard but to mandatory like 'iss', 'sub' and 'exp'. Before being transported the payload is Base64Url encoded.
+
+>*How to create a ready-to-transport signature*
+>>To create the signature take the encoded header and the encoded payload and concatenate them via a dot. Then take the secret and sign the former concatenation using the algorithm specified in the header. Encode the result from the algorithm also using Base64Url encoding and here it is your signature.
+
+>*What is sent across?*
+>>All above are concatenated in the form of *header.payload.signature*:
+```json
+eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJiMDhmODZhZi0zNWRhLTQ4ZjItOGZhYi1jZWYzOTA0NjYwYmQifQ.-xN_h82PHVTCMA9vdoHrcZxH-x5mb11y1537t3rGzcM
+```
+>>You may notice that the header and the payload are concatenated to create the signature but are sent as distinct entities.
 
 
 ### References
@@ -220,8 +268,11 @@ protected void configure(HttpSecurity http) throws Exception {
 [cgisecurity.com]
 [contrastsecurity.com]
 [developer.com]
+[ietf.org]
 [jwt.io]
 [martinfowler.com]
 [owasp.org]
 [spring.io]
+[stackoverflow.com](https://stackoverflow.com/questions/201479/what-is-base-64-encoding-used-for/201510#201510)
 [synopsys.com]
+[wikipedia.org]
