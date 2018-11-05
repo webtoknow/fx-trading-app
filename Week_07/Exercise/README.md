@@ -4,7 +4,7 @@
 
 - [Exercise 1 - Create project](#exercise-1-create-project)
 - [Exercise 2 - Database Setup](#exercise-2-database-setup)
-- [Exercise 3 - Read data to controller](#exercise-3-read-data)
+- [Exercise 3 - Read data to controller](#exercise-3-read-data-to-controller)
  
  
  
@@ -131,7 +131,7 @@ server.port=8200
 Now run the main class.
 
 
- ## Exercise 2 - Create database
+ ## Exercise 2 - Database Setup
  
  Create in postgresql the database: "users"
  Use the following sql commands to create the prerequisites.
