@@ -170,3 +170,209 @@ Now user Grant Wizzard to grant access of your db to your db-user.
 
 
  ## Exercise 3 - Read data to controller
+ 
+ Create the following folders in the package: com.project.user.administration
+ 1) controller
+ 2) exception
+ 3) model
+ 4) repository
+ 5) services
+ 6) vo
+ 
+ Create the first entity 
+ 
+ ```Java
+ 
+ package com.project.user.administration.model;
+
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Table(name = "user_table")
+public class User {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id", updatable = false, nullable = false)
+    private Long userId;
+
+    @Column(columnDefinition = "user_name")
+    private String userName;
+
+    @Column(columnDefinition = "password")
+    private String password;
+
+    @Column(columnDefinition = "email")
+    private String email;
+
+    @OneToMany(mappedBy = "user")
+    private List<UserLogin> logins = new ArrayList<>();
+
+    public User(){
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public List<UserLogin> getLogins() {
+        return logins;
+    }
+
+    public void setLogins(List<UserLogin> logins) {
+        this.logins = logins;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+}
+ 
+```
+ 
+ 
+Create the user repository for the read an user
+ 
+ ```Java
+ 
+package com.project.user.administration.repository;
+
+import com.project.user.administration.model.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface UserRepository extends JpaRepository<User, Long> {
+    public User findByUserId(Long userId);
+}
+
+ ```
+ 
+ ```Java
+ Create the user value object to pass to the front end.
+ 
+ package com.project.user.administration.vo;
+
+public class UserRequestVo {
+
+    private String username;
+    private String email;
+    private String password;
+    private String token;
+
+    public UserRequestVo(){
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+}
+ ```
+ 
+Create the user service for the database operations
+ 
+ 
+ ```Java
+ 
+ package com.project.user.administration.services;
+
+
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.project.user.administration.model.User;
+import com.project.user.administration.model.UserLogin;
+import com.project.user.administration.repository.UserLoginRepository;
+import com.project.user.administration.repository.UserRepository;
+import com.project.user.administration.vo.UserAuthorizeResponseVo;
+import com.project.user.administration.vo.UserTokenResponseVo;
+import com.project.user.administration.vo.UserRequestVo;
+import org.apache.commons.lang3.time.DateUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+@Service
+public class UserService {
+
+
+@Autowired
+private UserRepository userRepository;
+
+
+ public UserRequestVo findByUserId(Long userId){
+
+        User user = userRepository.findByUserId(userId);
+
+        UserRequestVo uservo  = new UserRequestVo();
+        uservo.setUsername(user.getUserName());
+
+        return uservo;
+    }
+
+
+}
+ 
+```
+ 
