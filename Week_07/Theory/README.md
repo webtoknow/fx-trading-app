@@ -1,7 +1,7 @@
 # Week 7 - Development : software security
 ### Table of contents
 
-- [SpringBoot](#spring-boot)
+- [Spring Boot](#spring-boot)
   	- [About](#about)
   	- [Annotations](#annotations)
   	- [Code Example](#code-example)
@@ -24,7 +24,7 @@
   	- [Spring Data](#spring-data)
 - [References](#references)
 
-## SpringBoot
+## Spring Boot
 
 Spring Boot is an open source Java-based framework used to create Micro Services.
 It is easy to create a stand-alone and production ready spring application.
