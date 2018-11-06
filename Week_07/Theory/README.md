@@ -1,6 +1,10 @@
 # Week 7 - Development : software security
 ### Table of contents
 
+- [SpringBoot](#spring-boot)
+  	- [About](#about)
+  	- [Annotations](#annotations)
+  	- [Code Example](#code-example)
 - [Security in today context](#security-in-today-context)
 	+ [Digital security](#digital-security)
 	+ [Application security](#application-security)
@@ -13,17 +17,98 @@
 	+ [Building blocks](#building-blocks-for-java)
 - [JWT approach](#jwt-approach)
 	- [Overview](#overview)	
-- [SpringBoot](#spring-boot)
-  	- [About](#about)
-  	- [Annotations](#annotations)
-  	- [Code Example](#code-example)
+	- [Creation and usage](#creation-and-usage)
 - [Jpa](#Jpa)
   	- [Jpa Introduction](#jpa-introduction)
   	- [Jpa Entity](#jpa-entity)
   	- [Spring Data](#spring-data)
-	
-
 - [References](#references)
+
+## SpringBoot
+
+Spring Boot is an open source Java-based framework used to create Micro Services.
+It is easy to create a stand-alone and production ready spring application.
+
+
+
+The Spring Boot Maven plugin provides many convenient features:
+
+1) It collects all the jars on the classpath and builds a single, runnable jar, which makes it more convenient to execute and transport your service.
+2) searches for the public static void main() method to flag as a runnable class.
+3) It provides a built-in dependency resolver that sets the version number to match Spring Boot dependencies. 
+You can override any version you wish, but it will default to Boot’s chosen set of versions.
+
+
+## Annotations
+
+
+
+@SpringBootApplication:
+
+1) @Configuration tags the class as a source of bean definitions for the application context.
+
+2) @EnableAutoConfiguration tells Spring Boot to start adding beans based on classpath settings, other beans, and various property settings.
+
+Normally you would add @EnableWebMvc for a Spring MVC app, but Spring Boot adds it automatically when it sees spring-webmvc on the classpath. 
+
+This flags the application as a web application and activates key behaviors such as setting up a DispatcherServlet.(receives requests and maps to the coresponding classes)
+
+
+3) @ComponentScan tells Spring to look for other components, configurations, and services in the hello package, allowing it to find the controllers.
+
+
+The main() method uses Spring Boot’s SpringApplication.run() method to launch an application.
+
+
+There is also a CommandLineRunner method marked as a @Bean and this runs on start up. 
+It retrieves all the beans that were created either by your app or were automatically added thanks to Spring Boot. 
+
+
+
+## Code Example
+
+
+```Java
+package hello;
+
+
+@SpringBootApplication
+public class Application {
+
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+
+    @Bean
+    public CommandLineRunner commandLineRunner(ApplicationContext ctx) {
+        return args -> {
+
+            System.out.println("Let's inspect the beans provided by Spring Boot:");
+
+            String[] beanNames = ctx.getBeanDefinitionNames();
+            Arrays.sort(beanNames);
+
+            for (String beanName : beanNames) {
+                System.out.println(beanName);
+            }
+        };
+    }
+}
+```
+
+
+```Java
+package hello.controllers;
+
+@RestController
+public class HelloController {
+
+    @RequestMapping("/")
+    public String index() {
+        return "Greetings from Spring Boot!";
+    }
+}
+```
 
 ## Security in today context
 
@@ -71,22 +156,29 @@ This is a mix of other testing techniques, including SAST and DAST. It uses the 
 
 > As a software developer you are designing your software to be secure from scratch.
 > As a software developer you always validate your user's input and use the right encoding for the input.
+
 > As a software developer you handle user authentication and authorization.
+
 > As a software developer you handle correctly user sessions.
+
 > As a software developer you use the strongest available cryptography to secure data at rest and in transit.
+
 > As a software developer you ensure that all third party components are validated against your entity/company policies.
+
 > As a software developer you challenge any flaws in software design or architecture.
+
 > As a software developer you have and improve recurrently the 'Secure coding guidelines' for developers. The entire internal development community is participating here.
+
 > As a software developer you help your colleagues in DevOvs and Release Management to secure the configuration procedures and to securely deploy your application.
 
 > One the most unknown field of today software development is security design patterns. Let's add a few here:
->> * Single access point for login in.
->> * Clear distinction between authentication and authorization, also known as access control.
->> * Always use sessions to isolate information in multi-user environment.
->> * Limit the view using the principle 'access is allowed per need'. Default user has very limited access, usually at login page, general policy guide, user rights page and alike.
->> * Work with multi-layered security. Firewalls, anti-viruses, self-protection, etc.
->> * Sanitize your data by removing expired, duplicate or unnecessary data.
->> * Design to fail in a secure manner.
+* Single access point for login in.
+* Clear distinction between authentication and authorization, also known as access control.
+* Always use sessions to isolate information in multi-user environment.
+* Limit the view using the principle 'access is allowed per need'. Default user has very limited access, usually at login page, general policy guide, user rights page and alike.
+* Work with multi-layered security. Firewalls, anti-viruses, self-protection, etc.
+* Sanitize your data by removing expired, duplicate or unnecessary data.
+* Design to fail in a secure manner.
 
 ## Spring Security
 
@@ -99,11 +191,11 @@ This is a mix of other testing techniques, including SAST and DAST. It uses the 
 ### Authentication
 > Authentication is about ensuring that the entity/principal called in Spring accessing your protected resources is allowed to access it. First step is to identify the principal. Simplest form of identification is via username and password. Others, more sophisticated ways, are via LDAP (Lightweight Directory Access Protocol) or via CAS (Central Authentication Service) which is a single sign-on protocol.
 > Authentications supported:
->> HTTP Basic
->> Form-based authentication
->> LDAP 
->> Java Authentication and Authorization Service
->> Kerberos
+* HTTP Basic;
+* Form-based authentication
+* LDAP 
+* Java Authentication and Authorization Service
+* Kerberos
 
 ### Authorization
 > If the authentication is successful the principal goes to the second step. Now that we know who our user is what are the actions that is allowed to perform? Which are the areas where is allowed to navigate? If you are an admin you are probably allowed to do whatever you want, if you are an user you probably has much more limited access.
@@ -139,11 +231,11 @@ public class WebSecurityConfig implements WebMvcConfigurer {
 }
 ```
 >Some important takeaways from the code above:
->>Require authentication for every URL in the application.
->>Generates a basic login form.
->>Allow 'user' with 'password' to authenticate via form base authentication.
->>Allow user to logout.
->>Help with other ten plus features (cache control, prevents well know attacks).
+* Require authentication for every URL in the application.
+* Generates a basic login form.
+* Allow 'user' with 'password' to authenticate via form base authentication.
+* Allow user to logout.
+* Help with other ten plus features (cache control, prevents well know attacks).
 >How Spring knows that every URL needs to be authenticated? Or how does it know to support form based authentication? All is based on the default configuration of the *WebSecurityConfigurerAdapter* via *configure* method:
 ```java
 protected void configure(HttpSecurity http) throws Exception {
@@ -189,18 +281,21 @@ protected void configure(HttpSecurity http) throws Exception {
 }
 ```
 >Using the code above:
->>All URLs under */resources* and URLs equal with */signup* and equal to */about* are free to access.
->>All URLs under */admin* require the user to have an *ADMIN* role.
->>All URLs under */db* require the user to have both *ADMIN* and *DBA* roles.
->>All others require user to be authenticated via form login.
+* All URLs under */resources* and URLs equal with */signup* and equal to */about* are free to access.
+* All URLs under */admin* require the user to have an *ADMIN* role.
+
+* All URLs under */db* require the user to have both *ADMIN* and *DBA* roles.
+
+* All others require user to be authenticated via form login.
 
 
 >*Step E* Deal with custom logout
 > A few important things happen once the user is logged out. These are default actions built in Spring.
->>Invalidate the HTTP session.
->>Clear the SecurityContextHolder.
->>Clean up RememberMe authentication is it was configured.
->>Redirect to /login?logout.
+* Invalidate the HTTP session.
+* Clear the SecurityContextHolder.
+* Clean up RememberMe authentication is it was configured.
+* Redirect to /login?logout.
+
 >If custom changes are needed they can be added, in the same method as above, like this:
 ```java
     http
@@ -215,13 +310,171 @@ protected void configure(HttpSecurity http) throws Exception {
 }
 ```
 >These changes add, starting with *logoutUrl* line above: 
->>a custom logout page, 
->>a custom logout redirect page, 
->>a new logout handler on successful logout, 
->>a custom general logout handler,
->>deletes user named cookies. 
+* a custom logout page, 
+* a custom logout redirect page, 
+* a new logout handler on successful logout, 
+* a custom general logout handler,
+* deletes user named cookies. 
+
 
 ## JWT approach
+
+### Overview
+>A JSON Web Token (JWT) is a JSON object used to exchange information between parties. The exchange is done in a save way and it contains:
+* Header:
+	```json
+	{
+		"typ": "JWT",
+		"alg": "HS256"
+	}
+	```
+* Payload:
+	```json
+	{
+		"userId": "b08f86af-35da-48f2-8fab-cef3904660bd"
+	}
+	```
+* Signature:
+	```json
+	-xN_h82PHVTCMA9vdoHrcZxH-x5mb11y1537t3rGzcM
+	```
+
+### Creation and usage
+>*How to create a ready-to-transport header*
+>> The header contains information about how JWT signature should be computed. The "alg" key in our example says that HMAC-SHA256 algorithm should be used to create the signature. Before being transported header is Base64Url encoded.
+
+>*How to create a ready-to-transport payload*
+>> The data included in payload is also known as 'claims' of the JWT. There are a few standard but to mandatory like 'iss', 'sub' and 'exp'. Before being transported the payload is Base64Url encoded.
+
+>*How to create a ready-to-transport signature*
+>>To create the signature take the encoded header and the encoded payload and concatenate them via a dot. Then take the secret and sign the former concatenation using the algorithm specified in the header. Encode the result from the algorithm also using Base64Url encoding and here it is your signature.
+
+>*What is sent across?*
+>>All above are concatenated in the form of *header.payload.signature*:
+```json
+eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJiMDhmODZhZi0zNWRhLTQ4ZjItOGZhYi1jZWYzOTA0NjYwYmQifQ.-xN_h82PHVTCMA9vdoHrcZxH-x5mb11y1537t3rGzcM
+```
+>>You may notice that the header and the payload are concatenated to create the signature but are sent as distinct entities.
+
+
+## Jpa Introduction
+
+### What?
+Java Persistence API is a collection of classes and methods to persistently store the vast amounts of data into a database ,
+
+### Why?
+To reduce the burden of writting code for relational object management, a programmer follows the ‘JPA Provider’ framework, which allows easy interaction with database instance. Here the required framework is taken over by JPA.
+
+### Who?
+JPA is an open source API, therefore various enterprise vendors such as Oracle, Redhat, Eclipse, etc. provide new products by adding the JPA persistence flavor in them. Some of these products include:
+Hibernate, Eclipselink, Toplink, Spring Data JPA, etc.
+
+
+### Jpa Entity
+
+
+```Java
+
+@Entity
+@Table(name = "employee")
+public class Employee implements Serializable {
+
+	private static final long serialVersionUID = -3009157732242241606L;
+  
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name="id")
+	private long id;
+
+	@Column(name = "firstname")
+	private String firstName;
+
+	@Column(name = "lastname")
+	private String lastName;
+	
+	@Column(name = "age")
+	private int age;
+
+	protected Employee() {
+	}
+
+	public Employee(String firstName, String lastName,int age) {
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.age = age;
+	}
+	
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLast_Name(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public int getAge() {
+		return age;
+	}
+
+	public void setAge(int age) {
+		this.age = age;
+	}
+}
+
+```
+
+### Spring Data
+
+This spring-module provides spring data repository interfaces which are implemented to create JPA repositories.
+
+#### No More DAO Implementations
+
+Spring data provides a base class JpaRepository that helps us from writting the following methods:
+
+- findAll
+- count, delete, deleteAll, deleteAll, deleteById, existsById, findById, save
+- exists, findOne
+- deleteAllInBatch()
+- deleteInBatch(Iterable<T> entities)
+  
+  
+The repository interface is used for extending the CRUD interface. This interface adds the layer of a repository in the program. Spring Data JPA provides two major ways of creating queries. These queries are then used in the repository interface to fetch the data from the database.
+
+
+
+```Java
+
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface EmployeeRepository extends CrudRepository<Employee, Long>{
+	List findByLastName(String lastName);
+	
+@Query("SELECT e FROM Employee e WHERE e.age = :age")
+    public List findByAge(@Param("age") int age);
+}
+
+
+```
 
 
 
@@ -434,11 +687,14 @@ public interface EmployeeRepository extends CrudRepository<Employee, Long>{
 
 ### References
 
-[cgisecurity.com]
-[contrastsecurity.com]
-[developer.com]
-[jwt.io]
-[martinfowler.com]
-[owasp.org]
-[spring.io]
-[synopsys.com]
+* [cgisecurity.com](cgisecurity.com)
+* [contrastsecurity.com](contrastsecurity.com)
+* [developer.com](developer.com)
+* [ietf.org](https://tools.ietf.org/html/rfc7519)
+* [jwt.io](jwt.io)
+* [martinfowler.com](martinfowler.com)
+* [owasp.org](wasp.org)
+* [spring.io](spring.io)
+* [stackoverflow.com](https://stackoverflow.com/questions/201479/what-is-base-64-encoding-used-for/201510#201510)
+* [synopsys.com](synopsys.com)
+* [wikipedia.org](wikipedia.org)
