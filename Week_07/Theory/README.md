@@ -24,7 +24,7 @@
   	- [Spring Data](#spring-data)
 - [References](#references)
 
-## Spring Boot
+## About
 
 Spring Boot is an open source Java-based framework used to create Micro Services.
 It is easy to create a stand-alone and production ready spring application.
