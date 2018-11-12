@@ -32,7 +32,6 @@ A components is a glob of software that's intended to be used, without change, b
 A service is similar to a component in that it's used by foreign applications. The main difference is that I expect a component to be used locally (think jar file, assembly, dll, or a source import).
 A service will be used remotely through some remote interface, either synchronous or asynchronous (eg web service, messaging system, RPC, or socket.)
 
-I mostly use service in this article, but much of the same logic can be applied to local components too. Indeed often you need some kind of local component framework to easily access a remote service. But writing "component or service" is tiring to read and write, and services are much more fashionable at the moment.
 
 
 ## Inversion of Control
@@ -91,6 +90,18 @@ public class Box {
 }
 ```
 
+```Java
+package hello;
+
+public class Box {
+    private Item item;
+    
+    public setItem(Item item) {
+        this.item = item;
+    }
+}
+```
+
 
 
 In case of Field-Based DI, we can inject the dependencies by marking them with an @Autowired annotation:
@@ -111,7 +122,7 @@ While constructing the Box object, if there’s no constructor or setter method 
 
 We can also achieve this using XML configuration.
 
-This approach might look simpler and cleaner but is not recommended to use because it has a few drawbacks such as:
+-- it has a few drawbacks such as:
 
 This method uses reflection to inject the dependencies, which is costlier than constructor-based or setter-based injection
 It’s really easy to keep adding multiple dependencies using this approach. If you were using constructor injection having multiple arguments would have made us think that the class does more than one thing which can violate the Single Responsibility Principle.
@@ -122,8 +133,12 @@ It’s really easy to keep adding multiple dependencies using this approach. If 
 There are many benefits to microservices. Because of their isolation and strict requirement to communicate through well-defined interfaces, microservices prevent quick and dirty solutions often found in monoliths. These hacks inside of a monolith result in a loss of cohesion and an increase in coupling --  two primary causes of complexity.
 
 
-Complexity comes from low cohesion and high coupling. Microservices provides the structure to keep that at bay.
+Complexity comes from low cohesion and high coupling. Microservices provide the structure to keep that at bay.
 
+ degree to which the elements inside a module belong together
+ degree of interdependence between software modules
+ 
+ Which is which?
 
 #References
 

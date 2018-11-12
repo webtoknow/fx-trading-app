@@ -130,6 +130,7 @@ import java.util.HashMap;
 
 public enum ECurrency {
 	
+    //EUR("EUR"),
     //todo add eur, ron, gbp, usd
     //add label property
     //add constructor with label property as parameter
@@ -215,7 +216,9 @@ Add quote logic in Controller
 	private static final Map<ECurrency, Float> GBP_RATES = new HashMap<ECurrency, Float>();
 	private static final Map<ECurrency, Float> RON_RATES = new HashMap<ECurrency, Float>();
 
-
+ / Static block is used for initializing the static variables.
+ //This block gets executed when the class is loaded in the memory
+ //can we have more than one?
 
 	static {
 		EUR_RATES.put(ECurrency.GBP, 0.9F);
