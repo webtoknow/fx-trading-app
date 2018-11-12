@@ -4,16 +4,18 @@
 
 - [Exercise 1 - Create project](#exercise-1---create-project)
 - [Exercise 2 - Currency enum and rateVO](#exercise-2---create-currency-enum-and-ratevo)
-- [Exercise 2 - Currency enum](#exercise-2---create-currency-enum)
-- [Exercise 2 - Currency enum](#exercise-2---create-currency-enum)
-- [Exercise 2 - Currency enum](#exercise-2---create-currency-enum)
-- [Exercise 2 - Currency enum](#exercise-2---create-currency-enum)
+- [Exercise 3 - Create controller](#exercise-3---)
+- [Exercise 4 - Check](#exercise-4--)
+- [Exercise 5 - Add quote logic](#exercise-5---)
+- [Exercise 6 - Tidy up](#exercise-6---)
 
 #Exercise 1
 
  Use your favourite IDE to create a simple maven project.
  Update pom.xml with the following tags:
  
+ Or, use spring initializer:
+ add WEB, devtools
  
 ```XML
  
