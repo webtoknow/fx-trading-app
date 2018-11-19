@@ -23,7 +23,7 @@ public class UserAuthProxyService {
 
   private static final Logger log = LoggerFactory.getLogger(UserAuthProxyService.class);
 
-  public AuthResponse authorizeUser(String token) throws IOException {
+  public AuthResponse authorizeUser(String token) {
     try {
       String postBody = String.format("{\"token\": \"%s\"}", token);
 
