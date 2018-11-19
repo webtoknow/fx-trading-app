@@ -1,6 +1,9 @@
 # Week 9 - Development of Fxtrading microservice
 
-Fxtrading service
+Before developing the Fxtrading service you can take a look at the application architecture.
+
+![alt text](https://github.com/WebToLearn/fx-trading-app/blob/fxtrading-docs/Week_09/Exercise/architecture.png)
+
 
 - [Exercise I - Importing initial project setup in IDE](#exercise-I)
 - [Exercise II - Database Setup](#exercise-II)
