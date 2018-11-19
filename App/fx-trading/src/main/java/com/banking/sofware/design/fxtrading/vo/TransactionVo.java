@@ -22,10 +22,6 @@ public class TransactionVo {
 
   private Long date;
 
-  public TransactionVo() {
-
-  }
-
   public BigDecimal getId() {
     return id;
   }
