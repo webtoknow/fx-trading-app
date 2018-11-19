@@ -10,7 +10,7 @@ Fxtrading service
 - [Exercise VI - Secure the API with authorization filter](#exercise-VI)
 
 
-## Exercise I - Importing initial project setup in IDE <a name="#exercise-I"></a>
+## Exercise I - Importing initial project setup in IDE <a name="exercise-I"></a>
 
 Import in the IDE the starter project. It should be imported as a Maven project.
 
@@ -21,7 +21,7 @@ Notes:
 For example: Tomcat server is defined to run on port 8210 by setting property *server.port*
 4. Under the root package there is a *configuration* folder containing the class CustomWebSecurityConfigurerAdapter. This overrides the default Spring Security configuration
 
-## Exercise II - Database Setup <a name="#exercise-II"></a>
+## Exercise II - Database Setup <a name="exercise-II"></a>
 
 1. Create the database schema **fxtrading**
 2. Create the **transactions** table. 
@@ -39,7 +39,7 @@ spring.datasource.username=<VALUE>
 spring.datasource.password=<VALUE>
 ```
 
-## Exercise III - Implement REST endpoint for displaying list of all trades <a name="#exercise-III"></a>
+## Exercise III - Implement REST endpoint for displaying list of all trades <a name="exercise-III"></a>
 
 For this exercise we will need to create:
 1. a Hibernate @Entity class that maps to the *transactions* table
@@ -324,7 +324,7 @@ public class FxTradingRestController {
 After completing steps 1-7 of exercise III you should have a functional REST endpoint for listing all trades.
 It can now be tested with a tool like Postman
  
-## Exercise IV - Implement remote REST endpoint caller <a name="#exercise-IV"></a>
+## Exercise IV - Implement remote REST endpoint caller <a name="exercise-IV"></a>
 
 Add class RemoteServiceCaller in *service* package
 This class will be used to call remote REST services
@@ -408,7 +408,7 @@ public class RemoteServiceCaller {
   }
 }
 ```
-## Exercise V - Implement functionality for saving trades <a name="#exercise-V"></a>
+## Exercise V - Implement functionality for saving trades <a name="exercise-V"></a>
 
 Now using the remote service caller we can call quote service to find out the quote for a transaction at a given moment.
 
@@ -542,7 +542,7 @@ Note that you need to add a class dependency of QuoteProxyService. Hint: use @Au
   }
   ```
  
-## Exercise VI - Secure the API with authorization filter <a name="#exercise-VI"></a>
+## Exercise VI - Secure the API with authorization filter <a name="exercise-VI"></a>
 
 Finally we will secure the REST endpoints.
 
