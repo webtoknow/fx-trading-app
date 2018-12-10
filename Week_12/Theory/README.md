@@ -61,3 +61,8 @@ This technique is mostly used when the tests are lacking or not reliable or if t
 Amazon Web Services  https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-attribute-updatepolicy.html 
 Docker Swarm https://docs.docker.com/engine/swarm/swarm-tutorial/rolling-update/
 Kubernetes https://kubernetes.io/docs/tutorials/kubernetes-basics/update/update-intro/ 
+
+
+## What is DevOps ?  
+
+https://www.youtube.com/watch?v=_I94-tJlovg 
