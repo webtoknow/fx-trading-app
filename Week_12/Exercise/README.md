@@ -12,8 +12,7 @@ the service in order to deliver value to the customer
 
 - Release and deployment management also ensures handover to service operations takes place and that suitable
 training and documentation exists to ensure ongoing support of the new service.
-
-http://www.datacenterjournal.com/wp-content/uploads/2018/04/plutoradevops.jpg 
+![Deployemnt](http://www.datacenterjournal.com/wp-content/uploads/2018/04/plutoradevops.jpg  "Deployemnt")
 
 
 ## What is High Availability ? 
