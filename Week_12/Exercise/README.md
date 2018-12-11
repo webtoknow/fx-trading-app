@@ -16,12 +16,15 @@ Save private key as .ppk
 Open Putty and create connections to all 3 machines (Use Public IPs and go to Connection->SSH->Auth and browse to .ppk key)
 
 - Run below commands to set a simpler hostname on all 3 hosts:
+
+```bash
 sudo -i
 vi /etc/hostname
 replace hostname (e.g. ip-172-31-44-160.eu-central-1.compute.internal -> master-node.eu-central-1.compute.internal)
 hostname -F /etc/hostname
 logout
 sudo -i
+```
 
 - Get the IP of each host by running the command: ifconfig eth0 | grep -w 'inet' | awk '{print $2}'
 and update /etc/hosts file on master-node, as in below example:
