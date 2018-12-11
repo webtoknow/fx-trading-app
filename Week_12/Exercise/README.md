@@ -26,26 +26,39 @@ logout
 sudo -i
 ```
 
-- Get the IP of each host by running the command: ifconfig eth0 | grep -w 'inet' | awk '{print $2}'
+- Get the IP of each host by running the command: 
+```bash
+ifconfig eth0 | grep -w 'inet' | awk '{print $2}'
+```
 and update /etc/hosts file on master-node, as in below example:
 
+```bash
 127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
 ::1         localhost6 localhost6.localdomain6
 172.31.44.160 master-node
 172.31.45.114 dev-node
 172.31.42.203 sit-node
-
+```
 - Generate ssh keys on master, as ec2-user
+
+```bash
 su - ec2-user
 cd ~/.ssh
 ssh-keygen -t rsa
 cat id_rsa.pub >> authorized_keys
+```
 
-- Create a new key file with the content of .ppk key provided by Amazon and name it as amazon.pem (in ~root/.ssh)
+- Create a new key file with the content of .ppk key provided by Amazon and name it as amazon.pem 
+
+```bash
+(in ~root/.ssh)
 vi amazon.pem
 chmod 400 amazon.pem
+```
 
 - Run below commands on master to copy the keys on the remaining hosts
+
+```bash
 scp -i amazon.pem -p * dev-node:~/.ssh
 scp -i amazon.pem -p * sit-node:~/.ssh
 ssh master-node "sudo cp .ssh/* ~root/.ssh"
@@ -54,11 +67,13 @@ ssh sit-node "sudo cp .ssh/* ~root/.ssh"
 sudo -i
 scp /etc/hosts dev-node:/etc
 scp /etc/hosts sit-node:/etc
-
+```
 Passwordless ssh is set
 
 ----------------------------------------------------------------------------------------------------------------
 Run below commands to install the required softaware on all node (java, tomcat, jenkins)
+
+```bash
 sudo -i
 sudo amazon-linux-extras install -y ansible2
 sed -i 's|#inventory      = /etc/ansible/hosts|inventory      = /root/ansible/hosts|' /etc/ansible/ansible.cfg
@@ -69,8 +84,11 @@ master-node
 [nodes]
 dev-node
 sit-node
+```
 
 - vi install_node.sh and copy below content:
+
+```bash
 echo "Installing jdk"
 yum install -y java-1.8.0-openjdk
 
@@ -83,15 +101,17 @@ echo '<Context privileged="true" antiResourceLocking="false"
          docBase="${catalina.home}/webapps/manager">
     <Valve className="org.apache.catalina.valves.RemoteAddrValve" allow="^.*$" />
 </Context>' > manager.xml
+mkdir -p apache-tomcat-8.5.35/conf/Catalina/localhost/
 cp manager.xml /root/apache-tomcat-8.5.35/conf/Catalina/localhost/
 
 sed -i '/<\/tomcat-users>/i <user username="deploy" password="deploy" roles="manager-script"/>' /root/apache-tomcat-8.5.35/conf/tomcat-users.xml;
-cp manager.xml /root/apache-tomcat-8.5.35/conf/Catalina/localhost/
 sleep 3
 /root/apache-tomcat-8.5.35/bin/startup.sh
+```
 
 - vi install_master.sh and copy below content:
 
+```bash
 echo "Installing jdk"
 yum install -y java-1.8.0-openjdk
 
@@ -111,33 +131,17 @@ sed -i 's|/var/lib/jenkins|/jenkins|' /etc/passwd
 sed -i 's|JENKINS_HOME="/var/lib/jenkins"|JENKINS_HOME="/jenkins"|' /etc/sysconfig/jenkins
 
 service jenkins restart
+```
 
-- vi install_nodes.sh and copy below content:
-
-echo "Installing jdk"
-yum install -y java-1.8.0-openjdk
-
-echo "Installing tomcat"
-wget https://archive.apache.org/dist/tomcat/tomcat-8/v8.5.35/bin/apache-tomcat-8.5.35.tar.gz;
-sleep 3
-tar xvf apache-tomcat-8.5.35.tar.gz
-
-echo '<Context privileged="true" antiResourceLocking="false"
-         docBase="${catalina.home}/webapps/manager">
-    <Valve className="org.apache.catalina.valves.RemoteAddrValve" allow="^.*$" />
-</Context>' > manager.xml
-mkdir -p apache-tomcat-8.5.35/conf/Catalina/localhost/
-cp manager.xml /root/apache-tomcat-8.5.35/conf/Catalina/localhost/
-
-sed -i '/<\/tomcat-users>/i <user username="deploy" password="deploy" roles="manager-script"/>' /root/apache-tomcat-8.5.35/conf/tomcat-users.xml;
-sleep 3
-/root/apache-tomcat-8.5.35/bin/startup.sh
 
 Run below commands on master
+
+```bash
 chmod 744 install_master.sh install_nodes.sh
 ansible nodes -m shell -a "mkdir ansible;scp -p master-node:~/ansible/*.sh ~/ansible"
 ansible master -m shell -a "~/ansible/install_master.sh"
 ansible nodes -m shell -a "~/ansible/install_nodes.sh"
+```
 
 ------------------------------------------------------------------------------------
 Verify tomcat status on dev-node and sit-node:
