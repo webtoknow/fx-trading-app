@@ -179,18 +179,18 @@ Click new Item, set name as Test, Freestyle project, OK
 Click new Item, set name as DeploySIT, Freestyle project, OK
 
 1. Edit Build
-Source Code Management: Set GitHub repo URL
+Source Code Management: Set GitHub repo URL,
 Build triggers: Poll SCM and Scheduler H/5 * * * *
 Post build actions: Add post-build action->Build other projects and select DeployDEV
 
 2. Edit DeployDEV
 Check Copy data to workspace and set path to: /jenkins/workspace/Build/
-Post build actions: Deploy ear/war to container
- EAR/WAR files: **/*.ear
-Context path: <application context>
-Tomcat URL: http://<dev-node-public-ip>:8080
-Set credentials: deploy/deploy
-Post build actions: Add post-build action->Build other projects and select Test
+Post build actions: Deploy ear/war to container,
+ EAR/WAR files: **/*.ear,
+Context path: <application context>,
+Tomcat URL: http://<dev-node-public-ip>:8080,
+Set credentials: deploy/deploy,
+Post build actions: Add post-build action->Build other projects and select Test.
   
 3. Edit Test
 Build->Execute shell and add below text:
@@ -200,14 +200,14 @@ curl http://<dev-node-public-ip>:8080/HWS/hi | grep Hello
 Post build actions: Add post-build action->Build other projects and select DeploySIT
 
 3. Edit DeploySIT
-Check Copy data to workspace and set path to: /jenkins/workspace/Build/
-Post build actions: Deploy ear/war to container
- EAR/WAR files: **/*.ear
-Context path: <application context>
-Tomcat URL: http://<sit-node-public-ip>:8080
-Set credentials: deploy/deploy
+Check Copy data to workspace and set path to: /jenkins/workspace/Build/,
+Post build actions: Deploy ear/war to container,
+ EAR/WAR files: **/*.ear,
+Context path: <application context>,
+Tomcat URL: http://<sit-node-public-ip>:8080,
+Set credentials: deploy/deploy,
 
-Click on "+" near All, set view name: DeliveryPipeline and select DeliveryPipelineView, OK
+Click on "+" near All, set view name: DeliveryPipeline and select DeliveryPipelineView, OK.
 On the bottom side, Pipelines: Add Components and select the first job (Build)
 
 -----------------------------------
