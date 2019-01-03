@@ -8,82 +8,82 @@
 **Summary Table of Core Performance-Testing Activities**
 	The following table summarizes the seven core performance-testing activities along with the most common input and output for each activity. Note that project context is not listed, although it is a critical input item for each activity.
 	
-**Summary Table of Core Performance-Testing Activities**
-**Activity 1. Identify the Test Environment**
-Input
-	⦁	Logical and physical production architecture 
-	⦁	Logical and physical test architecture 
-	⦁	Available tools
-Output
-	⦁	Comparison of test and production environments 
-	⦁	Environment-related concerns 
-	⦁	Determination of whether additional tools are required 
+**Summary Table of Core Performance-Testing Activities**  
+**Activity 1. Identify the Test Environment**  
+  Input  
+ 	⦁	   Logical and physical production architecture
+  	⦁	   Logical and physical test architecture   
+	⦁	  Available tools  
+Output  
+	⦁	  Comparison of test and production environments  
+	⦁	  Environment-related concerns  
+	⦁	  Determination of whether additional tools are required  
 
-**Activity 2. Identify Performance Acceptance Criteria**
-Input
-	⦁	Client expectations 
-	⦁	Risks to be mitigated 
-	⦁	Business requirements 
-	⦁	Contractual obligations 
-Output
-	⦁	Performance-testing success criteria 
-	⦁	Performance goals and requirements 
-	⦁	Key areas of investigation 
-	⦁	Key performance indicators
-	⦁	Key business indicators
+**Activity 2. Identify Performance Acceptance Criteria**    
+  Input  
+	⦁	  Client expectations  
+	⦁	  Risks to be mitigated  
+	⦁	  Business requirements  
+	⦁	  Contractual obligations  
+  Output  
+	⦁	  Performance-testing success criteria   
+	⦁	  Performance goals and requirements  
+	⦁	  Key areas of investigation   
+	⦁	  Key performance indicators  
+	⦁	  Key business indicators  
 
-**Activity 3. Plan and Design Tests**	
-Input
-	⦁	Available application features and/or components 
-	⦁	Application usage scenarios 
-	⦁	Unit tests 
-	⦁	Performance acceptance criteria 
-Output
-	⦁	Conceptual strategy 
-	⦁	Test execution prerequisites 
-	⦁	Tools and resources required 
-	⦁	Application usage models to be simulated 
-	⦁	Test data required to implement tests 
-	⦁	Tests ready to be implemented 
+**Activity 3. Plan and Design Tests**	  
+  Input  
+	⦁	  Available application features and/or components  
+	⦁	  Application usage scenarios   
+	⦁	  Unit tests   
+	⦁	  Performance acceptance criteria   
+  Output  
+	⦁	  Conceptual strategy   
+	⦁	  Test execution prerequisites   
+	⦁	  Tools and resources required   
+	⦁	  Application usage models to be simulated   
+	⦁	  Test data required to implement tests   
+	⦁	  Tests ready to be implemented   
 
-**Activity 4. Configure the Test Environment**
-Input
-	⦁	Conceptual strategy 
-	⦁	Available tools 
-	⦁	Designed tests 
-Output
-	⦁	Configured load-generation and resource-monitoring tools 
-	⦁	Environment ready for performance testing 
+**Activity 4. Configure the Test Environment**  
+  Input  
+	⦁	  Conceptual strategy   
+	⦁	  Available tools   
+	⦁	  Designed tests   
+  Output  
+	⦁	  Configured load-generation and resource-monitoring tools   
+	⦁	  Environment ready for performance testing   
 
-**Activity 5. Implement the Test Design**
-Input
-	⦁	Conceptual strategy 
-	⦁	Available tools/environment 
-	⦁	Available application features and/or components 
-	⦁	Designed tests 
-Output
-	⦁	Validated, executable tests 
-	⦁	Validated resource monitoring 
-	⦁	Validated data collection 
+**Activity 5. Implement the Test Design**  
+  Input  
+	⦁	  Conceptual strategy   
+	⦁	  Available tools/environment   
+	⦁	  Available application features and/or components   
+	⦁	  Designed tests   
+  Output  
+	⦁	  Validated, executable tests   
+	⦁	  Validated resource monitoring   
+	⦁	  Validated data collection   
 
-**Activity 6. Execute the Test**
-Input
-	⦁	Task execution plan 
-	⦁	Available tools/environment 
-	⦁	Available application features and/or components 
-	⦁	Validated, executable tests 
-Output
-	⦁	Test execution results 
+**Activity 6. Execute the Test**  
+  Input  
+	⦁	  Task execution plan   
+	⦁	  Available tools/environment   
+	⦁	  Available application features and/or components   
+	⦁	  Validated, executable tests   
+  Output  
+	⦁	  Test execution results   
 
-**Activity 7. Analyze Results, Report, and Retest**
-Input
-	⦁	Task execution results 
-	⦁	Performance acceptance criteria 
-	⦁	Risks, concerns, and issues 	
-Output
-	⦁	Results analysis 
-	⦁	Recommendations 
-	⦁	Reports 
+**Activity 7. Analyze Results, Report, and Retest**  
+  Input  
+	⦁	  Task execution results   
+	⦁	  Performance acceptance criteria   
+	⦁	  Risks, concerns, and issues     	
+  Output    
+	⦁	  Results analysis   
+	⦁	  Recommendations   
+	⦁	  Reports   
 
 **Core Performance-Testing Activities Walkthrough**
 The seven core performance-testing activities can be summarized as follows. 
