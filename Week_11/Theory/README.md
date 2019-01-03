@@ -12,12 +12,12 @@
 
 | Activity  | Input | Output|
 | :---         |     :---:      |          ---: |
-| Activity 1. Identify the Test Environment | ⦁	Logical and physical production architecture 
-⦁	Logical and physical test architecture 
-⦁	Available tools 
-     | Comparison of test and production environments 
-⦁	Environment-related concerns 
-⦁	Determination of whether additional tools are required 
+| Activity 1. Identify the Test Environment	 | 	⦁	Logical and physical production architecture 
+							⦁	Logical and physical test architecture 
+							⦁	Available tools 
+     										| Comparison of test and production environments 
+										⦁	Environment-related concerns 
+										⦁	Determination of whether additional tools are required 
    |
 | git diff     | git diff       | git diff      |
 
