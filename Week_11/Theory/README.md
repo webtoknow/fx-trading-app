@@ -9,6 +9,16 @@
 	The following table summarizes the seven core performance-testing activities along with the most common input and output for each activity. Note that project context is not listed, although it is a critical input item for each activity.
 	
 **Summary Table of Core Performance-Testing Activities**
+| Activity  | Input | Output|
+| :---         |     :---:      |          ---: |
+| Activity 1. Identify the Test Environment    | ⦁	Logical and physical production architecture 
+⦁	Logical and physical test architecture 
+⦁	Available tools 
+     | ⦁	Comparison of test and production environments 
+⦁	Environment-related concerns 
+⦁	Determination of whether additional tools are required 
+   |
+| git diff     | git diff       | git diff      |
 Activity 	Input 	Output 
 Activity 1. Identify the Test Environment 	⦁	Logical and physical production architecture 
 ⦁	Logical and physical test architecture 
