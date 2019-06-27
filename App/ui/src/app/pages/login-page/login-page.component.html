@@ -9,20 +9,24 @@
           <h4>Login to your account</h4>
         </div>
         <form id="login" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+          <!-- Username -->
           <div class="form-group flex">
             <i class="fa fa-user icon" aria-hidden="true"></i>
             <div class="col">
-              <input type="text" class="form-control form-control-sm" id="inputUsername" formControlName="username" placeholder="username"
+              <input type="text" class="form-control form-control-sm" formControlName="username"
+                placeholder="username" autocomplete="username" id="username"
                 [ngClass]="{ 'is-invalid': submitted && f.username.errors }" />
               <span *ngIf="submitted && f.username.errors" class="invalid-feedback">
                 <span *ngIf="f.username.errors.required">Username is required!</span>
               </span>
             </div>
           </div>
+          <!-- Password -->
           <div class="form-group flex">
             <i class="fa fa-lock icon" aria-hidden="true"></i>
             <div class="col">
-              <input type="password" class="form-control form-control-sm" id="inputPassword" formControlName="password" placeholder="password"
+              <input type="password" class="form-control form-control-sm" formControlName="password" 
+                placeholder="password" autocomplete="current-password" id="password" 
                 [ngClass]="{ 'is-invalid': submitted && f.password.errors }" />
               <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
                 <div *ngIf="f.password.errors.required">Password is required!</div>
