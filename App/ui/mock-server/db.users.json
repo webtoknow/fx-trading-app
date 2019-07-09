@@ -1,0 +1,19 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "username": "danamun",
+      "email": "danamun@email.com",
+      "password": "danamun"
+    },
+    {
+      "id": 2,
+      "username": "bogdan",
+      "email": "bogdan@email.com",
+      "password": "bogdan"
+    }
+  ],
+  "roles": [],
+  "password_reset_tokens": [],
+  "user_settings": []
+}
