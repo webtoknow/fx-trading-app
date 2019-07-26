@@ -37,7 +37,7 @@ export class LoginPageComponent implements OnInit {
 
   }
 
-  // convenience getter for easy access to form fields
+  // Convenience getter for easy access to form fields
   get f() {
     return this.loginForm.controls;
   }
@@ -45,7 +45,7 @@ export class LoginPageComponent implements OnInit {
   onSubmit() {
     this.submitted = true;
 
-    // exit here if form is invalid
+    // Exit function if form is invalid
     if (this.loginForm.invalid) {
       return;
     }
