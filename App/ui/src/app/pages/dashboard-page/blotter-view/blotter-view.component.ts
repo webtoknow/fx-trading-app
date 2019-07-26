@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { Transaction, SortType } from 'src/app/models/transaction';
-import { filter } from 'rxjs/internal/operators/filter';
+import { Transaction } from 'src/app/models/transaction';
 import { TradeService } from '../../../services/trade.service';
 import { Subject } from 'rxjs';
-import { takeUntil, map } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 
 
 @Component({
