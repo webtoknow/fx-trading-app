@@ -33,13 +33,13 @@ export class RegisterPageComponent implements OnInit {
     })
   }
 
-  //getter for easy access to form fields
+  // Convenience getter for easy access to form fields
   get f() { return this.registerForm.controls; }
 
   onSubmit() {
     this.submitted = true;
 
-    //if form is invalid
+    // Exit function if form is invalid
     if (this.registerForm.invalid) {
       return;
     }
