@@ -1,0 +1,7 @@
+{
+    "currencies": ["EUR", "RON", "USD", "GBP"],
+    "fx-rate": {
+        "buyRate": 1.3,
+        "sellRate": 1.2
+    }
+}
