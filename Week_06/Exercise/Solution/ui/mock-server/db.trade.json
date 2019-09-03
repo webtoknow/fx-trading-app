@@ -1,0 +1,158 @@
+{
+  "transactions": [
+    {
+      "id": 1234,
+      "username": "Catalin Popescu",
+      "primaryCcy": "USD",
+      "secondaryCcy": "EUR",
+      "rate": "0.86",
+      "action": "SELL",
+      "notional": 1000000,
+      "tenor": "1M",
+      "date": 1537511800526
+    },
+    {
+      "id": 212,
+      "username": "Bogdan Pascu",
+      "primaryCcy": "USD",
+      "secondaryCcy": "EUR",
+      "rate": "0.15",
+      "action": "BUY",
+      "notional": 1000000,
+      "tenor": "1M",
+      "date": 1536560103000
+    },
+    {
+      "id": 34,
+      "username": "George Popescu",
+      "primaryCcy": "EUR",
+      "secondaryCcy": "USD",
+      "rate": "0.63",
+      "action": "SELL",
+      "notional": 1000000,
+      "tenor": "3M",
+      "date": 1537511800526
+    },
+    {
+      "id": 455,
+      "username": "Andrei Nare",
+      "primaryCcy": "USD",
+      "secondaryCcy": "EUR",
+      "rate": "1.11",
+      "action": "SELL",
+      "notional": 1000000,
+      "tenor": "1M",
+      "date": 1537511800526
+    },
+    {
+      "id": 55,
+      "username": "George Barbu",
+      "primaryCcy": "RON",
+      "secondaryCcy": "EUR",
+      "rate": "0.46",
+      "action": "SELL",
+      "notional": 1000000,
+      "tenor": "1M",
+      "date": 1536560103000
+    },
+    {
+      "id": 3133,
+      "username": "Maria Munteanu",
+      "primaryCcy": "USD",
+      "secondaryCcy": "GBP",
+      "rate": "1.04",
+      "action": "BUY",
+      "notional": 1000000,
+      "tenor": "1M",
+      "date": 1537511800526
+    },
+    {
+      "id": 3123,
+      "username": "Mihai Nedelcu",
+      "primaryCcy": "EUR",
+      "secondaryCcy": "GBP",
+      "rate": "0.86",
+      "action": "BUY",
+      "notional": 1000000,
+      "tenor": "1M",
+      "date": 1536560103000
+    },
+    {
+      "id": 4523,
+      "username": "Dan Purcarete",
+      "primaryCcy": "USD",
+      "secondaryCcy": "GBP",
+      "rate": "0.31",
+      "action": "SELL",
+      "notional": 1000000,
+      "tenor": "1M",
+      "date": 1537511800526
+    },
+    {
+      "id": 123,
+      "username": "Ileana Geo",
+      "primaryCcy": "RON",
+      "secondaryCcy": "USD",
+      "rate": "0.67",
+      "action": "SELL",
+      "notional": 1000000,
+      "tenor": "3M",
+      "date": 1536560103000
+    },
+    {
+      "id": 12,
+      "username": "Dana Popescu",
+      "primaryCcy": "EUR",
+      "secondaryCcy": "USD",
+      "rate": "0.61",
+      "action": "SELL",
+      "notional": 1000000,
+      "tenor": "1M",
+      "date": 1537511800526
+    },
+    {
+      "id": 1,
+      "username": "George Nicolae",
+      "primaryCcy": "USD",
+      "secondaryCcy": "GBP",
+      "rate": "1.23",
+      "action": "SELL",
+      "notional": 234324,
+      "tenor": "1M",
+      "date": 1537511800526
+    },
+    {
+      "id": 1234,
+      "username": "Piti Popescu",
+      "primaryCcy": "USD",
+      "secondaryCcy": "RON",
+      "rate": "1.01",
+      "action": "BUY",
+      "notional": 10050000,
+      "tenor": "1M",
+      "date": 1536560103000
+    },
+    {
+      "id": 55,
+      "username": "Adriana Popescu",
+      "primaryCcy": "USD",
+      "secondaryCcy": "EUR",
+      "rate": "0.12",
+      "action": "BUY",
+      "notional": 1234,
+      "tenor": "1M",
+      "date": 1536560103000
+    },
+    {
+      "id": 5234,
+      "username": "George Marcu",
+      "primaryCcy": "USD",
+      "secondaryCcy": "RON",
+      "rate": "0.45",
+      "action": "BUY",
+      "notional": 555.23,
+      "tenor": "3M",
+      "date": 1536560103000
+    }
+  ]
+}

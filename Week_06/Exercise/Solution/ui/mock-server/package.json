@@ -1,0 +1,18 @@
+{
+  "name": "mock-server",
+  "version": "1.0.0",
+  "description": "Mock server",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "concurrently \"node server.js\" \"json-server --watch db.trade.json --port 8210\" \"json-server --watch db.quote.json --port 8220\""
+  },
+  "author": "Bogdan Nicolae",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "concurrently": "^4.1.1",
+    "json-server": "^0.15.0",
+    "jsonwebtoken": "^8.5.1"
+  }
+}
