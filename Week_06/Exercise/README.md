@@ -244,18 +244,19 @@ import {startWith, switchMap} from "rxjs/operators";
     <div class="flex-vertical-centered filter-group">
       <span for="dateFilter">Date&nbsp;&nbsp;</span>
       <div class="input-group input-group-sm">
-        <input 
-          type="text" 
-          class="form-control form-control-sm" 
-          placeholder="Please select&nbsp;" 
-          [(ngModel)]="filter.date" 
-          (ngModelChange)="filterBy($event)" 
+        <input
+          type="text"
+          class="form-control form-control-sm"
+          placeholder="Please select&nbsp;"
+          [(ngModel)]="filter.date"
+          (ngModelChange)="filterBy($event)"
           [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }"
+          #dp="bsDatepicker"
           bsDatepicker>
         <div class="input-group-append">
-          <span class="input-group-text calendar-icon" id="date-picker-icon">
+          <button class="input-group-text calendar-icon" id="date-picker-icon" (click)="dp.show()" [attr.aria-expanded]="dp.isOpen">
             <i class="fa fa-calendar-alt icon" aria-hidden="true"></i>
-          </span>
+          </button>
         </div>
       </div>
     </div>
@@ -348,6 +349,10 @@ The user will be able to filter by *CCY Pair* and *Date*.
 .calendar-icon {
     background-color: white;
     color: #7C7C7C;
+}
+
+.calendar-icon:focus {
+    outline: 0;
 }
 
 .calendar-icon > i {
@@ -768,7 +773,7 @@ export class WidgetComponent implements OnInit, OnDestroy {
     }
     else {
       this.toastr.error('Please fill in both Amount and Tenor!');
-    } 
+    }
   }
   
   onBuy() {

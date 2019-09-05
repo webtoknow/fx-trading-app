@@ -30,6 +30,10 @@
     color: #7C7C7C;
 }
 
+.calendar-icon:focus {
+    outline: 0;
+}
+
 .calendar-icon > i {
     font-size: 18px;
 }
