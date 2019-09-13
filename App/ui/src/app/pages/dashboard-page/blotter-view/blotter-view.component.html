@@ -16,18 +16,19 @@
     <div class="flex-vertical-centered filter-group">
       <span for="dateFilter">Date&nbsp;&nbsp;</span>
       <div class="input-group input-group-sm">
-        <input 
-          type="text" 
-          class="form-control form-control-sm" 
-          placeholder="Please select&nbsp;" 
-          [(ngModel)]="filter.date" 
-          (ngModelChange)="filterBy($event)" 
+        <input
+          type="text"
+          class="form-control form-control-sm"
+          placeholder="Please select&nbsp;"
+          [(ngModel)]="filter.date"
+          (ngModelChange)="filterBy($event)"
           [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }"
+          #dp="bsDatepicker"
           bsDatepicker>
         <div class="input-group-append">
-          <span class="input-group-text calendar-icon" id="date-picker-icon">
+          <button class="input-group-text calendar-icon" id="date-picker-icon" (click)="dp.show()" [attr.aria-expanded]="dp.isOpen">
             <i class="fa fa-calendar-alt icon" aria-hidden="true"></i>
-          </span>
+          </button>
         </div>
       </div>
     </div>
@@ -39,27 +40,22 @@
     <thead class="blotter-table-header">
       <tr>
         <th>ID</th>
-        <th class="clickable" (click)="onSort('username')">
+        <th>
           <span>Username&nbsp;</span>
-          <i class="fas fa-sort"></i>
         </th>
-        <th class="clickable" (click)="onSort('ccyPair')">
+        <th>
           <span>Ccy Pair&nbsp;</span>
-          <i class="fas fa-sort"></i>
         </th>
         <th>Rate</th>
-        <th class="clickable" (click)="onSort('action')">
+        <th>
           <span>Action&nbsp;</span>
-          <i class="fas fa-sort"></i>
         </th>
-        <th class="clickable" (click)="onSort('notional')">
+        <th>
           <span>Notional&nbsp;</span>
-          <i class="fas fa-sort"></i>
         </th>
         <th>Tenor</th>
-        <th class="clickable" (click)="onSort('date')">
+        <th>
           <span>Transaction Date&nbsp;</span>
-          <i class="fas fa-sort"></i>
         </th>
       </tr>
     </thead>

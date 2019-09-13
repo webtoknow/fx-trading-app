@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { Transaction, SortType } from 'src/app/models/transaction';
-import { filter } from 'rxjs/internal/operators/filter';
+import { Transaction } from 'src/app/models/transaction';
 import { TradeService } from '../../../services/trade.service';
 import { Subject } from 'rxjs';
-import { takeUntil, map } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 
 
 @Component({
@@ -17,10 +16,6 @@ export class BlotterViewComponent implements OnInit {
     ccyPair: '',
     date: ''
   };
-  private sorter = {
-    column: '',
-    type: ''
-  }
   
   private unsubscribe = new Subject();
   private transactions: Transaction[] = [];
@@ -50,43 +45,7 @@ export class BlotterViewComponent implements OnInit {
           .map(transaction => transaction.ccyPair)
           .filter((x, i, a) => x && a.indexOf(x) === i);
         this.filterBy();
-        this.sortBy();
       });
-  }
-
-  onSort(column: string) {
-    this.sorter.column = column;
-    if (this.sorter.type === SortType.DEFAULT) {
-      this.sorter.type = SortType.ASC;
-    }
-    else if (this.sorter.type === SortType.ASC) {
-      this.sorter.type = SortType.DESC;
-    }
-    else {
-      this.sorter.type = SortType.DEFAULT;
-    }
-
-    this.sortBy();
-  }
-
-  sortBy(): void {
-    const { column, type } = this.sorter;
-
-    if (type === SortType.DEFAULT) {
-      this.transactions = [...this.initialTransactions];
-      return
-    }
-    
-    if (type === SortType.ASC) {
-      this.transactions.sort((a: any, b: any) => 0 - (a[column] > b[column] ? -1 : 1));
-      return;
-    }
-
-    if (type === SortType.DESC) {
-      this.transactions.sort((a: any, b: any) => 0 - (a[column] > b[column] ? 1 : -1));
-      return;
-    }
- 
   }
 
   getDateWithoutHourAndMinuteAndSeconds(date) {

@@ -1,6 +1,6 @@
 # Ui
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 6.1.5.
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.0.3.
 
 ## Development server
 
@@ -25,20 +25,3 @@ Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protrac
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
-
-## JSON Server
-
-```bash
-npm install json-server -g
-
-json-server --watch db.trade.json --port 8210
-json-server --watch db.quote.json --port 8220
-```
-
-## To resolve CORS
-
-```bash
-npm install no-cors-proxy -g
-
-no-cors-proxy -p 8000 -t http://some.api.com
-```

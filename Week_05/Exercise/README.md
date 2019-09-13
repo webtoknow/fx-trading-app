@@ -20,7 +20,8 @@
   - [Error Interceptor](#error-interceptor)
   - [Update Application Module with the new added classes](#update-application-module-with-the-new-added-classes)
   - [Login component](#login-component)
-- [Exercise 4 - Simulate the backend server to check login and register](#exercise-4---simulate-the-backend-server-to-check-login-and-register)
+- [Exercise 4a - Configure and start Mock Server](#exercise-4a---configure-and-start-mock-server)
+- [Exercise 4b - Simulate the backend server to check login and register](#exercise-4b---simulate-the-backend-server-to-check-login-and-register)
 - [Exercise 5 - Not found page](#exercise-5---not-found-page)
 
 ## Exercise 1 - Pages, Routing and Navigation
@@ -51,6 +52,7 @@ Create a folder for pages in *ui/src/app*:
 ```bash
 cd src\app
 mkdir pages
+cd pages
 ```
 
 Generate page components using CLI:
@@ -157,13 +159,8 @@ h1,h2,h3,h4,h5,h6 {
     height: 100vh;
 }
 
-.ng-invalid:not(form)  {
+.is-invalid {
   border-left: 5px solid #D9534F;
-}
-
-.clickable:hover {
-    cursor: pointer;
-    opacity: 0.8;
 }
 ```
 
@@ -192,7 +189,7 @@ imports: [
 
 ### Add Bootstrap, Datepicker and Fontawesome
 
-- *index.html*:
+In order to load bootstrap and fontawesome style, we should update *index.html* with CSS links:
 
 ```HTML
  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
@@ -200,21 +197,13 @@ imports: [
  <link rel="stylesheet" href="https://unpkg.com/ngx-bootstrap/datepicker/bs-datepicker.css">
 ```
 
-- *package.json*:
-
-```JSON
-"dependencies": {
-    ...,
-    "ngx-bootstrap": "^3.0.1",
-    ...
-}
-```
+and also install ngx-bootstrap:
 
 ```bash
 npm install ngx-bootstrap
 ```
 
-- *app.module.ts*:
+Link ngx-bootstrap by updating *app.module.ts*:
 
 ```JavaScript
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
@@ -223,7 +212,6 @@ imports: [
     ...
     BsDatepickerModule.forRoot()
 ]
-
 ```
 
 ## Exercise 2 - Register page
@@ -378,7 +366,8 @@ We already created the necessary files for register functionality. Now we have t
           <div class="form-group flex">
             <div class="col">
               <label for="username">Username</label>
-              <input type="text" class="form-control form-control-sm" id="inputUsername" formControlName="username" placeholder="username"
+              <input type="text" class="form-control form-control-sm" id="inputUsername"
+                formControlName="username" placeholder="username" autocomplete="username"
                 [ngClass]="{ 'is-invalid': submitted && f.username.errors }" />
               <span *ngIf="submitted && f.username.errors" class="invalid-feedback">
                 <span *ngIf="f.username.errors.required">Username is required!</span>
@@ -388,7 +377,8 @@ We already created the necessary files for register functionality. Now we have t
           <div class="form-group flex">
             <div class="col">
               <label for="email">Email</label>
-              <input type="text" class="form-control form-control-sm" id="inputEmail" formControlName="email" placeholder="email address"
+              <input type="text" class="form-control form-control-sm" id="inputEmail"
+                formControlName="email" placeholder="email address"
                 [ngClass]="{ 'is-invalid': submitted && f.email.errors }" />
               <div *ngIf="submitted && f.email.errors" class="invalid-feedback">
                 <div *ngIf="f.email.errors.required">Email is required!</div>
@@ -398,7 +388,8 @@ We already created the necessary files for register functionality. Now we have t
           <div class="form-group flex">
             <div class="col">
               <label for="password">Password</label>
-              <input type="password" class="form-control form-control-sm" id="inputPassword" formControlName="password" placeholder="password"
+              <input type="password" class="form-control form-control-sm" id="inputPassword"
+                formControlName="password" placeholder="password" autocomplete="new-password"
                 [ngClass]="{ 'is-invalid': submitted && f.password.errors }" />
               <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
                 <div *ngIf="f.password.errors.required">Password is required!</div>
@@ -409,7 +400,8 @@ We already created the necessary files for register functionality. Now we have t
           <div class="form-group flex">
             <div class="col">
               <label for="password">Confirm password</label>
-              <input type="password" class="form-control form-control-sm" id="inputConfirmPassword" formControlName="confirmPassword" placeholder="confirm password"
+              <input type="password" class="form-control form-control-sm" id="inputConfirmPassword"
+                formControlName="confirmPassword" placeholder="confirm password" autocomplete="new-password"
                 [ngClass]="{ 'is-invalid': submitted && f.confirmPassword.errors }" />
               <div *ngIf="submitted && f.confirmPassword.errors" class="invalid-feedback">
                 <div *ngIf="f.confirmPassword.errors.required">Password confirmation is required!</div>
@@ -433,21 +425,25 @@ We can notice here:
 - fields are grouped in a form: *[formGroup]="registerForm"*
 - when we press on *Register*, the *onSubmit* function is triggered: *(ngSubmit)="onSubmit()"*
 - we have some validations here:
-  - required validations:
-    - *e.g.*:
-    ```HTML
-     <span *ngIf="submitted && f.username.errors" class="invalid-feedback">
-        <span *ngIf="f.username.errors.required">Username is required!</span>
-    </span>
-    ```
-  - minimum length validations:
-    - *e.g.*:
-    ```HTML
-     <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
-       <div *ngIf="f.password.errors.minlength">Password must be at least 6 characters!
-       </div>
+- required validations:
+- *e.g.*:
+
+```HTML
+  <span *ngIf="submitted && f.username.errors" class="invalid-feedback">
+    <span *ngIf="f.username.errors.required">Username is required!</span>
+</span>
+```
+
+- minimum length validations:
+- *e.g.*:
+
+```HTML
+  <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
+    <div *ngIf="f.password.errors.minlength">Password must be at least 6 characters!
     </div>
-    ```
+</div>
+```
+
 - we have a link to *Login Page*:
 
 ```HTML
@@ -541,13 +537,13 @@ export class RegisterPageComponent implements OnInit {
     })
   }
 
-  //getter for easy access to form fields
+  // Convenience getter for easy access to form fields
   get f() { return this.registerForm.controls; }
 
   onSubmit() {
     this.submitted = true;
 
-    //if form is invalid
+    // Exit function if form is invalid
     if (this.registerForm.invalid) {
       return;
     }
@@ -595,7 +591,7 @@ import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { backendUrl } from '../constants';
 
-@Injectable() 
+@Injectable()
 export class AuthenticationService {
 
     constructor(
@@ -807,20 +803,24 @@ Let's fill in the neccesary files for login functionality with some code in orde
           <h4>Login to your account</h4>
         </div>
         <form id="login" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+          <!-- Username -->
           <div class="form-group flex">
             <i class="fa fa-user icon" aria-hidden="true"></i>
             <div class="col">
-              <input type="text" class="form-control form-control-sm" id="inputUsername" formControlName="username" placeholder="username"
+              <input type="text" class="form-control form-control-sm" formControlName="username"
+                placeholder="username" autocomplete="username" id="username"
                 [ngClass]="{ 'is-invalid': submitted && f.username.errors }" />
               <span *ngIf="submitted && f.username.errors" class="invalid-feedback">
                 <span *ngIf="f.username.errors.required">Username is required!</span>
               </span>
             </div>
           </div>
+          <!-- Password -->
           <div class="form-group flex">
             <i class="fa fa-lock icon" aria-hidden="true"></i>
             <div class="col">
-              <input type="password" class="form-control form-control-sm" id="inputPassword" formControlName="password" placeholder="password"
+              <input type="password" class="form-control form-control-sm" formControlName="password"
+                placeholder="password" autocomplete="current-password" id="password"
                 [ngClass]="{ 'is-invalid': submitted && f.password.errors }" />
               <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
                 <div *ngIf="f.password.errors.required">Password is required!</div>
@@ -952,6 +952,7 @@ export class LoginPageComponent implements OnInit {
 
   }
 
+  // Convenience getter for easy access to form fields
   get f() {
     return this.loginForm.controls;
   }
@@ -959,7 +960,7 @@ export class LoginPageComponent implements OnInit {
   onSubmit() {
     this.submitted = true;
 
-    // form is invalid
+    // Exit function if form is invalid
     if (this.loginForm.invalid) {
       return;
     }
@@ -970,7 +971,7 @@ export class LoginPageComponent implements OnInit {
       .subscribe(
         data => {
           this.router.navigate([this.returnUrl]);
-        }, 
+        },
         error => {
           this.toastr.error(error);
           this.loading = false;
@@ -988,7 +989,34 @@ We can observe:
 - the form, its fields and validations are specified in the class
 - in *onSubmit* function, if the form is valid, we use *authenticationService.login* to send the username and password to the server. If the request is successful, we will be redirected to *Dashboard* page or the previous accessed page where we did not have access initially (*returnUrl*). Else, we will display an error message.
 
-## Exercise 4 - Simulate the backend server to check login and register
+## Exercise 4a - Configure and start Mock Server
+
+Mock server is used to create a fake API to mock the backend data using [JSON Server](https://github.com/typicode/json-server).
+
+Let's install its packages:
+
+```bash
+cd fx-trading-app\Week_05\Exercise\Code\ui\mock-server
+npm install
+```
+
+Start all microservices in a single terminal:
+
+```bash
+npm start
+```
+
+Now we can access these APIs:
+
+- `http://localhost:8200/user/authenticate` - sign-in
+- `http://localhost:8200/user/register` - register
+- `http://localhost:8210/transactions` - get all transactions
+- `http://localhost:8220/currencies` - get all currencies
+- `http://localhost:8220/fx-rate` - get fx rates for specific currencies
+
+## Exercise 4b - Simulate the backend server to check login and register
+
+**Skip this exercise if you started the mock server by completing 4a.**
 
 At this moment, we do not have implemented a backend server. To check if our login and register functionalities are working, we can simulate it, by creating a new file named *fake-backend.ts* into *Week_05/Exercise/Code/ui/src/app/helpers*:
 
@@ -997,7 +1025,7 @@ import { Injectable } from '@angular/core';
 import { HttpRequest, HttpResponse, HttpHandler, HttpEvent, HttpInterceptor, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
 import { delay, mergeMap, materialize, dematerialize } from 'rxjs/operators';
- 
+
 @Injectable()
 export class FakeBackendInterceptor implements HttpInterceptor {
 

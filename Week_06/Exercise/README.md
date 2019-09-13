@@ -3,7 +3,7 @@
 ## Table of contents
 
 - [Exercise 1 - Create blotter-view, fx-rates-view and widget components](#exercise-1---create-blotter-view-fx-rates-view-and-widget-components)
-- [Exercise 2 - Install and use JSON Server](#exercise-2---install-and-use-json-server)
+- [Exercise 2 - Install and use mock server usign JSON Server](#exercise-2---install-and-use-mock-server-usign-json-server)
 - [Exercise 3 - Blotter View page](#exercise-3---blotter-view-page)
   - [Transaction model](#transaction-model)
   - [Trade service](#trade-service)
@@ -21,7 +21,7 @@
 Go to *Week_06/Exercise/Code/ui*:
 
 ```bash
-cd fx-trading-app\Week_06\Exercise\Code\ui
+cd fx-trading-app/Week_06/Exercise/Code/ui
 ```
 
 Run *npm install* to download all dependencies:
@@ -43,6 +43,8 @@ Let's create them!
 First, go to *Week_06/Exercise/Code/ui/src/app/pages/dashboard-page* and use Angular CLI to create these 3 new components, children of *dashboard-page* components:
 
 ```bash
+cd fx-trading-app/Week_06/Exercise/Code/ui/src/app/pages/dashboard-page
+
 ng generate component blotter-view
 ng generate component fx-rates-view
 ng generate component widget
@@ -104,22 +106,30 @@ and in *dashboard-page.component.css*:
 }
 ```
 
-## Exercise 2 - Install and use JSON Server
+## Exercise 2 - Install and use mock server usign JSON Server
 
-Because we do not have a backend server and a link to a real database at this moment, we will simulate having some data using *JSON Server*.
+Because we do not have a backend server and a link to a real database at this moment, we will simulate having some data using *JSON Server* and NodeJS.
 
-The first step is to install it (globally), using the following command:
-
-```bash
-npm install json-server -g
-```
-
-For the next step, we have just to start it with the 2 existing files - containing *quote* and *trade* data. Make sure you are in the following path, where both JSON files are situated: *Week_06/Exercise/Code/ui*. Please run these commands in separate terminal windows:
+Let's install its packages:
 
 ```bash
-json-server --watch db.trade.json --port 8210
-json-server --watch db.quote.json --port 8220
+cd fx-trading-app\Week_06\Exercise\Code\ui\mock-server
+npm install
 ```
+
+Start all microservices in a single terminal:
+
+```bash
+npm start
+```
+
+Now we can access these APIs:
+
+- `http://localhost:8200/user/authenticate` - sign-in
+- `http://localhost:8200/user/register` - register
+- `http://localhost:8210/transactions` - get all transactions
+- `http://localhost:8220/currencies` - get all currencies
+- `http://localhost:8220/fx-rate` - get fx rates for specific currencies
 
 ## Exercise 3 - Blotter View page
 
@@ -142,19 +152,14 @@ export interface Transaction {
 }
 ```
 
-As we can see in the design, some columns of the table filled in with transactions will be sortable, so let's add also an enum here containing the type of sort:
-
-```JavaScript
-export enum SortType {
-  ASC = 'asc',
-  DESC = 'desc',
-  DEFAULT = ''
-}
-```
-
 ### Trade service
 
 In *Week_06/Exercise/Code/ui/src/app/services*, let's create a file, *trade.service.ts*, which will contain all API calls desired to get data from JSON Server.
+
+```bash
+cd Week_06/Exercise/Code/ui/src/app/services
+ng generate service trade
+```
 
 Let's add our first method here, which will get all transactions for us, to be displayed in the table from the right side of the page:
 
@@ -239,18 +244,19 @@ import {startWith, switchMap} from "rxjs/operators";
     <div class="flex-vertical-centered filter-group">
       <span for="dateFilter">Date&nbsp;&nbsp;</span>
       <div class="input-group input-group-sm">
-        <input 
-          type="text" 
-          class="form-control form-control-sm" 
-          placeholder="Please select&nbsp;" 
-          [(ngModel)]="filter.date" 
-          (ngModelChange)="filterBy($event)" 
+        <input
+          type="text"
+          class="form-control form-control-sm"
+          placeholder="Please select&nbsp;"
+          [(ngModel)]="filter.date"
+          (ngModelChange)="filterBy($event)"
           [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }"
+          #dp="bsDatepicker"
           bsDatepicker>
         <div class="input-group-append">
-          <span class="input-group-text calendar-icon" id="date-picker-icon">
+          <button class="input-group-text calendar-icon" id="date-picker-icon" (click)="dp.show()" [attr.aria-expanded]="dp.isOpen">
             <i class="fa fa-calendar-alt icon" aria-hidden="true"></i>
-          </span>
+          </button>
         </div>
       </div>
     </div>
@@ -262,27 +268,22 @@ import {startWith, switchMap} from "rxjs/operators";
     <thead class="blotter-table-header">
       <tr>
         <th>ID</th>
-        <th class="clickable" (click)="onSort('username')">
+        <th>
           <span>Username&nbsp;</span>
-          <i class="fas fa-sort"></i>
         </th>
-        <th class="clickable" (click)="onSort('ccyPair')">
+        <th>
           <span>Ccy Pair&nbsp;</span>
-          <i class="fas fa-sort"></i>
         </th>
         <th>Rate</th>
-        <th class="clickable" (click)="onSort('action')">
+        <th>
           <span>Action&nbsp;</span>
-          <i class="fas fa-sort"></i>
         </th>
-        <th class="clickable" (click)="onSort('notional')">
+        <th>
           <span>Notional&nbsp;</span>
-          <i class="fas fa-sort"></i>
         </th>
         <th>Tenor</th>
-        <th class="clickable" (click)="onSort('date')">
+        <th>
           <span>Transaction Date&nbsp;</span>
-          <i class="fas fa-sort"></i>
         </th>
       </tr>
     </thead>
@@ -313,7 +314,7 @@ In this file, we display a table containing the following information from all t
 - tenor
 - date
 
-The user will be able to sort this table by *Username*, *CCY Pair*, *Action*, *Notional* and *Date* and to filter by *CCY Pair* and *Date*.
+The user will be able to filter by *CCY Pair* and *Date*.
 
 - **blotter-view.component.css**:
 
@@ -350,6 +351,10 @@ The user will be able to sort this table by *Username*, *CCY Pair*, *Action*, *N
     color: #7C7C7C;
 }
 
+.calendar-icon:focus {
+    outline: 0;
+}
+
 .calendar-icon > i {
     font-size: 18px;
 }
@@ -371,11 +376,10 @@ The user will be able to sort this table by *Username*, *CCY Pair*, *Action*, *N
 
 ```JavaScript
 import { Component, OnInit } from '@angular/core';
-import { Transaction, SortType } from 'src/app/models/transaction';
-import { filter } from 'rxjs/internal/operators/filter';
+import { Transaction } from 'src/app/models/transaction';
 import { TradeService } from '../../../services/trade.service';
 import { Subject } from 'rxjs';
-import { takeUntil, map } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 
 
 @Component({
@@ -389,10 +393,6 @@ export class BlotterViewComponent implements OnInit {
     ccyPair: '',
     date: ''
   };
-  private sorter = {
-    column: '',
-    type: ''
-  }
   
   private unsubscribe = new Subject();
   private transactions: Transaction[] = [];
@@ -406,6 +406,7 @@ export class BlotterViewComponent implements OnInit {
   ngOnInit() {
     this.startPooling();
   }
+
 
   startPooling(): void {
     this.tradeService.getTransactionsPolling()
@@ -421,43 +422,7 @@ export class BlotterViewComponent implements OnInit {
           .map(transaction => transaction.ccyPair)
           .filter((x, i, a) => x && a.indexOf(x) === i);
         this.filterBy();
-        this.sortBy();
       });
-  }
-
-  onSort(column: string) {
-    this.sorter.column = column;
-    if (this.sorter.type === SortType.DEFAULT) {
-      this.sorter.type = SortType.ASC;
-    }
-    else if (this.sorter.type === SortType.ASC) {
-      this.sorter.type = SortType.DESC;
-    }
-    else {
-      this.sorter.type = SortType.DEFAULT;
-    }
-
-    this.sortBy();
-  }
-
-  sortBy(): void {
-    const { column, type } = this.sorter;
-
-    if (type === SortType.DEFAULT) {
-      this.transactions = [...this.initialTransactions];
-      return
-    }
-
-    if (type === SortType.ASC) {
-      this.transactions.sort((a: any, b: any) => 0 - (a[column] > b[column] ? -1 : 1));
-      return;
-    }
-
-    if (type === SortType.DESC) {
-      this.transactions.sort((a: any, b: any) => 0 - (a[column] > b[column] ? 1 : -1));
-      return;
-    }
-
   }
 
   getDateWithoutHourAndMinuteAndSeconds(date) {
@@ -477,7 +442,6 @@ export class BlotterViewComponent implements OnInit {
     this.unsubscribe.complete();
     }
 }
-
 ```
 
 So, in this file:
@@ -486,12 +450,7 @@ So, in this file:
 - after getting all transactions, *startPooling* method:
   - adds *ccyPair* property to all transactions by concatenating *primaryCCY* and *secondaryCCY*
   - gets all *currenciesPairs* to fill in the filter select
-  - applies default sort and filter (with no criteria)
-- *onSort* method sets the sorting type:
-  - switches DEFAULT to ASC on first click
-  - switches ASC to DESC on second click
-  - switches DESC to DEFAULT on third click
-- *sortBy* method sorts by column and sorting type
+  - applies default filter (with no criteria)
 - *filterBy* method does the filtering functionality - by ccyPair and/or date
 - *ngOnDestroy* unsubscribes from getting transactions
 
@@ -814,7 +773,7 @@ export class WidgetComponent implements OnInit, OnDestroy {
     }
     else {
       this.toastr.error('Please fill in both Amount and Tenor!');
-    } 
+    }
   }
   
   onBuy() {

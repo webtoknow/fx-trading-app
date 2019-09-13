@@ -1,8 +1,3 @@
-export enum SortType {
-  ASC = 'asc',
-  DESC = 'desc',
-  DEFAULT = ''
-}
 
 export interface Transaction {
   id?: number;
