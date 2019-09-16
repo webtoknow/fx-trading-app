@@ -21,7 +21,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<java.version>1.10</java.version>
+		<java.version>11</java.version>
 	</properties>
 
 	<dependencies>
@@ -58,6 +58,12 @@
 		<dependency>
 			<groupId>javax.xml.bind</groupId>
 			<artifactId>jaxb-api</artifactId>
+		</dependency>
+		
+		<dependency>
+    		<groupId>org.javassist</groupId>
+    		<artifactId>javassist</artifactId>
+    		<version>3.23.1-GA</version>
 		</dependency>
 
 	</dependencies>
