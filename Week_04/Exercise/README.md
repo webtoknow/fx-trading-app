@@ -33,19 +33,21 @@ I. Generate a Spring Boot starter project with Maven as build tool
 
 Open [start.spring.io](https://start.spring.io/) in the browser.  
 
-Select: 1) Generate a Maven Project 2) with Java 3) and Spring Boot 2.0.5(or newer and stable if this one becomes unavailable)
-4) Complete Group section. Example: *com.banking.sofware.design*
-5) For Artifact choose a name like *fxtrading*
-6) Click on the link having text 'Switch to the full version.'
-7) Select Java version. Example: 10
-8) Select the following modules: Security, Web, JPA, PostgreSQL
-9) Generate project
+Select:
+1. Maven Project
+2. with Java
+3. and a stable version of Spring Boot
+4. Complete Group section. Example: *com.banking.sofware.design*
+5. For Artifact choose a name like *demo*
+6. Under Options select Java version 11
+7. Select the following modules: Security, Web, JPA, PostgreSQL
+8. Generate project
 
 II. Create database  
 
 In pgAdmin console:  
 
-1. Create a database with name *fxtrading*
+1. Create a database with name *demo*
 2. Open a Query Tool in the newly created database and  
 a) create a user that the application will use to connect  
 b) give the newly created user access rights
@@ -53,8 +55,8 @@ b) give the newly created user access rights
 Example:
 
 ```sql
-CREATE USER fxowner WITH ENCRYPTED PASSWORD 'password';
-GRANT ALL PRIVILEGES ON DATABASE fxtrading TO fxowner;
+CREATE USER demo_user WITH ENCRYPTED PASSWORD 'password';
+GRANT ALL PRIVILEGES ON DATABASE demo TO demo_user;
 ```
 
 III. Import project in IDE and set properties:  
@@ -63,9 +65,10 @@ In *src/main/resources/application.properties* configure database connection.
 Use database and user created at previous step
 
 ```JAVA
-spring.datasource.url=jdbc:postgresql://localhost:5432/fxtrading  
-spring.datasource.username=fxowner  
+spring.datasource.url=jdbc:postgresql://localhost:5432/demo
+spring.datasource.username=demo_user
 spring.datasource.password=password
+spring.jpa.properties.hibernate.jdbc.lob.non_contextual_creation=true
 ```
 
 After doing this, the application should start when running the main class: ```<ArtifactName>Application```
