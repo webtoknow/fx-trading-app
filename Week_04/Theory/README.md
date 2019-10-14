@@ -17,7 +17,7 @@
 ### About
 
 - is a comprehensive JavaScript framework, used by developers to build web applications
-- is built entirely in **TypeScript** which contains the ES6 JavaScript features and with support for type safety and tooling
+- is built entirely in **TypeScript** which contains the ES6 JavaScript features, has tooling and supports type safety
 - TypeScript must be 'transpiled' into JavaScript using the *tsc* compiler
 - enable to write SPA (Single Page Applications) with ease
 - comes with features like data-binding, change-detection, forms, router&navigation and http implementation
