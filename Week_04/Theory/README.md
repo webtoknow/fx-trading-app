@@ -8,7 +8,7 @@
 - only data is transmitted back and forth
 - no need to write code to render pages on the server
 - easy to debug with Chrome - you can monitor network operations, investigate page elements and data associated with it
-- can cache any local storage
+- can use Browser's local storage
 - we are using this type of applications every day
 - *e.g. : Gmail, Google Maps, GitHub*
 
@@ -17,7 +17,7 @@
 ### About
 
 - is a comprehensive JavaScript framework, used by developers to build web applications
-- is built entirely in **TypeScript** - the ES6 version of JavaScript with support for type safety and tooling
+- is built entirely in **TypeScript** which contains the ES6 JavaScript features, has tooling and supports type safety
 - TypeScript must be 'transpiled' into JavaScript using the *tsc* compiler
 - enable to write SPA (Single Page Applications) with ease
 - comes with features like data-binding, change-detection, forms, router&navigation and http implementation
