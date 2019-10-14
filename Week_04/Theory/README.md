@@ -4,7 +4,7 @@
 
 - is an app that works inside a browser
 - does not require page reloading during use
-- most resources (HTML + CSS + Scripts) are only loaded throughout the lifespan of application
+- most resources (HTML + CSS + scripts) are only loaded throughout the lifespan of application
 - only data is transmitted back and forth
 - no need to write code to render pages on the server
 - easy to debug with Chrome - you can monitor network operations, investigate page elements and data associated with it
@@ -35,14 +35,14 @@
 
 ### Angular CLI
 
-- is used by the generation of new angular projects
-- everytime we start a new project, there is a bunch of files to be created -> Angular CLI can resolve that issue by generating all that files for us
-- when it is done, we have a basic Angular project, run-able and containing all we need to continue
+- is used by the new generation of angular projects
+- every time we start a new project, there is a bunch of files to be created -> Angular CLI can resolve that issue by generating all that files for us
+- when it is done, we have a basic Angular project, runnable and containing all we need to continue
 - after starting the application, a new port is opened, where a live server continues to run using **Webpack's dev server**
 
 ### Webpack
 
-- is a popular mode bundler
+- is a popular module bundler
 - bundles application source code in convenient chunks
 - loads that code from a server to browser
 - takes in various assets (such as JavaScript, CSS and HTML) and then transforms these assets into a format that's convenient to consume through a browser
