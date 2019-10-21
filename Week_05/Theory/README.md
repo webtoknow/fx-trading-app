@@ -243,7 +243,7 @@ export class TradeService {
 ### Dependency Injection
 
 - is the way to create objects that depend upon other objects
-- a Depencency Injection system supplies the dependent objects (called also **dependencies**) when it creates an instance of an object
+- a Dependency Injection system supplies the dependent objects (called also **dependencies**) when it creates an instance of an object
 - depencencies are services or objects that a class needs to perform its function
 - in Angular, Dependency Injection provides declared dependencies to a class when that class is instantiated:
 
