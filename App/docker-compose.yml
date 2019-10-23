@@ -1,0 +1,22 @@
+version: "3"
+services:
+  users:
+    build: ./user-administration
+    ports: 
+      -  "8200:8200"
+  trading: 
+    build: ./fx-trading
+    ports:
+      - "8210:8210"
+  quote:
+    build: ./quote-service
+    ports:
+      - "8220:8220"
+  db:
+    image: postgres
+    environment:
+        POSTGRES_PASSWORD: "admin"
+    volumes:
+        - ./postgres-data:/var/lib/postgresql/data
+    ports:
+      - "54320:5432"
