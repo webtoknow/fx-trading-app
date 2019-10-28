@@ -22,7 +22,7 @@
 - offer signifiant benefits over other techinques for event handling, asynchronous programming and handling multiple values
 - are declarative, meaning that we define a function for publishing values, but it is not executed until a consumer subscribes to it
 - the subscribed consumer then receives notifications until the function completes or until they unsubscribe
-- to be able to use observables, we need to do the follosing steps:
+- to be able to use observables, we need to do the following steps:
   - to create an observable, we have to import **rxjs/observable**, so we will be able to create and work with Observable type, needed until this will become part of the language
 
   ```JavaScript
