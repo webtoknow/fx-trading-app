@@ -23,7 +23,7 @@
 - are declarative, meaning that we define a function for publishing values, but it is not executed until a consumer subscribes to it
 - the subscribed consumer then receives notifications until the function completes or until they unsubscribe
 - to be able to use observables, we need to do the following steps:
-  - to create an observable, we have to import **rxjs/observable**, so we will be able to create and work with Observable type, needed until this will become part of the language
+  - to create an observable, we have to import **rxjs/observable**, so we will be able to create and work with Observable type, needed until this will become part of the language:
 
   ```JavaScript
   import { Observable } from 'rxjs';
@@ -94,7 +94,7 @@ subscription.unsubscribe();
 - Observables can be:
   - **Created** by using the **new Observable()** call
   - **Subscribed** to by an **observer**
-  - **Executed** by callind the **next()**
+  - **Executed** by calling the **next()**
   - **Disposed** by calling **unsubscribe()**
 
   **Creating observable**:
@@ -112,7 +112,7 @@ subscription.unsubscribe();
   - the **next** calls are the most common because they deliver the data to subscribers
 
   **Disposing observables**:
-  - because the time it takes to execute can be infinite amount of time, we need a way to stop it when we want
+  - because the time it takes to execute can be infinite amount of time, we need a way to stop it when we want to
   - we will need to unsubscribe from the observable to do cleanup and release resources as it will be a waste of memory and computing power
 
 ### Forms and Validations
