@@ -8,9 +8,8 @@ Before developing the Fxtrading service you can take a look at the application a
 - [Exercise I - Importing initial project setup in IDE](#exercise-I)
 - [Exercise II - Database Setup](#exercise-II)
 - [Exercise III - Implement REST endpoint for displaying list of all trades](#exercise-III)
-- [Exercise IV - Implement remote REST endpoint caller](#exercise-IV)
-- [Exercise V - Implement functionality for saving trades](#exercise-V)
-- [Exercise VI - Secure the API with authorization filter](#exercise-VI)
+- [Exercise IV - Implement functionality for saving trades](#exercise-IV)
+- [Exercise V - Secure the API with authorization filter](#exercise-V)
 
 
 ## <a name="exercise-I">Exercise I - Importing initial project setup in IDE </a>
@@ -336,91 +335,8 @@ public class FxTradingRestController {
 After completing steps 1-7 of exercise III you should have a functional REST endpoint for listing all trades.
 It can now be tested with a tool like Postman
  
-## <a name="exercise-IV">Exercise IV - Implement remote REST endpoint caller </a>
 
-Add class RemoteServiceCaller in *service* package
-This class will be used to call remote REST services
-
-```
-package com.banking.sofware.design.fxtrading.service;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-
-@Service
-public class RemoteServiceCaller {
-
-  private static final Logger log = LoggerFactory.getLogger(RemoteServiceCaller.class);
-
-  public String doCallServiceGet(URL url) throws IOException {
-    return doCallService(url, "GET", null);
-  }
-
-  public String doCallServicePost(URL url, String postBody) throws IOException {
-    return doCallService(url, "POST", postBody);
-  }
-
-  private HttpURLConnection makeRequest(URL url, String method, String postBody) throws IOException {
-    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-    conn.setRequestProperty("Accept", "application/json");
-
-    if ("GET".equals(method)) {
-      conn.setRequestMethod("GET");
-    } else {
-      conn.setDoOutput(true);
-      conn.setRequestMethod("POST");
-      conn.setRequestProperty("content-type", "application/json");
-
-      BufferedWriter streamWriter = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()));
-      streamWriter.write(postBody);
-      streamWriter.flush();
-      streamWriter.close();
-    }
-    return conn;
-  }
-
-  private String doCallService(URL url, String method, String postBody) throws IOException {
-    BufferedReader streamReader = null;
-    HttpURLConnection conn = null;
-    try {
-      conn = makeRequest(url, method, postBody);
-
-      if (conn.getResponseCode() != 200) {
-        log.error("Call to URL {} method {} resulted in {} status code", url, method, conn.getResponseCode());
-        throw new RuntimeException("Failed with http error code: " + conn.getResponseCode());
-      }
-
-      streamReader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-      StringBuilder stringBuilder = new StringBuilder();
-      String inputStr;
-      while ((inputStr = streamReader.readLine()) != null) {
-        stringBuilder.append(inputStr);
-      }
-
-      String result = stringBuilder.toString();
-      log.info("Call to URL {} method {} was 200 OK and returned body: {}", url, method, result);
-      return result;
-    } finally {
-      if (streamReader != null) {
-        streamReader.close();
-      }
-      if (conn != null) {
-        conn.disconnect();
-      }
-    }
-  }
-}
-```
-## <a name="exercise-V">Exercise V - Implement functionality for saving trades </a>
+## <a name="exercise-IV">Exercise IV - Implement functionality for saving trades </a>
 
 Now using the remote service caller we can call quote service to find out the quote for a transaction at a given moment.
 
@@ -554,7 +470,7 @@ Note that you need to add a class dependency of QuoteProxyService. Hint: use @Au
   }
   ```
  
-## <a name="exercise-VI">Exercise VI - Secure the API with authorization filter </a>
+## <a name="exercise-V">Exercise V - Secure the API with authorization filter </a>
 
 Finally we will secure the REST endpoints.
 
