@@ -338,53 +338,43 @@ It can now be tested with a tool like Postman
 
 ## <a name="exercise-IV">Exercise IV - Implement functionality for saving trades </a>
 
-Now using the remote service caller we can call quote service to find out the quote for a transaction at a given moment.
+Since we cannot trust the exchange rate coming from the frontend(can be trivially changed) we will call the quote service to provide us with the rate.
 
-1. Let's create a service that wraps the remote service caller.
-It adds a convenience method that receives and returns data in a personalized way.
+1. Let's create a service that obtains the quotation from the quote service
 
 In package *service* add class QuoteProxyService
 
 ```
 package com.banking.sofware.design.fxtrading.service;
 
-import java.io.IOException;
-import java.net.URL;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import com.banking.sofware.design.fxtrading.dto.QuoteResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import com.banking.sofware.design.fxtrading.pojo.QuoteResponse;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 public class QuoteProxyService {
 
-  @Value("${fxrates.url}")
-  private String fxratesUrl;
-  
-  @Autowired
-  private RemoteServiceCaller proxyService;
+    @Value("${fxrates.url}")
+    private String fxratesUrl;
 
-  public QuoteResponse getRate(String primaryCcy, String secondaryCcy) throws IOException {
+    public QuoteResponse getRate(String primaryCcy, String secondaryCcy) {
 
-    StringBuilder sb = new StringBuilder(fxratesUrl);
-    sb = sb.append("?primaryCcy=").append(primaryCcy);
-    sb = sb.append("&secondaryCcy=").append(secondaryCcy);
-    URL url = new URL(sb.toString());
+        RestTemplate restTemplate = new RestTemplate();
 
-    String jsonAsString =  proxyService.doCallServiceGet(url);
-    
-    ObjectMapper mapper = new ObjectMapper();
-    return mapper.readValue(jsonAsString, QuoteResponse.class);
-  }
+        StringBuilder sb = new StringBuilder(fxratesUrl);
+        sb = sb.append("?primaryCcy=").append(primaryCcy);
+        sb = sb.append("&secondaryCcy=").append(secondaryCcy);
+
+        return restTemplate.getForObject(sb.toString(), QuoteResponse.class);
+    }
 
 }
+
 ```
 
-We also need to add a pojo class for deserializing the response.
-Create a folder *pojo* under *fxtrading* and add class QuoteResponse
+We also need to add a simple java object that will contain the deserialized response.  
+Create a folder *dto* under *fxtrading* and add class QuoteResponse  
 
 ```
 package com.banking.sofware.design.fxtrading.pojo;
@@ -399,24 +389,23 @@ public class QuoteResponse {
   private BigDecimal buyRate;
   private BigDecimal sellRate;
 
-  public BigDecimal getBuyRate() {
-    return buyRate;
+  public QuoteResponse() {
+
   }
 
-  public void setBuyRate(BigDecimal buyRate) {
+  public QuoteResponse(BigDecimal buyRate, BigDecimal sellRate) {
     this.buyRate = buyRate;
-  }
-
-  public BigDecimal getSellRate() {
-    return sellRate;
-  }
-
-  public void setSellRate(BigDecimal sellRate) {
     this.sellRate = sellRate;
   }
+  
+  // TODO: add getters and setters
 
 }
 ```
+
+Notice we added explictly the no-args constructor and also added a constructor with parameters. 
+The second one is created for convenience for unit testing.  
+If the first one is missing then the deserialization will fail.  
 
 2. In FxTradingService add the following methods 
 
@@ -444,16 +433,14 @@ public class QuoteResponse {
     repository.save(transaction);
   }
 
-  private QuoteResponse getCurrentRate(String primaryCcy, String secondaryCcy) {
-    try {
-      return proxyRatesService.getRate(primaryCcy, secondaryCcy);
-    } catch (IOException e) {
-      throw new RuntimeException("could not aquire current rate");
+   private QuoteResponse getCurrentRate(String primaryCcy, String secondaryCcy) {
+        return proxyRatesService.getRate(primaryCcy, secondaryCcy);
     }
-  }
 ```
 
-Note that you need to add a class dependency of QuoteProxyService. Hint: use @Autowired.
+Note:
+* you have to add missing imports
+* add a dependency of QuoteProxyService. Hint: use @Autowired.
   
 
 3. In FxTradingController add the following method:
@@ -469,13 +456,15 @@ Note that you need to add a class dependency of QuoteProxyService. Hint: use @Au
     }
   }
   ```
+  
+Now the implementation for the creation of trades should be done and tested with a tool like Postman.  
  
 ## <a name="exercise-V">Exercise V - Secure the API with authorization filter </a>
 
-Finally we will secure the REST endpoints.
+Finally we will secure the REST endpoints.  
 
-1. Firstly we add a service that checks whether a given token is valid.
-This service will call the authorization microservice that will do the actual validation.
+1. Firstly we add a service that checks whether a given token is valid.  
+This service will call the authorization microservice that will do the actual validation.  
 
 ```
 package com.banking.sofware.design.fxtrading.service;
