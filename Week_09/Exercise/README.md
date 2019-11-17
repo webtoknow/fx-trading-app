@@ -26,12 +26,13 @@ For example: Tomcat server is defined to run on port 8210 by setting property *s
 
 ## <a name="exercise-II">Exercise II - Database Setup </a>
 
-1. Create the database schema **fxtrading**
-2. Create the **transactions** table. 
-The code is in transactions-table.sql under postgres folder of the initial fxtrading project.
-3. Create user **fxowner** and grant him rights on fxtrading database and associated tables and sequences
-These operations are defined in users.sql under postgres folder of the inital project.
-4. Insert static data in the transactions table. Use the inserts in file initial_transactions.sql
+For this exercise do the following below with the help of the commands found in db_setup.sql
+
+1. Create a database named **fxtrading**
+2. Create the **transactions** table on the above database
+3. Create user **fxuser** and grant him rights on fxtrading database and associated tables and sequences
+4. Insert dummy test data in the transactions table
+
 
 Notes:
 1. Database connection properties are already set in /src/main/resources/application.properties. 
