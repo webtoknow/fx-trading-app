@@ -47,7 +47,7 @@ spring.datasource.password=<VALUE>
 
 For this exercise we will need to create:
 1. a Hibernate @Entity class that maps to the *transactions* table
-2. a TransactionVo class that will be used to serialize/deserialize data going through the @RestController(will be created after)
+2. a TransactionVo class that will be used to serialize/deserialize data going through the @RestController(wich will be created after)
 3. a class that implements Spring's Converter interface. It will convert Transaction @Entity objects to POJO TransactionVo objects.
 4. a @Configuration that defines the @Bean conversionService. 
 The conversionService bean should be configured by registering all required converters(in this case we only have one for transactions).
@@ -75,39 +75,47 @@ public class Transaction {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  BigDecimal id;
+  private BigDecimal id;
 
   @Column
-  String username;
+  private String username;
 
   @Column
-  String primaryCcy;
+  private String primaryCcy;
 
   @Column
-  String secondaryCcy;
+  private String secondaryCcy;
 
   @Column
-  BigDecimal rate;
+  private BigDecimal rate;
 
   @Column
-  String action;
+  private String action;
 
   @Column
-  BigDecimal notional;
+  private BigDecimal notional;
 
   @Column
-  String tenor;
+  private String tenor;
 
   @Column(insertable = false)
-  Date date;
+  private Date date;
 
   //TODO: Generate getters and setters
-  
+
 }
 ```
 
-2. Under *fxtrading* create folder *vo*.
-Inside the folder create class TransactionVo
+2. Under *fxtrading* create folder *vo*.  
+Inside the folder create class TransactionVo  
+
+We use this object to serialize/deserialize REST message payloads.  
+It is a practice to use a distinct set of objects when communicating through the REST interface.  
+These objects help us as we might want to either hide, aggregate or transform information coming from database entities.  
+
+In our case we transform the rate field(for examplification purposes).   
+Also we send/receive the date as a Long object.  
+
 
 ```
 package com.banking.sofware.design.fxtrading.vo;
@@ -140,12 +148,13 @@ public class TransactionVo {
 ```
 
 3. a
-In this microservice the rates are stored as integer numbers in the database. 
-They need to be converted from decimal to integers and vice versa when interacting with the UI or other services.
-For conversion we will multiply or divide with a constant defined in a constant class
+For teaching purposes in this microservice the rates are stored as integer numbers in the database.  
+This microservice will use only the first four decimal places of fx rates.  
+The rates will need to be converted from decimal to integers and vice versa when needed.   
+For conversion we will multiply or divide with a constant of 10000 defined in a constant class  
 
-Create package *util* under *fxtrading*
-In it add class MiscUtil:
+Create package *util* under *fxtrading*  
+In it add class MiscUtil:  
 
 ```
 package com.banking.sofware.design.fxtrading.util;
@@ -200,8 +209,7 @@ public class Transaction2TransactionVo implements Converter<Transaction, Transac
 }
 ```
 
-4.  In *fxtrading* create folder *configuration*.
-Add to it the following class:
+4.  In *fxtrading* under folder *configuration* add the following class:
 
 ```
 package com.banking.sofware.design.fxtrading.configuration;
@@ -273,10 +281,10 @@ import java.util.List;
 public class FxTradingService {
 
     @Autowired
-    FxTradingRepository repository;
+    private FxTradingRepository repository;
 
     @Autowired
-    ConversionService conversionService;
+    private ConversionService conversionService;
 
     @SuppressWarnings("unchecked")
     public List<TransactionVo> getTransactions() {
@@ -309,7 +317,7 @@ import java.util.List;
 public class FxTradingRestController {
 
     @Autowired
-    FxTradingService tradingService;
+    private FxTradingService tradingService;
 
     @CrossOrigin
     @RequestMapping(method = RequestMethod.GET, produces = "application/json")
