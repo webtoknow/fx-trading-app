@@ -1,23 +1,31 @@
 package com.banking.sofware.design.fxtrading.vo;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.math.BigDecimal;
 
 public class TransactionVo {
 
   private BigDecimal id;
 
+  @JsonProperty(required = true)
   private String username;
 
+  @JsonProperty(required = true)
   private String primaryCcy;
 
+  @JsonProperty(required = true)
   private String secondaryCcy;
 
   private BigDecimal rate;
 
+  @JsonProperty(required = true)
   private String action;
 
+  @JsonProperty(required = true)
   private BigDecimal notional;
 
+  @JsonProperty(required = true)
   private String tenor;
 
   private Long date;

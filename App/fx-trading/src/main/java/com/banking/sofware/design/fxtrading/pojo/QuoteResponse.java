@@ -10,6 +10,15 @@ public class QuoteResponse {
   private BigDecimal buyRate;
   private BigDecimal sellRate;
 
+  public QuoteResponse() {
+
+  }
+
+  public QuoteResponse(BigDecimal buyRate, BigDecimal sellRate) {
+    this.buyRate = buyRate;
+    this.sellRate = sellRate;
+  }
+
   public BigDecimal getBuyRate() {
     return buyRate;
   }
