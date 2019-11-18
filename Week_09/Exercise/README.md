@@ -457,11 +457,15 @@ Note:
   }
   ```
   
-Now the implementation for the creation of trades should be done and tested with a tool like Postman.  
+Now the implementation for the creation of trades should be done and you can test it with a tool like Postman.  
  
 ## <a name="exercise-V">Exercise V - Secure the API with authorization filter </a>
 
-Finally we will secure the REST endpoints.  
+In this exercise we will secure the REST API through a custom method.   
+Each call to the REST API will be intercepted and verified by interogating the users service for authorization.
+
+**Important Note**: this mechanism was primarily chosen to illustrate communications between microservices and is probably not the best way to implement authorization.  
+Since we are using JWT the simplest way is to verify the token in the trading service and not delegate to users service.
 
 1. Firstly we add a service that checks whether a given token is valid.  
 This service will call the authorization microservice that will do the actual validation.  
@@ -469,50 +473,52 @@ This service will call the authorization microservice that will do the actual va
 ```
 package com.banking.sofware.design.fxtrading.service;
 
-import java.io.IOException;
-import java.net.URL;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.banking.sofware.design.fxtrading.dto.AuthRequest;
+import com.banking.sofware.design.fxtrading.dto.AuthResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import com.banking.sofware.design.fxtrading.pojo.AuthResponse;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 public class UserAuthProxyService {
 
-  @Value("${user.auth.url}")
-  private String userAuthorization;
+    @Value("${user.auth.url}")
+    private String userAuthorization;
 
-  @Autowired
-  private RemoteServiceCaller proxyService;
 
-  private static final Logger log = LoggerFactory.getLogger(UserAuthProxyService.class);
-
-  public AuthResponse authorizeUser(String token) {
-    try {
-      String postBody = String.format("{\"token\": \"%s\"}", token);
-
-      String jsonAsString = proxyService.doCallServicePost(new URL(userAuthorization), postBody);
-
-      ObjectMapper mapper = new ObjectMapper();
-      return mapper.readValue(jsonAsString, AuthResponse.class);
-    } catch (IOException e) {
-      log.error("Error while calling authorization service", e);
-      throw new RuntimeException("Error while calling authorization service");
+    public AuthResponse authorizeUser(String token) {
+        RestTemplate restTemplate = new RestTemplate();
+        return restTemplate.postForObject(userAuthorization, new AuthRequest(token), AuthResponse.class);
     }
-  }
 
 }
 ```
 
-2 We create a POJO that will contain the response coming from the authorization service
+2 Now we have to create an object for serializing the request to the authorization service and one for deserializing the response.
+
+Under *dto* add:
 
 ```
-package com.banking.sofware.design.fxtrading.pojo;
+package com.banking.sofware.design.fxtrading.dto;
+
+public class AuthRequest {
+
+    private String token;
+
+    public AuthRequest(String token) {
+        this.token = token;
+    }
+
+    public String getToken() {
+        return token;
+    }
+}
+```
+
+And the response:
+
+```
+package com.banking.sofware.design.fxtrading.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -521,32 +527,20 @@ public class AuthResponse {
 
   private String userName;
   private boolean isValid;
-
-  public String getUserName() {
-    return userName;
-  }
-
-  public void setUserName(String userName) {
-    this.userName = userName;
-  }
-
-  public boolean isValid() {
-    return isValid;
-  }
-
-  public void setValid(boolean isValid) {
-    this.isValid = isValid;
-  }
-
+  
+  //generate getters and setters
+  
 }
 ```
 
-3. Under package *fxtrading* we will create a package *filter*
-We create a security filter in this package. This filter will execute before each call in fxtrading service(creating a new trade for example)
+3. Under package *fxtrading* we will create a package *filter*  
+We create a security filter in this package. This filter will intercept each HTTP call to fxtrading service.
 
-The filter will always allow OPTIONS calls.
-If the request contains the header Authorization starting with the string "Bearer " then the filter will call the autorization microservice. 
-If the token is valid then the actual call will be allowed.
+
+
+If the request contains the header Authorization starting with the string "Bearer " then the authorization service will be invoked to see if the token is valid.  
+If the token is valid then the actual call will be allowed.  
+The filter has to allow the browser's OPTIONS call.  
 
 ```
 package com.banking.sofware.design.fxtrading.filter;
@@ -569,7 +563,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-import com.banking.sofware.design.fxtrading.pojo.AuthResponse;
+import com.banking.sofware.design.fxtrading.dto.AuthResponse;
 import com.banking.sofware.design.fxtrading.service.UserAuthProxyService;
 
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
@@ -639,10 +633,21 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 ```
 
 4. Finally we must add the filter to Spring Security's filter chain. 
-We will change the configuration in CustomWebSecurityConfigurerAdapter class for this:
+We will change the configuration in CustomWebSecurityConfigurerAdapter class for the below one. And adding missing imports.
 
 ```
    http.csrf().disable().addFilterBefore(new JwtAuthorizationFilter(authenticationManager()), BasicAuthenticationFilter.class);
 ```
 
+This line will register the custom filter and each call will be intercepted by it.
+
+After this you can test the API and notice that without the Authorization header the requests will be rejected with 401 status code.
+
+To now make succesfull requests to the trading service API you have to:  
+* authenticate with username and password through the users service API  
+* take the token obtained at authentication  
+* use the token in the Authorization header like below in the calls to trading service:  
+```
+Authorization : Bearer <TOKEN>
+```
 
