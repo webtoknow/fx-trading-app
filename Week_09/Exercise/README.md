@@ -377,7 +377,7 @@ We also need to add a simple java object that will contain the deserialized resp
 Create a folder *dto* under *fxtrading* and add class QuoteResponse  
 
 ```
-package com.banking.sofware.design.fxtrading.pojo;
+package com.banking.sofware.design.fxtrading.dto;
 
 import java.math.BigDecimal;
 
