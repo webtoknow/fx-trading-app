@@ -168,9 +168,23 @@ INSERT INTO user_table (user_name , email , password)
 VALUES('andrei', 'andrei@gmail.com','AndreisPassword');
 ```
 
-Now user Grant Wizzard to grant access of your db to your db-user.
 
+Now user Grant Wizzard to grant access of your db to your db-user, or run the following scripts:
 
+```SQL 
+CREATE ROLE new_user LOGIN PASSWORD 'new_user_password';
+
+REVOKE CONNECT ON DATABASE users  FROM PUBLIC;
+GRANT CONNECT on DATABASE users  TO new_user;
+
+GRANT USAGE ON SCHEMA public TO new_user;
+
+GRANT ALL PRIVILEGES ON DATABASE users TO new_user;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO new_user;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO new_user;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO new_user;
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO new_user;
+```
 
  ## Exercise 3 - Read data to controller
  

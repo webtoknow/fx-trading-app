@@ -1,7 +1,7 @@
 package com.banking.sofware.design.fxtrading.service;
 
-import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -22,13 +22,13 @@ import com.banking.sofware.design.fxtrading.vo.TransactionVo;
 public class FxTradingService {
 
   @Autowired
-  FxTradingRepository repository;
+  private FxTradingRepository repository;
 
   @Autowired
-  ConversionService conversionService;
+  private ConversionService conversionService;
 
   @Autowired
-  QuoteProxyService proxyRatesService;
+  private QuoteProxyService proxyRatesService;
 
   
   @SuppressWarnings("unchecked")
@@ -50,7 +50,7 @@ public class FxTradingService {
     transaction.setAction(action.toUpperCase());
     QuoteResponse ratePair = getCurrentRate(vo.getPrimaryCcy(), vo.getSecondaryCcy());
     BigDecimal rate = "BUY".equalsIgnoreCase(action) ? ratePair.getBuyRate() : ratePair.getSellRate();
-    transaction.setRate(rate.multiply(MiscUtil.RATE_MULTIPLIER));
+    transaction.setRate(rate.multiply(MiscUtil.RATE_MULTIPLIER).setScale(0, RoundingMode.HALF_UP));
 
     transaction.setUsername(vo.getUsername());
     transaction.setPrimaryCcy(vo.getPrimaryCcy());
@@ -62,11 +62,7 @@ public class FxTradingService {
   }
 
   private QuoteResponse getCurrentRate(String primaryCcy, String secondaryCcy) {
-    try {
       return proxyRatesService.getRate(primaryCcy, secondaryCcy);
-    } catch (IOException e) {
-      throw new RuntimeException("could not aquire current rate");
-    }
   }
 
 }

@@ -1,16 +1,12 @@
-# 1. Brief Recap  
+# 1. HTTP Recapitulation
 
-HTTP is an internet protocol. We will very briefly recap the http methods, response types and format.  
+## 1.1 HTTP methods  
 
-## 1.1 HTTP methods(or verbs)  
-
-More common ones:  
+Most common ones:  
 GET  
 POST  
 PUT  
-DELETE  
-HEAD  
-OPTIONS  
+DELETE   
 
 <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods">Details</a>  
 
@@ -24,17 +20,17 @@ OPTIONS
 
 ## 1.3 HTTP format  
 
-An HTTP message is either a request message coming from the client or a response message coming from the server.  
-An HTTP message contains a list of headers and a payload.  
-For example if the server provides cookies to the client it will include a header named *Cookie*  
-There is a list of predefined HTTP headers and you can add custom headers to your HTTP responses.  
+HTTP is a client-server, request-response protocol.  
+An HTTP message contains a list of headers and in some of the cases a message body.  
+For example if the server provides cookies to the client it will include a header named *Cookie*   
+There is a list of predefined HTTP headers and you can add custom headers to your HTTP responses.   
 
 <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Messages">HTTP Messages</a>  
 
 # 2. REST(Representational State Transfer)  
 A set of conventions used to create web services. Alternative to SOAP.  
 Usually used with HTTP.  
-Each type of operation that the server can perform will map to one of the http verbs.  
+Each type of operation that the server can perform will map to one of the http methods.
   
 So for example:  
    for *obtaining* a resource from the server the corresponding operation will commonly be using an HTTP **GET**  
@@ -45,7 +41,7 @@ These operations listed above are commonly called CRUD(Create/Read/Update/Delete
 
 # 3. Spring Rest Controller 
 
-Small example to get a flavour.  
+Small example: 
 
 ```
 @RestController
@@ -69,16 +65,16 @@ public class FxTradingRestController {
 ```
 
 The @RestController annotation indicates this class is what its name describes - a REST controller.  
-It is just a convenience annotation that semantically describes the contents of the class. It behaves in the same way as a @Controller annotation.  
+It is just a convenience annotation that semantically describes the contents of the class.
   
 The @RequestMapping annotation is used here at the class level and the method level.  
-At the class level in this case it specifies the common base URL for all the methods in this class by adding to the API base URL. All URLs the methods are mapped to will have this same base URL.  
-At the method name we have specified the HTTP verb this method is binded to: GET. Also the *produces* parameter indicates the format of the response.  
+At the class level in this case it specifies the common base URL for all the methods in this class by adding to the API base URL.
+At the method name we have specified the HTTP method this method is bound to: GET. Also the *produces* parameter indicates the format of the response.  
 This annotations will translate into the following behaviour:  
 The server will listen on the following URL: <BASE_PATH>/transactions for GET methods. And the result of the method execution will be converted to an json file that will be transferred over HTTP to the requestor.  
 
 Notice the getTransactions method accepts an HttpServletResponse parameter? This is injected by Spring at method execution.  
 In this case it is used to set the status code to 400 in case of an error. 400 error means the error was caused by bad user input.   
-This is an example and not a good practice to respond to the user with 400 on any error happening on the server side regardless of the cause.  
+This is just a simple example and not a best practice.
 
-Finally @CrossOrigin is used in this case to allow the method to be called even if the web server that exposes it is on a different machine than the web server that serves the HTTP resources.
+Finally @CrossOrigin is used in this case to allow the method to be called even if the web server that exposes it is on a different domain than the web server that serves the HTTP resources.

@@ -8,9 +8,8 @@ Before developing the Fxtrading service you can take a look at the application a
 - [Exercise I - Importing initial project setup in IDE](#exercise-I)
 - [Exercise II - Database Setup](#exercise-II)
 - [Exercise III - Implement REST endpoint for displaying list of all trades](#exercise-III)
-- [Exercise IV - Implement remote REST endpoint caller](#exercise-IV)
-- [Exercise V - Implement functionality for saving trades](#exercise-V)
-- [Exercise VI - Secure the API with authorization filter](#exercise-VI)
+- [Exercise IV - Implement functionality for saving trades](#exercise-IV)
+- [Exercise V - Secure the API with authorization filter](#exercise-V)
 
 
 ## <a name="exercise-I">Exercise I - Importing initial project setup in IDE </a>
@@ -26,12 +25,13 @@ For example: Tomcat server is defined to run on port 8210 by setting property *s
 
 ## <a name="exercise-II">Exercise II - Database Setup </a>
 
-1. Create the database schema **fxtrading**
-2. Create the **transactions** table. 
-The code is in transactions-table.sql under postgres folder of the initial fxtrading project.
-3. Create user **fxowner** and grant him rights on fxtrading database and associated tables and sequences
-These operations are defined in users.sql under postgres folder of the inital project.
-4. Insert static data in the transactions table. Use the inserts in file initial_transactions.sql
+For this exercise do the following below with the help of the commands found in db_setup.sql
+
+1. Create a database named **fxtrading**
+2. Create the **transactions** table on the above database
+3. Create user **fxuser** and grant him rights on fxtrading database and associated tables and sequences
+4. Insert dummy test data in the transactions table
+
 
 Notes:
 1. Database connection properties are already set in /src/main/resources/application.properties. 
@@ -46,7 +46,7 @@ spring.datasource.password=<VALUE>
 
 For this exercise we will need to create:
 1. a Hibernate @Entity class that maps to the *transactions* table
-2. a TransactionVo class that will be used to serialize/deserialize data going through the @RestController(will be created after)
+2. a TransactionVo class that will be used to serialize/deserialize data going through the @RestController(wich will be created after)
 3. a class that implements Spring's Converter interface. It will convert Transaction @Entity objects to POJO TransactionVo objects.
 4. a @Configuration that defines the @Bean conversionService. 
 The conversionService bean should be configured by registering all required converters(in this case we only have one for transactions).
@@ -74,39 +74,47 @@ public class Transaction {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  BigDecimal id;
+  private BigDecimal id;
 
   @Column
-  String username;
+  private String username;
 
   @Column
-  String primaryCcy;
+  private String primaryCcy;
 
   @Column
-  String secondaryCcy;
+  private String secondaryCcy;
 
   @Column
-  BigDecimal rate;
+  private BigDecimal rate;
 
   @Column
-  String action;
+  private String action;
 
   @Column
-  BigDecimal notional;
+  private BigDecimal notional;
 
   @Column
-  String tenor;
+  private String tenor;
 
   @Column(insertable = false)
-  Date date;
+  private Date date;
 
   //TODO: Generate getters and setters
-  
+
 }
 ```
 
-2. Under *fxtrading* create folder *vo*.
-Inside the folder create class TransactionVo
+2. Under *fxtrading* create folder *vo*.  
+Inside the folder create class TransactionVo  
+
+We use this object to serialize/deserialize REST message payloads.  
+It is a practice to use a distinct set of objects when communicating through the REST interface.  
+These objects help us as we might want to either hide, aggregate or transform information coming from database entities.  
+
+In our case we transform the rate field(for examplification purposes).   
+Also we send/receive the date as a Long object.  
+
 
 ```
 package com.banking.sofware.design.fxtrading.vo;
@@ -139,12 +147,13 @@ public class TransactionVo {
 ```
 
 3. a
-In this microservice the rates are stored as integer numbers in the database. 
-They need to be converted from decimal to integers and vice versa when interacting with the UI or other services.
-For conversion we will multiply or divide with a constant defined in a constant class
+For teaching purposes in this microservice the rates are stored as integer numbers in the database.  
+This microservice will use only the first four decimal places of fx rates.  
+The rates will need to be converted from decimal to integers and vice versa when needed.   
+For conversion we will multiply or divide with a constant of 10000 defined in a constant class  
 
-Create package *util* under *fxtrading*
-In it add class MiscUtil:
+Create package *util* under *fxtrading*  
+In it add class MiscUtil:  
 
 ```
 package com.banking.sofware.design.fxtrading.util;
@@ -199,8 +208,7 @@ public class Transaction2TransactionVo implements Converter<Transaction, Transac
 }
 ```
 
-4.  In *fxtrading* create folder *configuration*.
-Add to it the following class:
+4.  In *fxtrading* under folder *configuration* add the following class:
 
 ```
 package com.banking.sofware.design.fxtrading.configuration;
@@ -272,10 +280,10 @@ import java.util.List;
 public class FxTradingService {
 
     @Autowired
-    FxTradingRepository repository;
+    private FxTradingRepository repository;
 
     @Autowired
-    ConversionService conversionService;
+    private ConversionService conversionService;
 
     @SuppressWarnings("unchecked")
     public List<TransactionVo> getTransactions() {
@@ -308,7 +316,7 @@ import java.util.List;
 public class FxTradingRestController {
 
     @Autowired
-    FxTradingService tradingService;
+    private FxTradingService tradingService;
 
     @CrossOrigin
     @RequestMapping(method = RequestMethod.GET, produces = "application/json")
@@ -327,142 +335,49 @@ public class FxTradingRestController {
 After completing steps 1-7 of exercise III you should have a functional REST endpoint for listing all trades.
 It can now be tested with a tool like Postman
  
-## <a name="exercise-IV">Exercise IV - Implement remote REST endpoint caller </a>
 
-Add class RemoteServiceCaller in *service* package
-This class will be used to call remote REST services
+## <a name="exercise-IV">Exercise IV - Implement functionality for saving trades </a>
 
-```
-package com.banking.sofware.design.fxtrading.service;
+Since we cannot trust the exchange rate coming from the frontend(can be trivially changed) we will call the quote service to provide us with the rate.
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-
-@Service
-public class RemoteServiceCaller {
-
-  private static final Logger log = LoggerFactory.getLogger(RemoteServiceCaller.class);
-
-  public String doCallServiceGet(URL url) throws IOException {
-    return doCallService(url, "GET", null);
-  }
-
-  public String doCallServicePost(URL url, String postBody) throws IOException {
-    return doCallService(url, "POST", postBody);
-  }
-
-  private HttpURLConnection makeRequest(URL url, String method, String postBody) throws IOException {
-    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-    conn.setRequestProperty("Accept", "application/json");
-
-    if ("GET".equals(method)) {
-      conn.setRequestMethod("GET");
-    } else {
-      conn.setDoOutput(true);
-      conn.setRequestMethod("POST");
-      conn.setRequestProperty("content-type", "application/json");
-
-      BufferedWriter streamWriter = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()));
-      streamWriter.write(postBody);
-      streamWriter.flush();
-      streamWriter.close();
-    }
-    return conn;
-  }
-
-  private String doCallService(URL url, String method, String postBody) throws IOException {
-    BufferedReader streamReader = null;
-    HttpURLConnection conn = null;
-    try {
-      conn = makeRequest(url, method, postBody);
-
-      if (conn.getResponseCode() != 200) {
-        log.error("Call to URL {} method {} resulted in {} status code", url, method, conn.getResponseCode());
-        throw new RuntimeException("Failed with http error code: " + conn.getResponseCode());
-      }
-
-      streamReader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-      StringBuilder stringBuilder = new StringBuilder();
-      String inputStr;
-      while ((inputStr = streamReader.readLine()) != null) {
-        stringBuilder.append(inputStr);
-      }
-
-      String result = stringBuilder.toString();
-      log.info("Call to URL {} method {} was 200 OK and returned body: {}", url, method, result);
-      return result;
-    } finally {
-      if (streamReader != null) {
-        streamReader.close();
-      }
-      if (conn != null) {
-        conn.disconnect();
-      }
-    }
-  }
-}
-```
-## <a name="exercise-V">Exercise V - Implement functionality for saving trades </a>
-
-Now using the remote service caller we can call quote service to find out the quote for a transaction at a given moment.
-
-1. Let's create a service that wraps the remote service caller.
-It adds a convenience method that receives and returns data in a personalized way.
+1. Let's create a service that obtains the quotation from the quote service
 
 In package *service* add class QuoteProxyService
 
 ```
 package com.banking.sofware.design.fxtrading.service;
 
-import java.io.IOException;
-import java.net.URL;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import com.banking.sofware.design.fxtrading.dto.QuoteResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import com.banking.sofware.design.fxtrading.pojo.QuoteResponse;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 public class QuoteProxyService {
 
-  @Value("${fxrates.url}")
-  private String fxratesUrl;
-  
-  @Autowired
-  private RemoteServiceCaller proxyService;
+    @Value("${fxrates.url}")
+    private String fxratesUrl;
 
-  public QuoteResponse getRate(String primaryCcy, String secondaryCcy) throws IOException {
+    public QuoteResponse getRate(String primaryCcy, String secondaryCcy) {
 
-    StringBuilder sb = new StringBuilder(fxratesUrl);
-    sb = sb.append("?primaryCcy=").append(primaryCcy);
-    sb = sb.append("&secondaryCcy=").append(secondaryCcy);
-    URL url = new URL(sb.toString());
+        RestTemplate restTemplate = new RestTemplate();
 
-    String jsonAsString =  proxyService.doCallServiceGet(url);
-    
-    ObjectMapper mapper = new ObjectMapper();
-    return mapper.readValue(jsonAsString, QuoteResponse.class);
-  }
+        StringBuilder sb = new StringBuilder(fxratesUrl);
+        sb = sb.append("?primaryCcy=").append(primaryCcy);
+        sb = sb.append("&secondaryCcy=").append(secondaryCcy);
+
+        return restTemplate.getForObject(sb.toString(), QuoteResponse.class);
+    }
 
 }
-```
-
-We also need to add a pojo class for deserializing the response.
-Create a folder *pojo* under *fxtrading* and add class QuoteResponse
 
 ```
-package com.banking.sofware.design.fxtrading.pojo;
+
+We also need to add a simple java object that will contain the deserialized response.  
+Create a folder *dto* under *fxtrading* and add class QuoteResponse  
+
+```
+package com.banking.sofware.design.fxtrading.dto;
 
 import java.math.BigDecimal;
 
@@ -474,24 +389,23 @@ public class QuoteResponse {
   private BigDecimal buyRate;
   private BigDecimal sellRate;
 
-  public BigDecimal getBuyRate() {
-    return buyRate;
+  public QuoteResponse() {
+
   }
 
-  public void setBuyRate(BigDecimal buyRate) {
+  public QuoteResponse(BigDecimal buyRate, BigDecimal sellRate) {
     this.buyRate = buyRate;
-  }
-
-  public BigDecimal getSellRate() {
-    return sellRate;
-  }
-
-  public void setSellRate(BigDecimal sellRate) {
     this.sellRate = sellRate;
   }
+  
+  // TODO: add getters and setters
 
 }
 ```
+
+Notice we added explictly the no-args constructor and also added a constructor with parameters. 
+The second one is created for convenience for unit testing.  
+If the first one is missing then the deserialization will fail.  
 
 2. In FxTradingService add the following methods 
 
@@ -508,7 +422,7 @@ public class QuoteResponse {
     transaction.setAction(action.toUpperCase());
     QuoteResponse ratePair = getCurrentRate(vo.getPrimaryCcy(), vo.getSecondaryCcy());
     BigDecimal rate = "BUY".equalsIgnoreCase(action) ? ratePair.getBuyRate() : ratePair.getSellRate();
-    transaction.setRate(rate.multiply(MiscUtil.RATE_MULTIPLIER));
+    transaction.setRate(rate.multiply(MiscUtil.RATE_MULTIPLIER).setScale(0, RoundingMode.HALF_UP));
 
     transaction.setUsername(vo.getUsername());
     transaction.setPrimaryCcy(vo.getPrimaryCcy());
@@ -519,16 +433,14 @@ public class QuoteResponse {
     repository.save(transaction);
   }
 
-  private QuoteResponse getCurrentRate(String primaryCcy, String secondaryCcy) {
-    try {
-      return proxyRatesService.getRate(primaryCcy, secondaryCcy);
-    } catch (IOException e) {
-      throw new RuntimeException("could not aquire current rate");
+   private QuoteResponse getCurrentRate(String primaryCcy, String secondaryCcy) {
+        return proxyRatesService.getRate(primaryCcy, secondaryCcy);
     }
-  }
 ```
 
-Note that you need to add a class dependency of QuoteProxyService. Hint: use @Autowired.
+Note:
+* you have to add missing imports
+* add a dependency of QuoteProxyService. Hint: use @Autowired.
   
 
 3. In FxTradingController add the following method:
@@ -544,61 +456,69 @@ Note that you need to add a class dependency of QuoteProxyService. Hint: use @Au
     }
   }
   ```
+  
+Now the implementation for the creation of trades should be done and you can test it with a tool like Postman.  
  
-## <a name="exercise-VI">Exercise VI - Secure the API with authorization filter </a>
+## <a name="exercise-V">Exercise V - Secure the API with authorization filter </a>
 
-Finally we will secure the REST endpoints.
+In this exercise we will secure the REST API through a custom method.   
+Each call to the REST API will be intercepted and verified by interogating the users service for authorization.
 
-1. Firstly we add a service that checks whether a given token is valid.
-This service will call the authorization microservice that will do the actual validation.
+**Important Note**: this mechanism was primarily chosen to illustrate communications between microservices and is probably not the best way to implement authorization.  
+Since we are using JWT the simplest way is to verify the token in the trading service and not delegate to users service.
+
+1. Firstly we add a service that checks whether a given token is valid.  
+This service will call the authorization microservice that will do the actual validation.  
 
 ```
 package com.banking.sofware.design.fxtrading.service;
 
-import java.io.IOException;
-import java.net.URL;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.banking.sofware.design.fxtrading.dto.AuthRequest;
+import com.banking.sofware.design.fxtrading.dto.AuthResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import com.banking.sofware.design.fxtrading.pojo.AuthResponse;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 public class UserAuthProxyService {
 
-  @Value("${user.auth.url}")
-  private String userAuthorization;
+    @Value("${user.auth.url}")
+    private String userAuthorization;
 
-  @Autowired
-  private RemoteServiceCaller proxyService;
 
-  private static final Logger log = LoggerFactory.getLogger(UserAuthProxyService.class);
-
-  public AuthResponse authorizeUser(String token) {
-    try {
-      String postBody = String.format("{\"token\": \"%s\"}", token);
-
-      String jsonAsString = proxyService.doCallServicePost(new URL(userAuthorization), postBody);
-
-      ObjectMapper mapper = new ObjectMapper();
-      return mapper.readValue(jsonAsString, AuthResponse.class);
-    } catch (IOException e) {
-      log.error("Error while calling authorization service", e);
-      throw new RuntimeException("Error while calling authorization service");
+    public AuthResponse authorizeUser(String token) {
+        RestTemplate restTemplate = new RestTemplate();
+        return restTemplate.postForObject(userAuthorization, new AuthRequest(token), AuthResponse.class);
     }
-  }
 
 }
 ```
 
-2 We create a POJO that will contain the response coming from the authorization service
+2 Now we have to create an object for serializing the request to the authorization service and one for deserializing the response.
+
+Under *dto* add:
 
 ```
-package com.banking.sofware.design.fxtrading.pojo;
+package com.banking.sofware.design.fxtrading.dto;
+
+public class AuthRequest {
+
+    private String token;
+
+    public AuthRequest(String token) {
+        this.token = token;
+    }
+
+    public String getToken() {
+        return token;
+    }
+}
+```
+
+And the response:
+
+```
+package com.banking.sofware.design.fxtrading.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -607,32 +527,20 @@ public class AuthResponse {
 
   private String userName;
   private boolean isValid;
-
-  public String getUserName() {
-    return userName;
-  }
-
-  public void setUserName(String userName) {
-    this.userName = userName;
-  }
-
-  public boolean isValid() {
-    return isValid;
-  }
-
-  public void setValid(boolean isValid) {
-    this.isValid = isValid;
-  }
-
+  
+  //generate getters and setters
+  
 }
 ```
 
-3. Under package *fxtrading* we will create a package *filter*
-We create a security filter in this package. This filter will execute before each call in fxtrading service(creating a new trade for example)
+3. Under package *fxtrading* we will create a package *filter*  
+We create a security filter in this package. This filter will intercept each HTTP call to fxtrading service.
 
-The filter will always allow OPTIONS calls.
-If the request contains the header Authorization starting with the string "Bearer " then the filter will call the autorization microservice. 
-If the token is valid then the actual call will be allowed.
+
+
+If the request contains the header Authorization starting with the string "Bearer " then the authorization service will be invoked to see if the token is valid.  
+If the token is valid then the actual call will be allowed.  
+The filter has to allow the browser's OPTIONS call.  
 
 ```
 package com.banking.sofware.design.fxtrading.filter;
@@ -655,7 +563,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-import com.banking.sofware.design.fxtrading.pojo.AuthResponse;
+import com.banking.sofware.design.fxtrading.dto.AuthResponse;
 import com.banking.sofware.design.fxtrading.service.UserAuthProxyService;
 
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
@@ -725,10 +633,86 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 ```
 
 4. Finally we must add the filter to Spring Security's filter chain. 
-We will change the configuration in CustomWebSecurityConfigurerAdapter class for this:
+We will change the configuration in CustomWebSecurityConfigurerAdapter class for the below one. And adding missing imports.
 
 ```
    http.csrf().disable().addFilterBefore(new JwtAuthorizationFilter(authenticationManager()), BasicAuthenticationFilter.class);
 ```
 
+This line will register the custom filter and each call will be intercepted by it.
 
+After this you can test the API and notice that without the Authorization header the requests will be rejected with 401 status code.
+
+To now make succesfull requests to the trading service API you have to:  
+* authenticate with username and password through the users service API  
+* take the token obtained at authentication  
+* use the token in the Authorization header like below in the calls to trading service:  
+```
+Authorization : Bearer <TOKEN>
+```
+
+## <a name="exercise-VI">Exercise VI - Unit test </a>
+
+Unit testing is a subject in its own right and would require considerably more time to do it justice.  
+However you can take a look at the below test.  
+You can add it under *src/test/java/com/banking/sofware/design/fxtrading/service*  
+
+```
+package com.banking.sofware.design.fxtrading.service;
+
+import com.banking.sofware.design.fxtrading.entities.Transaction;
+import com.banking.sofware.design.fxtrading.dto.QuoteResponse;
+import com.banking.sofware.design.fxtrading.repo.FxTradingRepository;
+import com.banking.sofware.design.fxtrading.vo.TransactionVo;
+import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
+import org.mockito.internal.util.reflection.FieldSetter;
+
+import java.math.BigDecimal;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.verify;
+
+public class FxTradingServiceTest {
+
+    @Test
+    public void makeTransaction() throws Exception{
+
+        //setup
+        FxTradingService service = new FxTradingService();
+        QuoteProxyService quoteMock = Mockito.mock(QuoteProxyService.class);
+        FxTradingRepository repositoryMock = Mockito.mock(FxTradingRepository.class);
+
+        FieldSetter.setField(service,
+                service.getClass().getDeclaredField("proxyRatesService"),
+                quoteMock);
+        FieldSetter.setField(service,
+                service.getClass().getDeclaredField("repository"),
+                repositoryMock);
+
+        TransactionVo vo = new TransactionVo();
+        vo.setAction("BUY");
+        vo.setNotional(BigDecimal.valueOf(10000));
+        vo.setTenor("SP");
+        vo.setPrimaryCcy("EUR");
+        vo.setSecondaryCcy("RON");
+        Mockito.when(quoteMock.getRate(vo.getPrimaryCcy(), vo.getSecondaryCcy()))
+                .thenReturn(new QuoteResponse(BigDecimal.valueOf(1.1234),BigDecimal.valueOf(1.4321)));
+
+
+        //method under test
+        service.makeTransaction(vo);
+
+        //assert
+        ArgumentCaptor<Transaction> capturedTransaction = ArgumentCaptor.forClass(Transaction.class);
+        verify(repositoryMock).save(capturedTransaction.capture());
+        assertEquals(BigDecimal.valueOf(11234), capturedTransaction.getValue().getRate());
+    }
+}
+```
+
+Notice there are three parts to the method (They follow a style named <a href="https://martinfowler.com/bliki/GivenWhenThen.html">given-when-then</a>  ) 
+* in the first part the test setup is made: mock objects and test input are prepared (the tested system is brought into a predetermined state)
+* in the second part the tested method is invoked
+* finally in the third part the results are verified by using asserts(the post-conditions are checked)

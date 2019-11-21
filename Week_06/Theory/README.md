@@ -8,9 +8,9 @@
   - [Pull vs Push](#pull-vs-push)
   - [Observable lifecycle](#observable-lifecycle)
 - [Forms and Validations](#forms-and-validations)
-  - [Template-driven Forms](#template-driven-forms)
   - [Reactive Forms](#reactive-forms)
-  - [Forms State](#forms-state)
+  - [Template-driven Forms](#template-driven-forms)
+  - [Key differences between Reactive and Template-driven forms](#key-differences-between-reactive-and-template-driven-forms)
 
 ## About Angular - part II
 
@@ -22,8 +22,8 @@
 - offer signifiant benefits over other techinques for event handling, asynchronous programming and handling multiple values
 - are declarative, meaning that we define a function for publishing values, but it is not executed until a consumer subscribes to it
 - the subscribed consumer then receives notifications until the function completes or until they unsubscribe
-- to be able to use observables, we need to do the follosing steps:
-  - to create an observable, we have to import **rxjs/observable**, so we will be able to create and work with Observable type, needed until this will become part of the language
+- to be able to use observables, we need to do the following steps:
+  - to create an observable, we have to import **rxjs/observable**, so we will be able to create and work with Observable type, needed until this will become part of the language:
 
   ```JavaScript
   import { Observable } from 'rxjs';
@@ -94,7 +94,7 @@ subscription.unsubscribe();
 - Observables can be:
   - **Created** by using the **new Observable()** call
   - **Subscribed** to by an **observer**
-  - **Executed** by callind the **next()**
+  - **Executed** by calling the **next()**
   - **Disposed** by calling **unsubscribe()**
 
   **Creating observable**:
@@ -112,7 +112,7 @@ subscription.unsubscribe();
   - the **next** calls are the most common because they deliver the data to subscribers
 
   **Disposing observables**:
-  - because the time it takes to execute can be infinite amount of time, we need a way to stop it when we want
+  - because the time it takes to execute can be infinite amount of time, we need a way to stop it when we want to
   - we will need to unsubscribe from the observable to do cleanup and release resources as it will be a waste of memory and computing power
 
 ### Forms and Validations
@@ -124,27 +124,85 @@ subscription.unsubscribe();
 - none of these is wrong
 - both are using **FormGroup** and **FormControl** building blocks
 
-#### Template-driven Forms
+### Reactive forms
 
-- the template has many part of responsability
-- it is easier and similar to AngularJS
-- use two-way binding
-- the state of the form (valid, invalid) is automatic
+- are more robust, scalable, reusable and testable
+- best practice is to be used when forms are a key part of the application
+- the form model provides the value and status of the form element at a given point of time: **model-driven approach**
+- each form element in the view is directly linked to a form model (*FormControl* instance)
+- updates from the view to the model and from the model to the view are synchronous and aren't dependent on the UI rendered
+- validators are not added through attributes in the template
+- validator functions are added directly to the form control model in the component class
+- *e.g.*:
 
-#### Reactive Forms
+    ```javascript
+    const formGroup = new FormGroup({
+        'phones': new FormArray([
+            new FormGroup({
+                'number': new FormControl('', [ Validators.required ]),
+                'type': new FormControl('Primary')
+            }),
+            new FormGroup({
+                'number': new FormControl(''),
+                'type': new FormControl('Secondary')
+            })
+        ])
+    });
+    ```
 
-- data management and validations happen in code (class)
-- much flexible and right for complex forms
-- it is not using data-binding
-- we specify in the code the way we want to use entered data
-- we can add easier and dinamically new items
+    ```HTML
+    <form [formGroup]="formGroup" >
+        <h1>User Phones</h1>
+        <div class="phones"
+            *ngFor="let phoneGroup of formGroup.get('phones')['controls'];
+                    let i = index"
+            formArrayName="phones">
+            <ng-container [formGroupName]="i" >
+            <p>Phone Type: {{ phoneGroup.get('type').value }}</p>
+            <input
+                type="tel"
+                placeholder="Phone number"
+                formControlName="number"
+            />
+            </ng-container>
+        </div>
+    </form>
+    ```
 
-#### Forms State
+> Note
+>
+> We can also create our own Custom Validators.
 
-- forms state are giving us information about:
-  - if the form was changed (*pristine*/*dirty*)
-  - is data is valid (*valid*/*errors*)
-  - if a field has been visited (*touched*/*untouched*)
-- *FormControl* handles the states and values of the fields
-- *FormGroup* is the form itself, but we can group also some fields in a form
-- *FormControl* and *FormGroup* are classes (from *Forms* module)
+### Template-driven forms
+
+- easy to be added in an app
+- don't scale as well as reactive forms
+- best practice is to be used if form requirements are basic and logic can be managed only in the template
+- the template provides the value and status of the form element at a given point of time:**template-driven approach**
+- each element is linked to a directive that manages the form model internally
+- to add validation, we need to add the same validation attributes and for native HTML form validation
+- every time the value of a form control changes, Angular runs validation and generates a list of validation errors, which results in an *INVALID* status, or null, which results in a *VALID* status
+- *e.g.*:
+
+    ```HTML
+    <input id="name" name="name" class="form-control" required minlength="4" [(ngModel="book.name")]>
+    <div *ngIf="name.invalid && (name.dirty || name.touched)" class="alert alert-danger">
+        <div *ngIf="name.errors.required">Name is required.</div>
+        <div *ngIf="name.errors.minlength">Name must be at least 4 characters long.</div>
+    </div>
+    ```
+
+> Note
+>
+> We can also create our own Custom Validators.
+
+### Key differences between Reactive and Template-driven forms
+
+| Key | Reactive | Template-driven |
+| ------------- | ------------- | ------------- |
+| Setup (form model) | More explicit, created in component class  | Less explicit, created by directives  |
+| Data model | Structured | Unstructured |
+| Predictability | Synchronous | Asynchronous |
+| Form validation | Functions | Directives |
+| Mutability | Immutable | Mutable |
+| Scalability | Low-level API access | Abstraction on top of APIs |
