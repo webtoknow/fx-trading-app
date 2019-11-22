@@ -1,5 +1,9 @@
 version: "3"
 services:
+  ui:
+    build: ./ui
+    ports: 
+      -  "80:80"
   users:
     build: ./user-administration
     ports: 
