@@ -34,7 +34,7 @@ The agenda has the following content:
   - [Introduction](Week_09/Theory/README.md)
   - [Exercise](Week_09/Exercise/README.md)
 - Week 10 – Testing
-  - [Introduction](Week_10/Theory/README.md)
+  - [Introduction](https://drive.google.com/file/d/0B4NKACt0AT2MOEZNT0d1VEtRNWZDSHN6WUVnUTJya1BVeGUw/view?usp=sharing)
   - [Exercise](Week_10/Exercise/README.md)
 - Week 11 – Testing
   - [Introduction](Week_11/Theory/README.md)
