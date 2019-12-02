@@ -1,6 +1,6 @@
 # Week 11 - Testing
 ## Exercise part
-###Framework short description
+### Framework short description
 **6. Framework Dive in**
 
 The presented Framework is used to handle the UI tests for the developed application.
@@ -20,7 +20,7 @@ The project uses the following structures:
 * ```DriverUtils``` Class handles WebDriver useful methods like waiting for an element to be visible, waiting for it to be clickable, closing all pages but the one with a certain title, switching to a frame etc.
 
 
-###Exercises
+### Exercises
 
 1.Locating a WebElement;
 
