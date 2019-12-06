@@ -1,0 +1,31 @@
+version: "3"
+services:
+  ui:
+    build: ./ui
+    ports: 
+      -  "80:80"
+  users:
+    build: ./user-administration
+    ports: 
+      -  "8200:8200"
+  trading: 
+    build: ./fx-trading
+    ports:
+      - "8210:8210"
+  quote:
+    build: ./quote-service
+    ports:
+      - "8220:8220"
+  db:
+    image: postgres
+    environment:
+        POSTGRES_PASSWORD: "admin"
+    volumes:
+        - postgres-db:/var/lib/postgresql/data
+        - ./fx-trading/database_setup/db_setup.sql:/docker-entrypoint-initdb.d/1.sql
+        - ./user-administration/database_setup/db_setup.sql:/docker-entrypoint-initdb.d/2.sql
+
+    ports:
+      - "54320:5432"
+volumes:
+    postgres-db:
