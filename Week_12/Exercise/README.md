@@ -1,214 +1,73 @@
 # DevOps exercise 
 ## Continous deployment
 
-1. Login to Amazon (https://eu-central-1.console.aws.amazon.com/ec2/v2/home):
-EC2 Dashboard -> Launch Instance, select Amazon Linux 2 AMI (HVM), Next: Configure Instance Details
-Set number of instances to 3, Next: Add Storage, Next: Add tags, Next: Configure Security Group
-Add Custom TCP Rule for port 8080, Source: Anywhere, Review and Launch, Launch
-Select Create a new key pair and save the key, Launch Instances.
-View Instances and add tags on Name column: master_node, dev_node and sit_node.
+1. Write your first playbook
+- Install Putty: https://the.earth.li/~sgtatham/putty/latest/w64/putty-64bit-0.70-installer.msi
+- Open Putty
+- Open Putty and connect to Ansible Controller
+- Create your inventory file:
+```
+[webservers]
+node1
+```
+- Start writing your first playbook:
+```
+---
+- name: Install 
+  become: yes
+  hosts: webservers
+  pre_tasks:
+    - name: Stop Firewall
+      service:
+        name: firewalld
+        state: stopped
+  tasks:
+    - name: Ensure latest version of apache2
+      package:
+        name: httpd
+        state: latest
+ 
+    - name: Ensure html page is installed
+      copy:
+        content: "some content here!"
+        dest: /var/www/html/index.html
 
-Install Putty: https://the.earth.li/~sgtatham/putty/latest/w64/putty-64bit-0.70-installer.msi
-Open Puttygen
-File->Load private key and select the key provided by Amazon.
-Save private key as .ppk
+    - name: Enable apache2 service
+      service:
+        name: httpd
+        state: started
+        enabled: true
 
-Open Putty and create connections to all 3 machines (Use Public IPs and go to Connection->SSH->Auth and browse to .ppk key)
-
-- Run below commands to set a simpler hostname on all 3 hosts:
-
-```bash
-sudo -i
-vi /etc/hostname
-replace hostname (e.g. ip-172-31-44-160.eu-central-1.compute.internal -> master-node.eu-central-1.compute.internal)
-hostname -F /etc/hostname
-logout
-sudo -i
+- name: Test
+  become: no
+  hosts: localhost
+  tasks:
+    - name: Connect to the server
+      uri:
+        url: "192.168.56.201:80"
+        status_code: 200    
+        return_content: yes
+```
+- Run your ansible playbook to your taget machine
+```
+ansible-playbook first_playbook.yml -i hosts
 ```
 
-- Get the IP of each host by running the command: 
-```bash
-ifconfig eth0 | grep -w 'inet' | awk '{print $2}'
-```
-and update /etc/hosts file on master-node, as in below example:
+2. Deploy your webserver project
+- Create the webserver role in order to install the httpd component and deploy your project using JINJA2 Template
+- Create your playbook that will use the webserver role
+- Run the created playbook to the target machine
 
-```bash
-127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
-::1         localhost6 localhost6.localdomain6
-172.31.44.160 master-node
-172.31.45.114 dev-node
-172.31.42.203 sit-node
-```
-- Generate ssh keys on master, as ec2-user
-
-```bash
-su - ec2-user
-cd ~/.ssh
-ssh-keygen -t rsa
-cat id_rsa.pub >> authorized_keys
-```
-
-- Create a new key file with the content of .ppk key provided by Amazon and name it as amazon.pem 
-
-```bash
-(in ~root/.ssh)
-vi amazon.pem
-chmod 400 amazon.pem
-```
-
-- Run below commands on master to copy the keys on the remaining hosts
-
-```bash
-scp -i amazon.pem -p * dev-node:~/.ssh
-scp -i amazon.pem -p * sit-node:~/.ssh
-ssh master-node "sudo cp .ssh/* ~root/.ssh"
-ssh dev-node "sudo cp .ssh/* ~root/.ssh"
-ssh sit-node "sudo cp .ssh/* ~root/.ssh"
-sudo -i
-scp /etc/hosts dev-node:/etc
-scp /etc/hosts sit-node:/etc
-```
-Passwordless ssh is set
-
-----------------------------------------------------------------------------------------------------------------
-Run below commands to install the required softaware on all node (java, tomcat, jenkins)
-
-```bash
-sudo -i
-sudo amazon-linux-extras install -y ansible2
-sed -i 's|#inventory      = /etc/ansible/hosts|inventory      = /root/ansible/hosts|' /etc/ansible/ansible.cfg
-mkdir ansible
-vi ~root/ansible/hosts and add:
-[master]
-master-node
-[nodes]
-dev-node
-sit-node
-```
-
-- vi install_node.sh and copy below content:
-
-```bash
-echo "Installing jdk"
-yum install -y java-1.8.0-openjdk
-
-echo "Installing tomcat"
-wget https://archive.apache.org/dist/tomcat/tomcat-8/v8.5.35/bin/apache-tomcat-8.5.35.tar.gz;
-sleep 3
-tar xvf apache-tomcat-8.5.35.tar.gz
-
-echo '<Context privileged="true" antiResourceLocking="false"
-         docBase="${catalina.home}/webapps/manager">
-    <Valve className="org.apache.catalina.valves.RemoteAddrValve" allow="^.*$" />
-</Context>' > manager.xml
-mkdir -p apache-tomcat-8.5.35/conf/Catalina/localhost/
-cp manager.xml /root/apache-tomcat-8.5.35/conf/Catalina/localhost/
-
-sed -i '/<\/tomcat-users>/i <user username="deploy" password="deploy" roles="manager-script"/>' /root/apache-tomcat-8.5.35/conf/tomcat-users.xml;
-sleep 3
-/root/apache-tomcat-8.5.35/bin/startup.sh
-```
-
-- vi install_master.sh and copy below content:
-
-```bash
-echo "Installing jdk"
-yum install -y java-1.8.0-openjdk
-
-echo "installing Git"
-yum install -y git
-
-echo "installing Jenkins"
-sudo wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat-stable/jenkins.repo
-sudo rpm --import https://jenkins-ci.org/redhat/jenkins-ci.org.key
-sudo yum install -y  jenkins
-
-mkdir /jenkins
-chmod 777 /jenkins
-export JENKINS_HOME=/jenkins >> ~/.bash_profile
-. ~/.bash_profile
-sed -i 's|/var/lib/jenkins|/jenkins|' /etc/passwd
-sed -i 's|JENKINS_HOME="/var/lib/jenkins"|JENKINS_HOME="/jenkins"|' /etc/sysconfig/jenkins
-
-service jenkins restart
-```
-
-
-Run below commands on master
-
-```bash
-chmod 744 install_master.sh install_nodes.sh
-ansible nodes -m shell -a "mkdir ansible;scp -p master-node:~/ansible/*.sh ~/ansible"
-ansible master -m shell -a "~/ansible/install_master.sh"
-ansible nodes -m shell -a "~/ansible/install_nodes.sh"
-```
-
-------------------------------------------------------------------------------------
-Verify tomcat status on dev-node and sit-node:
-http://<dev-node-public-ip>:8080
-http://<sit-node-public-ip>:8080
-  
-  
-------------------------------------------------------------------------------------
-Access Jenkins url:
-http://<master-node-public-ip>:8080
-  
-Login as admin and get the password from /jenkins/secrets/initialAdminPassword file
-
-Select "Select plugins to install"
-Select none and Install
-Continue as admin
-Save and finish
-Start using Jenkins
-  
-Click Manage Jenkins -> Manage Plugins -> Available tab
-Select "Deploy to container" and Download
-Repeat for "Delivery Pipeline" and "Copy data to workspace" plugin
-
-Download GIt plugin:
-https://updates.jenkins.io/download/plugins/git/3.9.1/git.hpi
-Click Manage Jenkins -> Manage Plugins -> Advanced tab and upload git.hpi file
-
-Restart Jenkins
-
---------------------------------------------------------------------------------------
-
-Click new Item, set name as Build, Freestyle project, OK
-Click new Item, set name as DeployDEV, Freestyle project, OK
-Click new Item, set name as Test, Freestyle project, OK
-Click new Item, set name as DeploySIT, Freestyle project, OK
-
-1. Edit Build
-Source Code Management: Set GitHub repo URL,
-Build triggers: Poll SCM and Scheduler H/5 * * * *
-Post build actions: Add post-build action->Build other projects and select DeployDEV
-
-2. Edit DeployDEV
-Check Copy data to workspace and set path to: /jenkins/workspace/Build/
-Post build actions: Deploy ear/war to container,
- EAR/WAR files: **/*.ear,
-Context path: <application context>,
-Tomcat URL: http://<dev-node-public-ip>:8080,
-Set credentials: deploy/deploy,
-Post build actions: Add post-build action->Build other projects and select Test.
-  
-3. Edit Test
-Build->Execute shell and add below text:
-date
-echo Test
-curl http://<dev-node-public-ip>:8080/HWS/hi | grep Hello
-Post build actions: Add post-build action->Build other projects and select DeploySIT
-
-3. Edit DeploySIT
-Check Copy data to workspace and set path to: /jenkins/workspace/Build/,
-Post build actions: Deploy ear/war to container,
- EAR/WAR files: **/*.ear,
-Context path: <application context>,
-Tomcat URL: http://<sit-node-public-ip>:8080,
-Set credentials: deploy/deploy,
-
-Click on "+" near All, set view name: DeliveryPipeline and select DeliveryPipelineView, OK.
-On the bottom side, Pipelines: Add Components and select the first job (Build)
-
------------------------------------
-Run Build job using Build Now button
+3. Create a Jenkins job that will deploy your web application
+- Go to Jenkins Home Page and login with 
+  - user: student
+  - password: student
+- Click on 'New Item'
+- Name your project
+- Select 'Freestyle Project'
+- Click Next
+- On 'Build' phase click on 'Add build step'
+- Select 'Invoke Ansible Playbook'
+- Add the details neccesary to your playbook
+- Click Save
+- Run Build job using Build Now button
