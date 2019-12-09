@@ -1,66 +1,114 @@
 # Week 12 - Devops
 
-## Release and Deployment Management - DevOps
+## DevOps Automation – Time to market by commit with open source tools
 
-### The goal of release and deployment management
+### DevOps Automation – Benefits and Concepts
 
-- Release and deployment management aims to build, test and deliver services to the customers specified by service
-design.
+- DevOps Automation is broadly divided into – Continuous Integration, Continuous Delivery, (CI/CD) and Continuous Deployment
 
-- The goal of release and deployment management is to deploy releases into operation and establish effective use of
-the service in order to deliver value to the customer
-
-- Release and deployment management also ensures handover to service operations takes place and that suitable
-training and documentation exists to ensure ongoing support of the new service.
-![Deployemnt](http://www.datacenterjournal.com/wp-content/uploads/2018/04/plutoradevops.jpg  "Deployemnt")
+- The CI/CD approach largely offers the following benefits to businesses:
+  - Faster software builds
+  - Time to market – the deadline deployment to PROD will be achieved easier
+  - Improve the code quality
+  - Efficient Developers
 
 
-## What is High Availability ? 
+## Overview of Jenkins 
 
-With an increased demand for reliable and performant infrastructures designed to serve critical systems, the terms scalability and high availability couldn’t be more popular. While handling increased system load is a common concern, decreasing downtime and eliminating single points of failure are just as important. High availability is a quality of infrastructure design at scale that addresses these latter considerations.
+- Open source automation tool
+- Jenkins is used to integrate all DevOps stages with the help of plugins.
+- Jenkins has well over 1000 plugins: Git, Ansible, Amazon EC2, Maven 2 project, HTML publisher etc.
+- Multi-technology
+- Multi-platform
+- Extensible
+- Pipeline supports building Continuous Delivery (CDel) pipelines through either a Web UI or a scripted Jenkinsfile.
 
-In computing, the term availability is used to describe the period of time when a service is available, as well as the time required by a system to respond to a request made by a user. High availability is a quality of a system or component that assures a high level of operational performance for a given period of time.
+### Jenkins User Interface 
 
-One of the goals of high availability is to eliminate single points of failure in your infrastructure. A single point of failure is a component of your technology stack that would cause a service interruption if it became unavailable. As such, any component that is a requisite for the proper functionality of your application that does not have redundancy is considered to be a single point of failure.
+![jenkins_ui](https://github.com/WebToLearn/fx-trading-app/blob/devops_open_source/Week_12/Theory/images/jenkins_ui.PNG)
 
-![High Available topology](https://assets.digitalocean.com/articles/high_availability/ha-diagram-animated.gif "High Available topology")
+## Overview of Ansible 
 
-
-## Deployment Strategies 
-
-A deployment strategy is a way to change or upgrade an application. The aim is to make the change without downtime in a way that the user barely notices the improvements.
-
-Now that we live in the DevOps era, deployments are also different in the industry. Some organizations do several deployments per day. There are some strategies to increase the frequency of deployments that help to reduce the risks of downtime without customers noticing that something changed.
-
-### Blue / Green Deployment 
-
-The blue/green deployment strategy consists of having two production versions of a particular system running at the same time. The catch is that only one is receiving live traffic. This means that the new version doesn’t necessarily have to be backward compatible because the blue and green deployments won’t be live at the same time. It represents a challenge for app dependencies like databases, but you can use the blue/green strategy for them too.
-
-![Blue Green](https://storage.googleapis.com/cdn.thenewstack.io/media/2017/11/73a2824d-blue-green.gif "Blue Green")
-
-https://rollout.io/blog/blue-green-deployment/
+- Open source automation platform
+- Agentless
+- Desired end state
+- Idempotency
+- Human-readable automation
+>         Playbook -> Play -> Task -> Module
 
 
-### Rolling deployment
+### Orientation to the Classroom Environment
 
-Rolling deployments are a pattern whereby, instead of deploying a package to all servers at once, we slowly roll out the release by deploying it to each server one-by-one. In load balanced scenarios, this allows us to reduce overall downtime.
+![classroom](https://github.com/WebToLearn/fx-trading-app/blob/devops_open_source/Week_12/Theory/images/classroom.PNG)
 
-![Rolling](https://storage.googleapis.com/cdn.thenewstack.io/media/2017/11/5bddc931-ramped.gif "Rolling")
+### Ansible Inventory 
 
-### Canary deployment 
+- Static inventory (groups, :children, implicit localhost) 
+- Default groups: all (without the default: localhost), ungrouped
 
-A canary deployment consists of gradually shifting production traffic from version A to version B. Usually the traffic is split based on weight. For example, 90 percent of the requests go to version A, 10 percent go to version B.
+### Ansible Configuration Files 
 
-This technique is mostly used when the tests are lacking or not reliable or if there is little confidence about the stability of the new release on the platform.
+- Three locations: /etc/ansible/ansible.cfg, ~/.ansible.cfg, ./ansible.cfg (the recommended location for testing)
+- Mostly used sections: [defaults], [privilege_escalation], [ssh_connection]
 
-![Canary](https://storage.googleapis.com/cdn.thenewstack.io/media/2017/11/a6324354-canary.gif "Canary")
+### Variables in playbooks
 
+- vars:
+![vars](https://github.com/WebToLearn/fx-trading-app/blob/devops_open_source/Week_12/Theory/images/vars.png)
 
-### Depending on the Cloud provider or platform, the following docs can be a good start to understand deployment:
+- vars_files:
+![vars_files](https://github.com/WebToLearn/fx-trading-app/blob/devops_open_source/Week_12/Theory/images/vars_files.png)
 
-Amazon Web Services  https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-attribute-updatepolicy.html 
-Docker Swarm https://docs.docker.com/engine/swarm/swarm-tutorial/rolling-update/
-Kubernetes https://kubernetes.io/docs/tutorials/kubernetes-basics/update/update-intro/ 
+### Gathering facts
+
+- Facts = variables that are automatically discovered by Ansible on a managed host.
+
+Example of facts gathered from a managed host: the host name, the IP addresses, the version of the operating system, the available disk space, memory
+
+### Implementing Task Control
+
+- Loops: with_items, with_nested (loops inside of loops), with_fileglob
+>   Note: with_X deprecated, use loop instead
+- Running tasks conditionally: when
+- Implementing tags: --tags and --skip-tags
+
+### Handlers
+
+- Tasks that respond to a notification triggered by other tasks (using notify statement)
+- Globally-unique name
+- Ansible notifies handlers only if the task acquires the CHANGED status
+- If no task notifies the handler by name -> it will not run
+- If one or more tasks notify the handler -> it will run ONCE, AFTER all the tasks in the play are completed ( unless - meta: flush_handlers) 
+
+### Ansible blocks and Error Handling
+
+Blocks= clauses that logically group tasks
+- block : main tasks to run
+- rescue: tasks that will be run if the tasks in the block clause fails
+- always: tasks that will run independently of the result of the other clauses
+
+![block](https://github.com/WebToLearn/fx-trading-app/blob/devops_open_source/Week_12/Theory/images/block.png)
+
+### Role structure
+
+![role](https://github.com/WebToLearn/fx-trading-app/blob/devops_open_source/Week_12/Theory/images/role.PNG)
+
+### Implementing roles
+
+Create roles:
+- Using ansible-galaxy command line tool
+  - ansible-galaxy  init	        //will create the role structure
+  - ansible-galaxy install -r	//will install role
+Use roles in playbooks
+ - roles/requirements.yml
+
+![requirements](https://github.com/WebToLearn/fx-trading-app/blob/devops_open_source/Week_12/Theory/images/requirements.png)
+
+### Order of execution
+
+- default : the order specified in the playbook
+- pre_tasks: executed before any roles are applied
+- post_tasks: executed after all roles are applied
 
 
 ## What is DevOps ?  
