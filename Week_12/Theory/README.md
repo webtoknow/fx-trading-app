@@ -1,5 +1,12 @@
 # Week 12 - Devops
 
+## Table of contents
+
+- [DevOps Automation – Time to market by commit with open source tools](#devops-automation-–-time-to-market-by-commit-with-open-source-tools)
+- [Overview of Jenkins](#overview-of-jenkins)
+- [Overview of Ansible](#overview-of-ansible)
+- [What is DevOps?](#what-is-devops?)
+
 ## DevOps Automation – Time to market by commit with open source tools
 
 ### DevOps Automation – Benefits and Concepts
@@ -12,8 +19,7 @@
   - Improve the code quality
   - Efficient Developers
 
-
-## Overview of Jenkins 
+## Overview of Jenkins
 
 - Open source automation tool
 - Jenkins is used to integrate all DevOps stages with the help of plugins.
@@ -23,30 +29,30 @@
 - Extensible
 - Pipeline supports building Continuous Delivery (CDel) pipelines through either a Web UI or a scripted Jenkinsfile.
 
-### Jenkins User Interface 
+### Jenkins User Interface
 
 ![jenkins_ui](https://github.com/WebToLearn/fx-trading-app/blob/devops_open_source/Week_12/Theory/images/jenkins_ui.PNG)
 
-## Overview of Ansible 
+## Overview of Ansible
 
 - Open source automation platform
 - Agentless
 - Desired end state
 - Idempotency
 - Human-readable automation
->         Playbook -> Play -> Task -> Module
 
+> Playbook -> Play -> Task -> Module
 
 ### Orientation to the Classroom Environment
 
 ![classroom](https://github.com/WebToLearn/fx-trading-app/blob/devops_open_source/Week_12/Theory/images/classroom.PNG)
 
-### Ansible Inventory 
+### Ansible Inventory
 
 - Static inventory (groups, :children, implicit localhost) 
 - Default groups: all (without the default: localhost), ungrouped
 
-### Ansible Configuration Files 
+### Ansible Configuration Files
 
 - Three locations: /etc/ansible/ansible.cfg, ~/.ansible.cfg, ./ansible.cfg (the recommended location for testing)
 - Mostly used sections: [defaults], [privilege_escalation], [ssh_connection]
@@ -68,7 +74,7 @@ Example of facts gathered from a managed host: the host name, the IP addresses, 
 ### Implementing Task Control
 
 - Loops: with_items, with_nested (loops inside of loops), with_fileglob
->   Note: with_X deprecated, use loop instead
+> Note: with_X deprecated, use loop instead
 - Running tasks conditionally: when
 - Implementing tags: --tags and --skip-tags
 
@@ -83,6 +89,7 @@ Example of facts gathered from a managed host: the host name, the IP addresses, 
 ### Ansible blocks and Error Handling
 
 Blocks= clauses that logically group tasks
+
 - block : main tasks to run
 - rescue: tasks that will be run if the tasks in the block clause fails
 - always: tasks that will run independently of the result of the other clauses
@@ -96,11 +103,14 @@ Blocks= clauses that logically group tasks
 ### Implementing roles
 
 Create roles:
+
 - Using ansible-galaxy command line tool
-  - ansible-galaxy  init	        //will create the role structure
-  - ansible-galaxy install -r	//will install role
+  - ansible-galaxy  init //will create the role structure
+  - ansible-galaxy install -r //will install role
+
 Use roles in playbooks
- - roles/requirements.yml
+
+- roles/requirements.yml
 
 ![requirements](https://github.com/WebToLearn/fx-trading-app/blob/devops_open_source/Week_12/Theory/images/requirements.png)
 
@@ -110,7 +120,6 @@ Use roles in playbooks
 - pre_tasks: executed before any roles are applied
 - post_tasks: executed after all roles are applied
 
+## What is DevOps?
 
-## What is DevOps ?  
-
-https://www.youtube.com/watch?v=_I94-tJlovg 
+Let's watch on Youtube [What is DevOps? - In Simple English](https://www.youtube.com/watch?v=_I94-tJlovg).
