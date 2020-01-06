@@ -2,8 +2,8 @@
 
 ## Table of contents
 
-- [Overview of Virtual Machine](#overview-of-jenkins)
-- [Overview of Container](#overview-of-ansible)
+- [Overview of Virtual Machine](#overview-of-vm)
+- [Overview of Container](#overview-of-container)
 - [Differences between Virtual Machines and Containers](#vms-vs-containers)
 
 ## Overview of Virtual Machine
