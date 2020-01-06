@@ -2,123 +2,59 @@
 
 ## Table of contents
 
-- [DevOps Automation – Time to market by commit with open source tools](#devops-automation-–-time-to-market-by-commit-with-open-source-tools)
-- [Overview of Jenkins](#overview-of-jenkins)
-- [Overview of Ansible](#overview-of-ansible)
-- [What is DevOps?](#what-is-devops?)
+- [Overview of Virtual Machine](#overview-of-jenkins)
+- [Overview of Container](#overview-of-ansible)
+- [Differences between Virtual Machines and Containers](#vms-vs-containers)
 
-## DevOps Automation – Time to market by commit with open source tools
+## Overview of Virtual Machine
 
-### DevOps Automation – Benefits and Concepts
+### What is a Virtual Machine?
 
-- DevOps Automation is broadly divided into – Continuous Integration, Continuous Delivery, (CI/CD) and Continuous Deployment
+  Virtual machines are software computers that provide the same functionality as physical computers. Like physical computers, they run applications and an operating system. However, virtual machines are computer files that run on a physical computer and behave like a physical computer. 
+  In other words, virtual machines behave as separate computer systems.
 
-- The CI/CD approach largely offers the following benefits to businesses:
-  - Faster software builds
-  - Time to market – the deadline deployment to PROD will be achieved easier
-  - Improve the code quality
-  - Efficient Developers
+### Usage of Virtual Machine
+  
+  Virtual machines are created to perform specific tasks that are risky to perform in a host environment, such as accessing virus-infected data and testing operating systems. Since the virtual machine is sandboxed from the rest of the system, the software inside the virtual machine cannot tamper with the host computer. Virtual machines can also be used for other purposes such as server virtualization.
 
-## Overview of Jenkins
+### Advantages of Virtual Machines:
 
-- Open source automation tool
-- Jenkins is used to integrate all DevOps stages with the help of plugins.
-- Jenkins has well over 1000 plugins: Git, Ansible, Amazon EC2, Maven 2 project, HTML publisher etc.
-- Multi-technology
-- Multi-platform
-- Extensible
-- Pipeline supports building Continuous Delivery (CDel) pipelines through either a Web UI or a scripted Jenkinsfile.
+- Provides disaster recovery and application provisioning options
+- Virtual machines are simply managed, maintained, and are widely available
+- Multiple operating system environments can be run on a single physical computer
 
-### Jenkins User Interface
+### Disadvantages of Virtual Machines:
 
-![jenkins_ui](https://github.com/WebToLearn/fx-trading-app/blob/devops_open_source/Week_12/Theory/images/jenkins_ui.PNG)
+- Running multiple virtual machines on one physical machine can cause unstable performance
+- Virtual machines are less efficient and run slower than a physical computer
 
-## Overview of Ansible
+## Overview of a Container
 
-- Open source automation platform
-- Agentless
-- Desired end state
-- Idempotency
-- Human-readable automation
+### What is a Container
 
-> Playbook -> Play -> Task -> Module
+A container is a standard unit of software that packages up code and all its dependencies so the application runs quickly and reliably from one computing environment to another.
 
-### Orientation to the Classroom Environment
+### Usage of a Container
 
-![classroom](https://github.com/WebToLearn/fx-trading-app/blob/devops_open_source/Week_12/Theory/images/classroom.PNG)
+Containers are an abstraction at the app layer that packages code and dependencies together. Multiple containers can run on the same machine and share the OS kernel with other containers, each running as isolated processes in user space. Containers take up less space than VMs (container images are typically tens of MBs in size), can handle more applications and require fewer VMs and Operating systems.
 
-### Ansible Inventory
+### Advantages of a Container
 
-- Static inventory (groups, :children, implicit localhost) 
-- Default groups: all (without the default: localhost), ungrouped
+- Enables more efficient use of system resources
+- Enables faster software delivery cycles
+- Enables application portability
+- Shines for microservices architecture
 
-### Ansible Configuration Files
+### Disadvantages of Container:
 
-- Three locations: /etc/ansible/ansible.cfg, ~/.ansible.cfg, ./ansible.cfg (the recommended location for testing)
-- Mostly used sections: [defaults], [privilege_escalation], [ssh_connection]
+- Containers don't run at bare-metal speeds
+- The container ecosystem is fractured. Its based on companies developments. Example: Openshift RedHat's container-as-a-service platform works only with Kubernetes container orchestrator.
+- Persistent data storage is complicated
+- Graphical applications don't work well
+- Not all applications benefit from containers
 
-### Variables in playbooks
+## Differences between Virtual Machines and Containers
 
-- vars:
-![vars](https://github.com/WebToLearn/fx-trading-app/blob/devops_open_source/Week_12/Theory/images/vars.png)
-
-- vars_files:
-![vars_files](https://github.com/WebToLearn/fx-trading-app/blob/devops_open_source/Week_12/Theory/images/vars_files.png)
-
-### Gathering facts
-
-- Facts = variables that are automatically discovered by Ansible on a managed host.
-
-Example of facts gathered from a managed host: the host name, the IP addresses, the version of the operating system, the available disk space, memory
-
-### Implementing Task Control
-
-- Loops: with_items, with_nested (loops inside of loops), with_fileglob
-> Note: with_X deprecated, use loop instead
-- Running tasks conditionally: when
-- Implementing tags: --tags and --skip-tags
-
-### Handlers
-
-- Tasks that respond to a notification triggered by other tasks (using notify statement)
-- Globally-unique name
-- Ansible notifies handlers only if the task acquires the CHANGED status
-- If no task notifies the handler by name -> it will not run
-- If one or more tasks notify the handler -> it will run ONCE, AFTER all the tasks in the play are completed ( unless - meta: flush_handlers) 
-
-### Ansible blocks and Error Handling
-
-Blocks= clauses that logically group tasks
-
-- block : main tasks to run
-- rescue: tasks that will be run if the tasks in the block clause fails
-- always: tasks that will run independently of the result of the other clauses
-
-![block](https://github.com/WebToLearn/fx-trading-app/blob/devops_open_source/Week_12/Theory/images/block.png)
-
-### Role structure
-
-![role](https://github.com/WebToLearn/fx-trading-app/blob/devops_open_source/Week_12/Theory/images/role.PNG)
-
-### Implementing roles
-
-Create roles:
-
-- Using ansible-galaxy command line tool
-  - ansible-galaxy  init //will create the role structure
-  - ansible-galaxy install -r //will install role
-
-Use roles in playbooks
-
-- roles/requirements.yml
-
-![requirements](https://github.com/WebToLearn/fx-trading-app/blob/devops_open_source/Week_12/Theory/images/requirements.png)
-
-### Order of execution
-
-- default : the order specified in the playbook
-- pre_tasks: executed before any roles are applied
-- post_tasks: executed after all roles are applied
 
 ## What is DevOps?
 
