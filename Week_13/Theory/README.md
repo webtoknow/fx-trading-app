@@ -1,4 +1,4 @@
-# Week 12 - Devops
+# Week 13 - Devops Part 2
 
 ## Table of contents
 
@@ -55,6 +55,7 @@ Containers are an abstraction at the app layer that packages code and dependenci
 
 ## Differences between Virtual Machines and Containers
 
+![devops](https://github.com/WebToLearn/fx-trading-app/blob/devops_open_source/Week_13/Theory/images/devops.PNG)
 
 ## What is DevOps?
 
