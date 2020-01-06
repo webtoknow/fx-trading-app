@@ -2,75 +2,98 @@
 
 ## Table of contents
 
-- [Exercise 1 - Write your first playbook](#exercise-1---write-your-first-playbook)
-- [Exercise 2 - Deploy your webserver project](#exercise-2---deploy-your-webserver-project)
-- [Exercise 3 - Create a Jenkins job that will deploy your web application](#exercise-3---create-a-jenkins-job-that-will-deploy-your-web-application)
-
-### Exercise 1 - Write your first playbook
-
-- Download and install [Putty](https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html)
-- Open Putty
-- Open Putty and connect to Ansible Controller
-- Create your inventory file:
+- [Exercise 1 - Write yout first Dockerfile](#exercise-1---write-your-first-dockerfile)
+- [Exercise 2 - Write your first docker compose template](#exercise-2---write-your-first-docker-compose-template)
+- [Exercise 3 - Write your Ansible playbook in order to deploy all 4 microservices](#exercise-3---write-your-ansible-playbook-in-order-to-deploy-the-application)
+- [Exercise 4 - Create Jenkins job in order to deploy the application](#exercise-4---create-jenkins-job-in-order-to-deploy-the-application)
+### Exercise 1 - Write your first Dockerfile
 
 ```
-[webservers]
-node1
+FROM maven:3.6.2-jdk-11-slim AS MAVEN_TOOL_CHAIN
+COPY pom.xml /tmp/
+COPY src /tmp/src/
+WORKDIR /tmp/
+RUN mvn package -Pprod -DskipTests
+
+FROM openjdk:11.0.4-jre
+COPY --from=MAVEN_TOOL_CHAIN /tmp/target/user-administration-0.0.1-SNAPSHOT.jar /user-admin.jar
+CMD /usr/local/openjdk-11/bin/java -Daplication-secret=secret -jar /user-admin.jar
 ```
 
-- Start writing your first playbook:
+### Exercise 2 - Write your first docker compose template
+
+```
+version: "3"
+services:
+  ui:
+    build: ./ui
+    ports: 
+      -  "80:80"
+  users:
+    build: ./user-administration
+    ports: 
+      -  "8200:8200"
+  trading: 
+    build: ./fx-trading
+    ports:
+      - "8210:8210"
+  quote:
+    build: ./quote-service
+    ports:
+      - "8220:8220"
+  db:
+    image: postgres
+    environment:
+        POSTGRES_PASSWORD: "admin"
+    volumes:
+        - postgres-db:/var/lib/postgresql/data
+        - ./fx-trading/database_setup/db_setup.sql:/docker-entrypoint-initdb.d/1.sql
+        - ./user-administration/database_setup/db_setup.sql:/docker-entrypoint-initdb.d/2.sql
+
+    ports:
+      - "54320:5432"
+volumes:
+    postgres-db:
+```
+
+### Exercise 3 - Write your Ansible playbook in order to deploy the application
 
 ```
 ---
-- name: Install
-  become: yes
-  hosts: webservers
-  pre_tasks:
-    - name: Stop Firewall
-      service:
-        name: firewalld
-        state: stopped
+- hosts: test 
+  become: yes 
   tasks:
-    - name: Ensure latest version of apache2
-      package:
-        name: httpd
-        state: latest
+  - name: Install docker packages
+    yum:
+      name:
+        - docker-ce
+        - docker-compose
+        - npm
+        - maven
+      state: present 
+  - name: Ensure SELinux is disabled after reboot
+    lineinfile:
+      path: /etc/selinux/config
+      regexp: '^SELINUX='
+      line: SELINUX=disabled
+    notify: 
+    - Disable SELinux
+  - name: Ensure docker is running
+    service:
+      name: docker
+      state: started
+  - name: Copy application files to target machine
+    copy:
+      src: "{{ workspace }}/App"
+      dest: /tmp
+  - name: Build & start Docker containers with Docker compose
+    shell: "cd /tmp/App && docker-compose up -d"
+  handlers:
+    - name: Disable SELinux
+      shell: "setenforce 0"
 
-    - name: Ensure html page is installed
-      copy:
-        content: "some content here!"
-        dest: /var/www/html/index.html
-
-    - name: Enable apache2 service
-      service:
-        name: httpd
-        state: started
-        enabled: true
-
-- name: Test
-  become: no
-  hosts: localhost
-  tasks:
-    - name: Connect to the server
-      uri:
-        url: "192.168.56.201:80"
-        status_code: 200
-        return_content: yes
 ```
-
-- Run your ansible playbook to your taget machine
-
-```
-ansible-playbook first_playbook.yml -i hosts
-```
-
-### Exercise 2 - Deploy your webserver project
-
-- Create the webserver role in order to install the httpd component and deploy your project using JINJA2 Template
-- Create your playbook that will use the webserver role
-- Run the created playbook to the target machine
-
-### Exercise 3 - Create a Jenkins job that will deploy your web application
+### Exercise 4 - Create Jenkins job in order to deploy the application
 
 - Go to Jenkins Home Page and login with
   - user: student
