@@ -42,6 +42,9 @@ The agenda has the following content:
 - Week 12 – Devops
   - [Introduction](Week_12/Theory/README.md)
   - [Exercise](Week_12/Exercise/README.md)
+- Week 13 – Devops
+  - [Introduction](Week_13/Theory/README.md)
+  - [Exercise](Week_13/Exercise/README.md)
 
 ## Technical requirements
 
