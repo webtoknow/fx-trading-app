@@ -2,9 +2,9 @@
 
 ## Table of contents
 
-- [Overview of Virtual Machine](#overview-of-vm)
-- [Overview of Container](#overview-of-container)
-- [Differences between Virtual Machines and Containers](#vms-vs-containers)
+- [Overview of Virtual Machine](#overview-of-virtual-machine)
+- [Overview of Container](#overview-of-a-container)
+- [Differences between Virtual Machines and Containers](#differences-between-virtual-machines-and-containers)
 
 ## Overview of Virtual Machine
 
