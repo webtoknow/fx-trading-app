@@ -1,4 +1,4 @@
-# Week 12 - Continous deployment exercises
+# Week 13 - Continous deployment exercises
 
 ## Table of contents
 
