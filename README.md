@@ -61,3 +61,6 @@ We just need:
 - [Maven](https://maven.apache.org/install.html)
 - [Postman](https://www.getpostman.com/apps)
 - [Postgresql](https://www.postgresql.org/download/)
+
+## Summary
+[![How can I develop a web applicaton](https://img.youtube.com/vi/_hJXIVPQhDo/0.jpg)](https://www.youtube.com/watch?v=_hJXIVPQhDo)
