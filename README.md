@@ -10,7 +10,7 @@ The agenda has the following content:
 
 - Week 1 – Introduction
 - Week 2 – Analysis
-  - [Introduction](Week_02/Theory/README.md)
+  - [Introduction](https://drive.google.com/file/d/1u4ghr57C4PpmKRoTivr2pFE6uWI_V7PD/view?usp=sharing)
   - [Exercise](Week_02/Exercise/README.md)
 - Week 3 - Design
   - [Introduction](https://slides.com/denisacretu/fx-trading-app/fullscreen)
