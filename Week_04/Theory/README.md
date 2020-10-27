@@ -12,7 +12,7 @@
 - we are using this type of applications every day
 - *e.g. : Gmail, Google Maps, GitHub*
 
-## Angular 6
+## Angular
 
 ### About
 
@@ -22,7 +22,7 @@
 - enable to write SPA (Single Page Applications) with ease
 - comes with features like data-binding, change-detection, forms, router&navigation and http implementation
 
-### ES6 and TyypeScript
+### ES6 and TypeScript
 
 - ES6 is the 6th version of the ECMA Script Programming Language, released in 2011
 - adds many features intended to make large-scale software developement easier, including:
