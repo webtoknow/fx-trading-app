@@ -1,5 +1,12 @@
 # Week 4 - Architecture and setup
 
+## Clone repo
+We can clone the repozitory using GIT and the command below or we can download it directly from Github.
+
+```bash
+git clone https://github.com/WebToLearn/fx-trading-app.git
+```
+
 ## Setup Angular
 
 Install [Angular CLI](https://cli.angular.io/)
