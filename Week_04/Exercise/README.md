@@ -1,6 +1,15 @@
 # Week 4 - Architecture and setup
 
+## Project arhitecture
+
+![Architecture - System Contex](Img/fx-trading-app-architecture-System-Context.png "Architecture - System Contex")
+
+![Architecture - Container diagram](Img/fx-trading-app-architecture-Container-diagram.png "Architecture - Container-diagram")
+
+We can also download a draw.io diagram from [here](https://drive.google.com/file/d/1gqwqInmvqGzmxTmXexQ1iFbuM0e-E9qk/view?usp=sharing).
+
 ## Clone repo
+
 We can clone the repozitory using GIT and the command below or we can download it directly from Github.
 
 ```bash
@@ -41,6 +50,7 @@ I. Generate a Spring Boot starter project with Maven as build tool
 Open [start.spring.io](https://start.spring.io/) in the browser.  
 
 Select:
+
 1. Maven Project
 2. with Java
 3. and a stable version of Spring Boot
