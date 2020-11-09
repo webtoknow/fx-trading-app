@@ -98,7 +98,7 @@ subscription.unsubscribe();
   - **Disposed** by calling **unsubscribe()**
 
   **Creating observable**:
-  - just call **new Observable()** an pass one argument (which is the observer here)
+  - just call **new Observable()** and pass one argument (which is the observer here)
 
   **Subscribing to observables**:
   - if you don't subscribe to observables, nothing will happen, because they are a lazy collection of data or multiple values over time
