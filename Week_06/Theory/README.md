@@ -86,7 +86,7 @@ subscription.unsubscribe();
     - *Data consumers: code that calls the previous functions*
 - **Push**:
   - the common way to push in JS are **promises**
-  - we can consider the Promises as producer, but this time it delivers a value to registered callbacks
+  - we can consider the Promise as producer, but this time it delivers a value to registered callbacks
   - **Observables** are the new way to push data in JS
 
 #### Observable lifecycle
