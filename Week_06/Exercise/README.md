@@ -8,7 +8,7 @@
   - [Transaction model](#transaction-model)
   - [Trade service](#trade-service)
   - [Update Application Module](#update-application-module)
-  - [Implement pooling mechanism](#implement-pooling-mechanism)
+  - [Implement poling mechanism](#implement-poling-mechanism)
   - [Blotter View component](#blotter-view-component)
 - [Exercise 4 - FX Rates View page](#exercise-4---fx-rates-view-page)
   - [Rate model](#rate-model)
@@ -201,7 +201,7 @@ providers: [
 ]
 ```
 
-### Implement pooling mechanism
+### Implement poling mechanism
 
 We want to simulate the real-time behavior for getting the transactions. This is the reason why we implement pooling mechanism.
 
