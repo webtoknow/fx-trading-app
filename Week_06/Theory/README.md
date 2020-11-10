@@ -50,7 +50,7 @@
 - **Observables** allow to resolve (better saying, **emit**) multiple values
 
 ```JavaScript
-const observable = mew Observable((observer) => {
+const observable = new Observable((observer) => {
     let i=0;
     setInterval(() => {
         observer.next(i++);
