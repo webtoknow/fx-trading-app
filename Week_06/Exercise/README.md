@@ -3,12 +3,12 @@
 ## Table of contents
 
 - [Exercise 1 - Create blotter-view, fx-rates-view and widget components](#exercise-1---create-blotter-view-fx-rates-view-and-widget-components)
-- [Exercise 2 - Install and use mock server usign JSON Server](#exercise-2---install-and-use-mock-server-usign-json-server)
+- [Exercise 2 - Install and use mock server using JSON Server](#exercise-2---install-and-use-mock-server-using-json-server)
 - [Exercise 3 - Blotter View page](#exercise-3---blotter-view-page)
   - [Transaction model](#transaction-model)
   - [Trade service](#trade-service)
   - [Update Application Module](#update-application-module)
-  - [Implement poling mechanism](#implement-poling-mechanism)
+  - [Implement polling mechanism](#implement-polling-mechanism)
   - [Blotter View component](#blotter-view-component)
 - [Exercise 4 - FX Rates View page](#exercise-4---fx-rates-view-page)
   - [Rate model](#rate-model)
@@ -106,7 +106,7 @@ and in *dashboard-page.component.css*:
 }
 ```
 
-## Exercise 2 - Install and use mock server usign JSON Server
+## Exercise 2 - Install and use mock server using JSON Server
 
 Because we do not have a backend server and a link to a real database at this moment, we will simulate having some data using *JSON Server* and NodeJS.
 
@@ -201,7 +201,7 @@ providers: [
 ]
 ```
 
-### Implement poling mechanism
+### Implement polling mechanism
 
 We want to simulate the real-time behavior for getting the transactions. This is the reason why we implement pooling mechanism.
 
