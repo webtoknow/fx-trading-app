@@ -203,7 +203,7 @@ providers: [
 
 ### Implement polling mechanism
 
-We want to simulate the real-time behavior for getting the transactions. This is the reason why we implement pooling mechanism.
+We want to simulate the real-time behavior for getting the transactions. This is the reason why we implement polling mechanism.
 
 So, we should add a new method in *trade.service.ts*, which will make a call to get all transactions every 2 seconds:
 
