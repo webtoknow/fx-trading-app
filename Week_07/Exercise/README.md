@@ -8,8 +8,13 @@
 - [Exercise 4 - Read all users](#exercise-4---read-all-users)
 - [Exercise 5 - User Registration](#exercise-5---user-registration)
 - [Exercise 6 - User Authentication](#exercise-6---user-authentication)
-- [Exercise 7 - User Autherization](#exercise-7---user-autherization)
- 
+- [Exercise 7 - User Authorization](#exercise-7---user-authorization)
+
+ ## Pre-requisites
+    - Install Java 11
+    - Install maven
+    - Install PostgreSQL
+    - Install Postman
  
  
  ## Exercise 1 - Create project
@@ -20,71 +25,77 @@
  ```XML
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.project</groupId>
-	<artifactId>user-administration</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<packaging>jar</packaging>
+    <groupId>com.project</groupId>
+    <artifactId>user-administration</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
 
-	<name>user-administration</name>
-	<description>Spring Boot for user administration</description>
+    <name>user-administration</name>
+    <description>Spring Boot for user administration</description>
 
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.0.1.RELEASE</version>
-		<relativePath/> <!-- lookup parent from repository -->
-	</parent>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.1.1.RELEASE</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
 
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<java.version>1.10</java.version>
-	</properties>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>1.10</java.version>
+    </properties>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>3.7</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-jpa</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.2</version>
+        </dependency>
+        <dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.7</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
 
-		<dependency>
-			<groupId>org.postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.auth0</groupId>
-			<artifactId>java-jwt</artifactId>
-			<version>3.4.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.auth0</groupId>
+            <artifactId>java-jwt</artifactId>
+            <version>3.4.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
-
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>
 ```
 
 
@@ -110,7 +121,7 @@ public class UserAdministrationApplication {
 
  ```
  
- Create the following property file: application.properties
+ Create the following property file: application.properties and add the following lines to it
  
 ```
  ## Spring DATASOURCE (DataSourceAutoConfiguration & DataSourceProperties)
@@ -137,7 +148,7 @@ Now run the main class.
  ## Exercise 2 - Database Setup
  
  Create in postgresql the database: "users"
- Use the following sql commands to create the prerequisites.
+ Run the following sql commands to create the prerequisites.
  
  
  ```Sql
@@ -169,7 +180,7 @@ VALUES('andrei', 'andrei@gmail.com','AndreisPassword');
 ```
 
 
-Now user Grant Wizzard to grant access of your db to your db-user, or run the following scripts:
+Now use the Grant Wizzard to grant to your db-user access to your db , or just run the following scripts directly:
 
 ```SQL 
 CREATE ROLE new_user LOGIN PASSWORD 'new_user_password';
@@ -188,7 +199,7 @@ GRANT SELECT ON ALL TABLES IN SCHEMA public TO new_user;
 
  ## Exercise 3 - Read data to controller
  
- Create the following folders in the package: com.project.user.administration
+ Create the following packages under: com.project.user.administration
  1) controller
  2) exception
  3) model
@@ -199,13 +210,19 @@ GRANT SELECT ON ALL TABLES IN SCHEMA public TO new_user;
  Create the first entity 
  
  ```Java
- 
- package com.project.user.administration.model;
+package com.project.user.administration.model;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "user_table")
 public class User {
@@ -224,57 +241,11 @@ public class User {
     @Column(columnDefinition = "email")
     private String email;
 
-    @OneToMany(mappedBy = "user")
-    private List<UserLogin> logins = new ArrayList<>();
-
-    public User(){
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public List<UserLogin> getLogins() {
-        return logins;
-    }
-
-    public void setLogins(List<UserLogin> logins) {
-        this.logins = logins;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
 }
- 
 ```
  
  
-Create the user repository for the read an user.
+Create the repository for the User entity in order for it to be able to read an user.
  
  ```Java
  
@@ -291,104 +262,58 @@ public interface UserRepository extends JpaRepository<User, Long> {
 }
 
  ```
+
+ Create the user value object to be passed to the front-end.
  
  ```Java
- Create the user value object to pass to the front end.
- 
- package com.project.user.administration.vo;
+package com.project.user.administration.vo;
 
-public class UserRequestVo {
+ import lombok.AllArgsConstructor;
+ import lombok.Builder;
+ import lombok.Data;
+ import lombok.NoArgsConstructor;
 
-    private String username;
-    private String email;
-    private String password;
-    private String token;
+ @Data
+ @Builder
+ @NoArgsConstructor
+ @AllArgsConstructor
+ public class UserRequestVo {
 
-    public UserRequestVo(){
-    }
+     private String username;
+     private String email;
+     private String password;
+     private String token;
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-}
+ }
  ```
  
-Create the user service for the database operations.
+Create the user service and add method for finding by user id
  
+```Java
  
- ```Java
- 
- package com.project.user.administration.services;
+package com.project.user.administration.services;
 
-
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.interfaces.DecodedJWT;
 import com.project.user.administration.model.User;
-import com.project.user.administration.model.UserLogin;
-import com.project.user.administration.repository.UserLoginRepository;
 import com.project.user.administration.repository.UserRepository;
-import com.project.user.administration.vo.UserAuthorizeResponseVo;
-import com.project.user.administration.vo.UserTokenResponseVo;
 import com.project.user.administration.vo.UserRequestVo;
-import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 @Service
 public class UserService {
 
+    @Autowired
+    private UserRepository userRepository;
 
-@Autowired
-private UserRepository userRepository;
-
-
- public UserRequestVo findByUserId(Long userId){
+    public UserRequestVo findByUserId(Long userId) {
 
         User user = userRepository.findByUserId(userId);
 
-        UserRequestVo uservo  = new UserRequestVo();
-        uservo.setUsername(user.getUserName());
-
-        return uservo;
+        return UserRequestVo.builder()
+                .username(user.getUserName())
+                .email(user.getEmail())
+                .build();
     }
-
-
 }
  
 ```
@@ -401,16 +326,15 @@ private UserRepository userRepository;
 package com.project.user.administration.controller;
 
 import com.project.user.administration.services.UserService;
-import com.project.user.administration.vo.UserAuthorizeResponseVo;
-import com.project.user.administration.vo.UserTokenResponseVo;
 import com.project.user.administration.vo.UserRequestVo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.text.ParseException;
 
 @RestController
-
 public class UserController {
 
     @Autowired
@@ -418,155 +342,107 @@ public class UserController {
 
     @GetMapping("/user/{userId}")
     @CrossOrigin
-    public UserRequestVo getAnswersByQuestionId(@PathVariable Long userId) {
+    public UserRequestVo getUserById(@PathVariable Long userId) {
         return userService.findByUserId(userId);
     }
- }   
- 
+}
  ```
  
-Now lets test with PostMan.
+Use Postman to test the endpoint.
+
+Example: GET - localhost:8200/user/1  =>  should return the user "razvan"
 
  ## Exercise 4 - Read all users
- 
- Do this exercise alone this time :).
- 
+ Do this exercise alone this time :)
+
+ ### 4.a. - GET all users
+    Example: GET localhost:8200/user/all  =>  should return all users
+    Hint: Use the map() methods from Java stream to transform the List<User> to List<UserRequestVo>
+
+ ### 4.b. [Optional] - GET all users whose username contains a given sequence of letters
+    Example: GET - localhost:8200/user?name=andr  =>  should return the user whose username is "andrei"
+    Hints: - The name should be passed to the request as a @RequestParam
+           - Use the filter() and map() methods from Java stream
 
  ## Exercise 5 - User Registration
- 
- Create a new value object class for the request.
- 
- 
-```Java
-package com.project.user.administration.vo;
 
-public class UserRequestVo {
-
-    private String username;
-    private String email;
-    private String password;
-    private String token;
-
-    public UserRequestVo(){
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-}
-```
-
-Update user-service with the register method.
+Add the register method to UserService.
 
 ```Java
 
 public void registerNewUser(UserRequestVo userRequestVo) {
-        User user = new User();
-        user.setUserName(userRequestVo.getUsername());
-        user.setPassword(userRequestVo.getPassword());
-        user.setEmail(userRequestVo.getEmail());
+    User user = User.builder()
+        .userName(userRequestVo.getUsername())
+        .password(userRequestVo.getPassword())
+        .email(userRequestVo.getEmail())
+        .build();
 
-        userRepository.save(user);
-    }
-
+    userRepository.save(user);
+}
 
 ```
 
-Update user-controller with the request part.
-
+Add registerNewUser method to the UserController
 
 ```Java
 @PostMapping("/user/register")
-    @CrossOrigin
-    public void registerNewUser(@RequestBody UserRequestVo userRequestVo) {
-        userService.registerNewUser(userRequestVo);
-    }
+@CrossOrigin
+public void registerNewUser(@RequestBody UserRequestVo userRequestVo) {
+    userService.registerNewUser(userRequestVo);
+}
 ```
 
-Now lets test with PostMan.
+Use Postman to test the new endpoint.
 
 
  ## Exercise 6 - User Authentication
  
  Create a new class for the token response: UserTokenResponseVo.java
- 
- 
+
  ```Java
- package com.project.user.administration.vo;
+package com.project.user.administration.vo;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserTokenResponseVo {
-
     private String username;
     private String token;
-
-    public UserTokenResponseVo(){
-
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
 }
  ```
  
- Update user repository class with the method for retrieving the user.
+ Update the UserRepository by adding a method for retrieving the user.
  
-  ```Java
+```Java
   
-  @Query("SELECT u FROM User u WHERE u.userName = ?1 and u.password = ?2")
-  public User findUser(String userName, String password);
+@Query("SELECT u FROM User u WHERE u.userName = ?1 and u.password = ?2")
+public User findUser(String userName, String password);
    
- ```
+```
  
  
- Create user-login Jpa class and repository class
+ Create the UserLogin entity
  
  ```Java
- 
- package com.project.user.administration.model;
+package com.project.user.administration.model;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "user_login")
 public class UserLogin {
@@ -586,49 +462,16 @@ public class UserLogin {
     @Column(columnDefinition = "token_expire_time")
     private String tokenExpireTime;
 
-    public UserLogin(){
-    }
-
-    public UserLogin(User user, String token, String tokenExpireTime){
-        this.user=user;
-        this.token=token;
-        this.tokenExpireTime= tokenExpireTime;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public Long getUserLoginId() {
-        return userLoginId;
-    }
-
-    public void setUserLoginId(Long userLoginId) {
-        this.userLoginId = userLoginId;
-    }
-
-    public String getTokenExpireTime() {
-        return tokenExpireTime;
-    }
-
-    public void setTokenExpireTime(String tokenExpireTime) {
-        this.tokenExpireTime = tokenExpireTime;
-    }
 }
 ```
 
+Update the User entity and add a new attribute:
+```Java
+@OneToMany(mappedBy = "user")
+private List<UserLogin> logins = new ArrayList<>();
+```
+
+Create the repository for the UserLogin class
 ```Java
 package com.project.user.administration.repository;
 
@@ -644,11 +487,16 @@ public interface UserLoginRepository extends JpaRepository<UserLogin, Long> {
     public UserLogin findByUserAndToken(String userName, String token);
 
 }
- 
  ```
+
+ Inject the UserLoginRepository in the UserService
+ ```Java
+ @Autowired
+ UserLoginRepository userLoginRepository;
+ ```
+
   
- Update user-service class with validation, user-login save and token generation logick.
- 
+ Update the UserService class with validation, user-login save and token generation logic.
  
  ```Java
  
@@ -662,11 +510,11 @@ public interface UserLoginRepository extends JpaRepository<UserLogin, Long> {
                     .withSubject(username)
                     .withIssuer("auth0")
                     .withExpiresAt(DateUtils.addHours(new Date(), 3))
-                    .sign(Algorithm.HMAC256(System.getProperty("aplication-secret")));
+                    .sign(Algorithm.HMAC256("secret"));
         return jwt;
   }
     
-    
+
  public UserTokenResponseVo validateUserCredentialsAndGenerateToken(UserRequestVo userRequestVo) {
 
         User user = userRepository.findUser(userRequestVo.getUsername(), userRequestVo.getPassword());
@@ -676,7 +524,11 @@ public interface UserLoginRepository extends JpaRepository<UserLogin, Long> {
             //String token=  RandomStringUtils.random(25, true, true);
             String token = createJsonWebToken(userRequestVo.getUsername());
 
-            UserLogin userLogin= new UserLogin(user, token, getCurrentTimeStamp());
+             UserLogin userLogin = UserLogin.builder()
+                    .user(user)
+                    .token(token)
+                    .tokenExpireTime(getCurrentTimeStamp())
+                    .build();
             userLoginRepository.save(userLogin);
 
             UserTokenResponseVo userTokenResponseVo = new UserTokenResponseVo();
@@ -691,7 +543,7 @@ public interface UserLoginRepository extends JpaRepository<UserLogin, Long> {
  
   ```
   
-  Update user-controller for the authenticate http method.
+  Add the authentication method to the UserController.
   
  ```Java
    @PostMapping("/user/authenticate")
@@ -701,48 +553,33 @@ public interface UserLoginRepository extends JpaRepository<UserLogin, Long> {
     }
 ```
 
-Test it with post man.
+Test this endpoint with Postman.
 
 
-## Exercise 7 - User Autherization
+## Exercise 7 - User Authorization
 
-Create the TokenResponse class.
+Create the UserAuthorizeResponseVo class.
 
  ```Java
- 
  package com.project.user.administration.vo;
 
-public class UserTokenResponseVo {
+ import lombok.AllArgsConstructor;
+ import lombok.Builder;
+ import lombok.Data;
+ import lombok.NoArgsConstructor;
 
-    private String username;
-    private String token;
-
-    public UserTokenResponseVo(){
-
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-}
-
+ @Data
+ @Builder
+ @NoArgsConstructor
+ @AllArgsConstructor
+ public class UserAuthorizeResponseVo {
+     private String username;
+     private boolean isValid;
+ }
  ```
  
- Update User Service class with the autherization logick.
- 
- 
+ Update UserService class with the authorization logic.
+
  
   ```Java
   
@@ -778,7 +615,7 @@ public class UserTokenResponseVo {
 
     public static String extractUserNameFromToken( String token) throws JWTVerificationException{
 
-            Algorithm algorithm = Algorithm.HMAC256(System.getProperty("aplication-secret"));
+            Algorithm algorithm = Algorithm.HMAC256("secret");
             JWTVerifier verifier =  JWT.require(algorithm)
                     .withIssuer("auth0")
                     .build();
@@ -790,7 +627,7 @@ public class UserTokenResponseVo {
 
     public static boolean verifyToken(String user, String token){
         try{
-            Algorithm algorithm = Algorithm.HMAC256(System.getProperty("aplication-secret"));
+            Algorithm algorithm = Algorithm.HMAC256("secret");
             JWTVerifier verifier =  JWT.require(algorithm)
                                         .withIssuer("auth0")
                                         .build();
@@ -810,17 +647,17 @@ public class UserTokenResponseVo {
         }
 
     }
-}
+
 ```
 
-Update controller for the authorize request
+Update the UserController and add the authorize request
 
  ```Java
- @PostMapping("/user/authorize")
+    @PostMapping("/user/authorize")
     @CrossOrigin
     public UserAuthorizeResponseVo authorize(@RequestBody UserRequestVo userRequestVo) throws ParseException {
         return userService.authorizeV2(userRequestVo);
     }
  ```
  
- Test it with postman.
+ Test it with Postman.

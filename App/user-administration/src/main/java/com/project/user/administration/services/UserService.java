@@ -35,17 +35,18 @@ public class UserService {
 
         User user = userRepository.findByUserId(userId);
 
-        UserRequestVo uservo  = new UserRequestVo();
-        uservo.setUsername(user.getUserName());
-
-        return uservo;
+        return UserRequestVo.builder()
+                .username(user.getUserName())
+                .email(user.getEmail())
+                .build();
     }
 
     public void registerNewUser(UserRequestVo userRequestVo) {
-        User user = new User();
-        user.setUserName(userRequestVo.getUsername());
-        user.setPassword(userRequestVo.getPassword());
-        user.setEmail(userRequestVo.getEmail());
+        User user = User.builder()
+                .userName(userRequestVo.getUsername())
+                .password(userRequestVo.getPassword())
+                .email(userRequestVo.getEmail())
+                .build();
 
         userRepository.save(user);
     }
@@ -59,7 +60,11 @@ public class UserService {
             //String token=  RandomStringUtils.random(25, true, true);
             String token = createJsonWebToken(userRequestVo.getUsername());
 
-            UserLogin userLogin= new UserLogin(user, token, getCurrentTimeStamp());
+            UserLogin userLogin = UserLogin.builder()
+                    .user(user)
+                    .token(token)
+                    .tokenExpireTime(getCurrentTimeStamp())
+                    .build();
             userLoginRepository.save(userLogin);
 
             UserTokenResponseVo userTokenResponseVo = new UserTokenResponseVo();
