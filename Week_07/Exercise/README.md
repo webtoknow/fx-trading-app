@@ -56,7 +56,6 @@
             <version>1.18.2</version>
         </dependency>
         <dependency>
-        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>3.7</version>
