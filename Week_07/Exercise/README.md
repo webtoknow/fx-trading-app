@@ -120,7 +120,7 @@ public class UserAdministrationApplication {
 
  ```
  
- Create the following property file: application.properties and add the following lines to it
+ Create the following property file under the "resources" package: application.properties and add the following lines to it
  
 ```
  ## Spring DATASOURCE (DataSourceAutoConfiguration & DataSourceProperties)
