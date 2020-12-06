@@ -21,7 +21,7 @@ Notes:
 2. The pom.xml file contains the required Maven dependencies: Spring Web, Spring JPA, Spring Security, PostgreSQL
 3. Properties are already set in /src/main/resources/application.properties. 
 For example: Tomcat server is defined to run on port 8210 by setting property *server.port*
-4. Under the root package there is a *configuration* folder containing the class CustomWebSecurityConfigurerAdapter. This overrides the default Spring Security configuration
+4. Under the root package there is a *configuration* package containing the class CustomWebSecurityConfigurerAdapter. This overrides the default Spring Security configuration
 
 ## <a name="exercise-II">Exercise II - Database Setup </a>
 
@@ -44,7 +44,7 @@ spring.datasource.password=<VALUE>
 
 ## <a name="exercise-III">Exercise III - Implement REST endpoint for displaying list of all trades </a>
 
-For this exercise we will need to create(indications below):
+For this exercise we will need to create(guidance below):
 1. a Hibernate @Entity class that maps to the *transactions* table
 2. a TransactionVo class that will be used to serialize/deserialize data going through the @RestController(wich will be created after)
 3. a class that implements Spring's Converter interface. It will convert Transaction @Entity objects to POJO TransactionVo objects.
@@ -56,8 +56,8 @@ The conversionService bean should be configured by registering all required conv
 
 Indications:
 
-1.  Under *fxtrading* create folder *entities*
-Create inside the folder the class Transaction that maps to transactions table:
+1.  Under package *fxtrading* create package *entities*
+Create inside the package the class Transaction that maps to transactions table:
 
 ```
 package com.banking.sofware.design.fxtrading.entities;
@@ -107,8 +107,8 @@ public class Transaction {
 }
 ```
 
-2. Under *fxtrading* create folder *vo*.  
-Inside the folder create class TransactionVo  
+2. Under *fxtrading* create package *vo*.  
+Inside the package create class TransactionVo  
 
 We use this object to serialize/deserialize REST message payloads.  
 It is a practice to use a distinct set of objects when communicating through the REST interface.  
@@ -174,7 +174,7 @@ public final class MiscUtil {
 ```
 
 3. b
-Under *fxtrading* create folder *converters*.
+Under *fxtrading* create package *converters*.
 Add to it a new class named Transaction2TransactionVo
 
 ```
@@ -210,7 +210,7 @@ public class Transaction2TransactionVo implements Converter<Transaction, Transac
 }
 ```
 
-4.  In *fxtrading* under folder *configuration* add the following class:
+4.  In *fxtrading* under package *configuration* add the following class:
 
 ```
 package com.banking.sofware.design.fxtrading.configuration;
@@ -244,7 +244,7 @@ public class ConversionConfiguration {
 ```
 
 
-5. Create folder *repo* under *fxtrading* and add:
+5. Create package *repo* under *fxtrading* and add:
 
 ```
 package com.banking.sofware.design.fxtrading.repo;
@@ -376,7 +376,7 @@ public class QuoteProxyService {
 ```
 
 We also need to add a simple java object that will contain the deserialized response.  
-Create a folder *dto* under *fxtrading* and add class QuoteResponse  
+Create a package *dto* under *fxtrading* and add class QuoteResponse  
 
 ```
 package com.banking.sofware.design.fxtrading.dto;
