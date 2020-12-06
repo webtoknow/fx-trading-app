@@ -418,7 +418,7 @@ If the first one is missing then the deserialization will fail.
 ```
   @Transactional
   public void makeTransaction(TransactionVo vo) {
-    // TODO: validations
+    // Important: in a real application validations should be made - here for example
     String action = vo.getAction();
     if (StringUtils.isBlank(action) || !List.of("BUY", "SELL").contains(action.toUpperCase())) {
       throw new IllegalArgumentException("Action not supported!");
