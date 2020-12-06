@@ -111,8 +111,8 @@ public class Transaction {
 Inside the package create class TransactionVo  
 
 We use this object to serialize/deserialize REST message payloads.  
-It is a practice to use a distinct set of objects when communicating through the REST interface.  
-These objects help us as we might want to either hide, aggregate or transform information coming from database entities.  
+It is a practice to use a distinct set of objects(from entities) when communicating through the REST interface.  
+These objects help us as we might want for example to either hide, aggregate or transform information coming from database entities.  
 
 In our case we transform the rate field(for examplification purposes).   
 Also we send/receive the date as a Long object.  
