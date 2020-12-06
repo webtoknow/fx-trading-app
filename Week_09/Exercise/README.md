@@ -201,8 +201,12 @@ public class Transaction2TransactionVo implements Converter<Transaction, Transac
     vo.setAction(source.getAction());
     vo.setNotional(source.getNotional());
     vo.setTenor(source.getTenor());
-	//TODO: set date field on VO by obtaining milliseconds since 1970 from Date object
-	//TODO2: what if date is null? 
+    //TODO: set date field on VO by obtaining milliseconds since 1970 from Date object
+    /**
+     * Notice: the date object can't be null as it is a mandatory database field.
+     * but if an entity field can be null we need to take care at conversion to
+     * avoid Null Pointer Exception
+     **/
     //vo.setDate(<!--REPLACE WITH CODE-->);
     return vo;
   }
