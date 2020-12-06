@@ -463,6 +463,8 @@ Note:
   }
   ```
   
+**Important**: for this functionality to work this microservice has to connect to a live quote service.
+
 Now the implementation for the creation of trades should be done and you can test it with a tool like Postman.  
  
 ## <a name="exercise-V">Exercise V - Secure the API with authorization filter </a>
