@@ -44,7 +44,7 @@ spring.datasource.password=<VALUE>
 
 ## <a name="exercise-III">Exercise III - Implement REST endpoint for displaying list of all trades </a>
 
-For this exercise we will need to create:
+For this exercise we will need to create(indications below):
 1. a Hibernate @Entity class that maps to the *transactions* table
 2. a TransactionVo class that will be used to serialize/deserialize data going through the @RestController(wich will be created after)
 3. a class that implements Spring's Converter interface. It will convert Transaction @Entity objects to POJO TransactionVo objects.
@@ -53,6 +53,8 @@ The conversionService bean should be configured by registering all required conv
 5. a @Repository interface extending JpaRepository
 6. a @Service class
 7. a @RestController class
+
+Indications:
 
 1.  Under *fxtrading* create folder *entities*
 Create inside the folder the class Transaction that maps to transactions table:
