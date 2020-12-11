@@ -10,6 +10,7 @@ Before developing the Fxtrading service you can take a look at the application a
 - [Exercise III - Implement REST endpoint for displaying list of all trades](#exercise-III)
 - [Exercise IV - Implement functionality for saving trades](#exercise-IV)
 - [Exercise V - Secure the API with authorization filter](#exercise-V)
+- [Exercise VI - Unit test](#exercise-VI)
 
 
 ## <a name="exercise-I">Exercise I - Importing initial project setup in IDE </a>
@@ -449,7 +450,7 @@ Note:
 * add a dependency of QuoteProxyService. Hint: use @Autowired.
   
 
-3. In FxTradingController add the following method:
+3. In FxTradingRestController add the following method:
 
 ```
   @CrossOrigin
@@ -663,7 +664,7 @@ Authorization : Bearer <TOKEN>
 
 Unit testing is a subject in its own right and would require considerably more time to do it justice.  
 However you can take a look at the below test.  
-You can add it under *src/test/java/com/banking/sofware/design/fxtrading/service*  
+You can add it under the test folder(src/**test**/java) in package *com.banking.sofware.design.fxtrading.service*  
 
 ```
 package com.banking.sofware.design.fxtrading.service;
