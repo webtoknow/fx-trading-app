@@ -1,378 +1,488 @@
 # Week 2 – Analysis
-# Week 2 – Analysis
 
 ## Table of contents
 
-- [Game debrief considerations](#game-debrief-considerations)
-- [So, what is business analysis? Who is a BA?](#so-what-is-business-analysis?-who-is-a-BA?)
-- [What does a BA do?](#what-does-a-ba-do?)
-- [Some context considerations. Methodologies](#some-context-considerations-methodologies)
-- [Waterfall](#waterfall)
-  - [Some good things about Waterfall](#some-good-things-about-waterfall)
-  - [Some disadvantages of Waterfall](#some-disadvantages-of-waterfall)
-  - [When (not) to use Waterfall](#when-(not)-to-use-waterfall)
-- [Agile](#agile)
-  - [Some good things about Agile](#some-good-things-about-agile)
-  - [Some disadvantages of Agile](#some-disadvantages-of-agile)
-  - [When (not) to use Agile](#when-(not)-to-use-Agile)
-- [Waterfall/Agile](#waterfall/agile)
-  - [Fundamental Assumptions](#fundamental-assumptions)
-  - [Control](#control)
-  - [Management Style](#management-style)
-  - [Knowledge Management](#knowledge-management)
-  - [Role Assignment](#role-assignment)
-  - [Communication](#communication)
-  - [Customer's Role](#customer's-role)
-  - [Project Cycle](#project-cycle)
-  - [Development Model](#development-model)
-  - [Desired Organisational Form/Structure](#desired-organisational-form/structure)
-- [Hybrid](#hybrid)
-  - [Water-scrum-fall](#water-scrum-fall)
-  - [Agifall](#agifall)
-- [Golden rule of engagement](#golden-rule-of-engagement)
-- [BA underlying activities](#ba-underlying-activities)
-- [The circle of analysis](#the-circle-of-analysis)
-- [Requirements - the cornerstone of analysis work. And of the projects](#requirements---the-cornerstone-of-analysis-work-and-of-the-projects)
-- [Concepts](#concepts)
-- [BRD](#brd)
-- [FSD](#fsd)
-- [Requirements, epics, user stories, acceptance criteria, use cases](#requirements,-epics,-user-stories,-acceptance-criteria,-use-cases)
-- [MVP](#mvp)
-- [UML](#uml)
-- [Tools](#tools)
-- [Skills](#skills)
-- [Analysis process sneak peak (Agile)](#analysis-process-sneak-peak-(Agile))
-- [Food for thought](#food-for-thought)
-
-## Game debrief considerations
-
-- The process. Rule owners:
-  - Customer
-  - Analysts
-  - Other team members
-  - Time slots
-- Assumptions (What do we really know for sure? Did we confirmed out thoughts?)
-- Ask
-- Challenge. But do not bully :)
-- What was delivered? (POC / pieces / full package)
-- Customer satisfaction
-- How we prepare for next projects?
+- [Requirements](#requirements)
+- [Exercise](#exercise)
+- [Solution - User Stories](#Solution---User-Stories)
+  - [USER STORY #1 – Transactions View](#user-story-#1-–-transactions-view)
+  - [USER STORY #2 – Transactions Ccy Pair Filter](#user-story-#2-–-transactions-ccy-pair-filter)
+  - [USER STORY #3 – Transactions Date Filter](#user-story-#3-–-transactions-date-filter)
+  - [USER STORY #4 – New User Register](#user-story-#4-–-new-user-register)
+  - [USER STORY #5 – Error Messages for Register Form](#user-story-#5-–-error-messages-for-register-form)
+  - [USER STORY #6 – Fx Rates View](#user-story-#6-–-fx-rates-view)
+  - [USER STORY #7 – Currency selection widget](#user-story-#7-–-currency-selection-widget)
+  - [User Role Matrix](#user-role-matrix)
 
-![BFA_workshop_1](Img/BFA_workshop_1.jpg "BFA_workshop_1")
+## Requirements
 
-![BFA_workshop_2](Img/BFA_workshop_2.jpg "BFA_workshop_2")
+FX Trading application pages:
 
-![BFA_workshop_3](Img/BFA_workshop_3.jpg "BFA_workshop_3")
+### Register page
 
-![BFA_workshop_4](Img/BFA_workshop_4.jpg "BFA_workshop_4")
+A page that allows the creation of a new account.
 
-![BFA_workshop_5](Img/BFA_workshop_5.jpg "BFA_workshop_5")
+The page contains the following elements:
 
-![BFA_workshop_6](Img/BFA_workshop_6.jpg "BFA_workshop_6")
+page title: “Register a new account”
 
-![BFA_workshop_7](Img/BFA_workshop_7.jpg "BFA_workshop_7")
+- “username” field
+- “email” field
+- “password” field
+- “password confirmation” field
+- “register” button
+- “Already have an account?” text that redirects the user to the login page
 
-![BFA_workshop_8](Img/BFA_workshop_8.jpg "BFA_workshop_8")
+### Login page
 
-![SDLC](Img/SDLC.jpg "SDLC")
+A page that allows an user to login, giving them access to the FX Trading Dashboard.
 
-## So, what is business analysis? Who is a BA?
+The page contains the following elements:
 
-Business analysis is the **practice** of enabling **change** is an enterprise by defining **needs** and **recommending solutions** that deliver **value** to **stakeholders**.
+Page title: “Login to your account”
 
-Business analysts enables an enterpries to articulate needs and the rationale for **change**, and to support design and describe solutions that can deliver value.
+- username field
+- password field
+- login button
+- “Don’t have an account” link that redirects the user to the Register page
+- “Forgot my password” link
 
-Business analysts are responsible for discovering, synthesizing and analyzing information from a variety of sources within an enterprise, including tools, processes, documentation and stakeholders.
+### FX Trading Dashboard
 
-## What does a BA do?
+This page will give the users the option to sell and buy currency (called FX Rate View) and also view a history of the trades (called blotter view). The user is going to be part of a team and is able to see other team members’ activity.
 
-Business analysts play a role in aligning the designed and delivered solutions with the needs of stakeholders. The activities that business analysts perform include:
+### FX Rate View
 
-- understanding enterprise problems and goals,
-- analysing needs and solutions,
-- devising strategies,
-- driving change and
-- facilitating stakeholder collaboration
+FX rate gives user the option to trade several currencies (USD, EUR, GBP, RON and CHF).
+Users must use one currency to buy one of the other currencies.
+Users should be able to customize some aspects of the User Interface.
 
-## Some context considerations. Methodologies
+Elements needed:
 
-![Methodologies](Img/methodologies.jpg "Methodologies")
+- currency I want to buy (eg. EUR)
+- currency I want to sell (eg. RON)
+- currency exchange rates for sell/buy actions (eg. EUR/RON - buy: 4,6100 / sell: 4,7350)
+- notional - amount I want to buy/sell (eg. 1.000.000)
+- tenor - When the trade will take place (eg. Now / 1 Month / 3 Months)
+- buy Button
+- sell Button
 
-The two most popular methodologies used for IT projects (and not only) are:
+The user must be able to add more currency combinations to the dashboard (EUR/RON, EUR/USD, CHF/USD, etc.)
 
-- Waterfall -> this is the traditional approach
-- Agile -> newer than Waterfall, often implemented using Scrum.
+### Blotter View
 
-Hybrid is a combination of the two above-mentioned methodologies, not as opaque or strict as those two, created in order to allow a project-specific framework.
+The blotter view displays a transaction history for the user and other users in their team.
 
-## Waterfall
+Fields needed:
 
-![Waterfall](Img/Waterfall.jpg "Waterfall")
+- transaction id
+- username
+- currency pair (USD/EUR)
+- currency exchange rate
+- action (sell/buy)
+- notional
+- tenor
+- transaction date/time
 
-**Waterfall** is a linear approach to software development. In this methodology, the sequence of events is the following:
+The user should be able to apply 2 filters to the dataset described above (currency pair, transaction date)
 
-1. Gather and document requirements
-2. Design
-3. Implementation (including code and unit test)
-4. Verification (including SIT, INT, UAT)
-5. Deliver the finished product
-6. Maintenance
+## Exercise
 
-In a **true** Waterfall development project, each of these represents a distinct stage of software development, and each stage generally finishes before the next one can begin. There is also typicalle a stage gate between each; for example, requirements **must** be reviewd and approved by the customer before design can begin.
+Analyse the user requirements and based on them try to create user stories for the three main pages. Get feedback from the user and improve stories until you reach the optimal solution for their needs.
 
-### Some good things about Waterfall:
+## Solution - User Stories
 
-- Given that the agreement on what will be delivered happens in an early stage of the project, the planning is more straightforward.
-- It is simple to understand and implement, since it is a linear model. Phases do not overlap.
-- Members of the team could be involved with each other work, depending on the active phase of the project.
-- The presence of the customer is needed in the Analysis phase only.
+### USER STORY #1 – Transactions View
 
-### Some disadvantages of Waterfall:
+**As a** Trader (authenticated user in FX Trading application)
 
-- Any changes required after the gathering and sign-off of requirements cannot be accommodate.
-- Since the customer sees only the final product, no intermediary feedback is collected.
-- High amounts of risk is the final phases.
+**I want to** see all the past transactions of all authenticated Traders
 
-### When (not) to use Waterfall:
+**So that** I can conclude on the pattern of trades and make my transactions on the basis of this analysis.
 
-- This model is used only when:
-  - The requirements are very well known, clear and fixed;
-  - Product definition is stable;
-  - Technology is understood;
-  - There are no ambiguous requirements;
-  - Ample resources with required expertise are available freely;
-  - The project is short.
-- Not a good model for complex and object-oriented projects.
-- Poor model for long and ongoing projects.
-- Not suitable for the projects where requirements are at a moderate or high risk of changing
+_Please check the [mock-up](../../Week_03/Exercise) for guidelines on how it could look. This does not have to be the actual implementation, as the design might be different, but the same kind of information must be present in the actual implementation._
 
-## Agile
+**Acceptance Criteria:**
 
-![Agile](Img/Agile.jpg "Agile")
+#### AC#1 – Past Transactions View
 
-**Agile** is an iterative, team-based approach to development. The approach emphasizes the rapid delivery of an application in complete functional components. Rather than creating tasks and schedules, all time is "time-boxed" into phases called "sprints". Each sprint has a defined duration (usually in weeks) with a running list of deliverables, planned at the start of the sprint. Deliverables are prioritized by business value as determined by the customer. If all planned work for the sprint cannot be completed, work is reprioritized and the information is used for future sprint planning. 
+**Given that** I am a Trader
 
-As work is completed, it can be reviewd and evaluated by the project team and customer, through daily builds and end-of-sprint demos. Agile relies on a very high level of customer involvement throughout the project, but especially during these reviews.
+**When** I authenticate in the FX Trading application
 
-The basis of Agile methodology is the [Agile manifesto](https://agilemanifesto.org/).
+**Then** I am able to see the past transactions of all registered Traders, with the following information for each of them:
 
-Agile is often implemented with Scrum. In Scrum there are some specific roles (Product Owner – responsible for backlog prioritization, Scrum Master (responsible with organizing the ceremonies), project team (BA, architects, developers, QA etc.)) and some ceremonies (sprint planning, daily meetings, grooming, demo, retrospective).
+| Column Name          | Description                                                                                                                                                                   |
+|----------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ID                   | Shows the Transaction ID, as an integer. <br> It is generated by the system for each new Trade.                                                                                   |
+| Username             | Shows the username of the Trader doing the transaction                                                                                                                        |
+| Ccy Pair             | Provides the currencies being traded. <br> Each currency is shown as a three-digit value. <br> The separator is “/”.                                                                  |
+| Rate                 | Shows the rate between currencies used for the respective transactions.                                                                                                       |
+| Action               | Shows the action type, which can be “BUY” or “SELL”                                                                                                                           |
+| Notional             | Shows the amount being traded                                                                                                                                                 |
+| Tenor                | Provides the length of time before the trade expires. <br> It can be one month (“1M”), three months (“3M”) or Spot – the date when the trader exchanged the currencies (“SP”).     |
+| Transaction Date     | It is the date when the transaction was executed, in format “dd/mm/yyyy hh:mm”                                                                                                |
 
-### Some good things about Agile:
+#### AC#2 – Transactions Default Ordering
 
-- Rapid adjustment to changes;
-- People and interactions are emphasized rather than process and tools.
-- Working software is delivered frequently, therefore feedback is received in earlier stages of development.
-- Development is more user focused.
+**Given that:**
 
-### Some disadvantages of Agile: 
+* I am a Trader
+* AC#1 is in place
 
-- The high degree of customer involvement might be an issue for customers who may not have the time for this type of participation.
-- Members of the team are completely dedicated to only one project.
-- The iterative nature of Agile might lead to frequent refactoring if the full scope is not considered in the initial architecture and design.
-- At the beginning of the software development life cycle, it is difficult to assess the required effort.
+**When** I authenticate in the FX Trading application & I check the Transaction View
 
-### When (not) to use Agile:
+**Then** by default the Transactions are ordered based on the Transaction Date, ascending (oldest Transaction Date on top)
 
-- When new changes are needed to be implemented. The freedom agile gives to change is very important.
-- Agile can be inefficient in large organizations/proiects
-- Agile doesn’t work when the clients are not available for feedback.
+### USER STORY #2 – Transactions Ccy Pair Filter
 
-## Waterfall/Agile
+**As a** Trader (authenticated user in FX Trading application)
 
-![Waterfall_vs_Agile](Img/Waterfall_vs_Agile.jpg "Waterfall_vs_Agile")
+**I want to** be able to filter the past transactions based on the Currency Pair
 
-Differences between Waterfall and Agile:
+**So that** I can easily retrieve the information I need for my trading activity.
 
-### Fundamental Assumptions
+**Acceptance Criteria:**
 
-Waterfall: Systems are fully specifiable, predictable, and can be built through meticulous and extensive planning.
+#### AC#1
 
-Agile: High-quality, adaptive software can be developed by small teams using the principles of continuous design improvement and testing based on rapid feedback and change.
+**Given that:**
 
-### Control
+* I am a Trader
+* USER STORY#1 is in place
 
-Waterfall: Process-centric  
-Agile: People-centric
+**When** I authenticate in the FX Trading application & I check the Transaction View
 
-### Management Style
+**Then** I can filter the Transaction based on the Currency Pair.
 
-Waterfall: Command-and-control  
-Agile: Leadership-and-collaboration
+The filter must be named “Ccy Pair”. By default, no “Ccy Pair” filtering will be applied.
 
-### Knowledge Management
+It allows the user to select from a list of values with all defined Currency Pairs the one they want to use for filtering the transactions.
 
-Waterfall: Explicit  
-Agile: Tacit
+#### AC#2 – negative scenario
 
-### Role Assignment
+**Given that:**
 
-Waterfall: Individual—favors specialization  
-Agile: Self-organizing teams—encourages role interchangeability
+* I am a Trader
+* AC#1 is in place
 
-### Communication
+**When** I try to filter based on multiple Currency Pairs at a time
 
-Waterfall: Formal  
-Agile: Informal
+**Then** the system will not allow this action – once a new Ccy Pair value is selected, the previously selected one will get de-selected.
 
-### Customer's Role
+### USER STORY #3 – Transactions Date Filter
 
-Waterfall: Important  
-Agile: Critical
+**As a** Trader (authenticated user in FX Trading application)
 
-### Project Cycle
+**I want to** be able to filter the past transactions based on the date they were performed
 
-Waterfall: Guided by tasks or activities  
-Agile: Guided by product features
+**So that** I can easily retrieve the information I need for my trading activity.
 
-### Development Model
+**Acceptance Criteria:**
 
-Waterfall: Life cycle model (Waterfall, Spiral, or some variation)  
-Agile: The evolutionary-delivery model
+#### AC#1 – Transactions Date Filter
 
-### Desired Organisational Form/Structure
+**Given that:**
 
-Waterfall: Mechanistic  
-Agile: Organic
+* I am a Trader
+* USER STORY #1 is in place
 
-## Hybrid
+**When** I authenticate in the FX Trading application & I check the Transaction View
 
-![Hybrid](Img/Hybrid.jpg "Hybrid")
+**Then** I can filter the Transaction based on the Transaction Date.
 
-### Water-scrum-fall
+Based on this input, the Transactions will be filtered and only those traded on the specific date provided by the user will be displayed. By default, no Transaction Date filtering will be applied.
 
-One model that makes waterfall and agile get along is the [Water-scrum-fall](https://www.scrumalliance.org/community/articles/2015/june/water-scrum-fal) model.
+The Transaction Date filter allows the user to select a date from a calendar picker or to manually input it in format dd/mm/yyyy.
 
-Business analysis and release management teams follow the traditional waterfall methods, while the development and testing team scrum methods in a limited way.
+#### AC#2 – negative scenario (wrong date format)
 
-Water-scrum-fall method employs the traditional waterfall approach for planning, requirements gathering, budgeting and documenting the project’s progress. When there are enough details to begin development, the team switches to a timeboxed, iterative version of Scrum for product development.
+**Given that:**
 
-This method uses agile principles and scrum communication techniques in day-to-day activities related product development.
+* I am a Trader
+* AC#1 is in place
 
-![water_scrum_fall](Img/water_scrum_fall.jpg "water_scrum_fall")
+**When** I provide an incorrect Transaction Date, different than dd/mm/yyyy
 
-### Agifall
+**Then** the system will display a message “Invalid Format”.
 
-Agifall approach was first presented at [Vancouver Digital Product Managers Meetup Group](www.meetup.com/Vancouver-Digital-Project-Managers/). It combines the best of waterfall and agile by injecting the agile into a loose waterfall process.
+It will still allow the user to select or manually input another Transaction Date.
 
-The aim of Agifall is to increase the speed, decrease the cost and improve the quality. Agifall approaches planning in a user-centric manner and use quick prototype tools. It carries the planning and requirements activities of waterfall in an agile manner by breaking them into user stories and prioritizing them in the sprint.
+#### AC#3 – negative scenario (wrong date format)
 
-n the Agifall method, you don’t wait for one phase to complete before starting the next phase; rather you begin the next phase as soon as you can. This means that you can begin independent development of some modules or components while the planning phase is still in progress. The development phase follows the usual agile principles.
+**Given that:**
 
-Agifall model suggests graphic designing and testing in parallel with the development phase.
+* I am a Trader
+* AC#1 is in place
 
-**If you want to check more about methodologies, please check:**
+**When** I provide a future date for Transaction Date filter
 
-- http://agilemanifesto.org/ 
-- http://www.agilenutshell.com/agile_vs_waterfall 
-- https://www.atlassian.com/agile/scrum 
-- http://www.itinfo.am/eng/software-development-methodologies/ 
-- https://www.qasymphony.com/blog/agile-methodology-guide-agile-testing/
-- https://reqtest.com/agile-blog/agile-waterfall-hybrid-methodology-2/ 
-- https://www.seguetech.com/waterfall-vs-agile-methodology/ 
-- https://www.smartsheet.com/agile-vs-scrum-vs-waterfall-vs-kanban 
-- https://www.synopsys.com/blogs/software-security/top-4-software-development-methodologies/ 
+**Then** the system will display a message “No future dates allowed”.
 
-## Golden rule of engagement
+It will still allow the user to select or manually input another Transaction Date.
 
-![golden_rule_engagement](Img/golden_rule_engagement.jpg "golden_rule_engagement")
+#### Transaction View Mock-up
 
-## BA underlying activities
+![Blotter view](Img/blotter-view.png "Blotter View")
 
-![ba_underlying_activities](Img/ba_underlying_activities.jpg "ba_underlying_activities")
+### USER STORY #4 – New User Register
 
-## The circle of analysis
+**As an** unregistered user
 
-![circle_of_analysis](Img/circle_of_analysis.jpg "circle_of_analysis")
+**I want to** be able to register in the FX Trading application
 
-## Requirements - the cornerstone of analysis work. And of the projects
+**So that** I can perform my trending activity.
 
-**Business requriements:** statements of goals, objectives, and outcomes that describe why a change has been initiated. They can apply to the whole of an enterprise, a business area, or a specific initiative
+**Acceptance Criteria:**
 
-**Stakeholder requirements:** describe the needs of stakeholders that must be met in order to achieve the business requirements. They may serve as a bridge between business and solution requirements
+#### AC#1 – Link to Register
 
-**Solution requirements:** describe the capabilities and qualities of a solution that meets the stakeholder requirements. They provide the appropriate level of detail to allow for the development and implementation of the solution. Solution requirements can be divided into two sub-categories:
+**Given** I am an unregistered user
 
-- ***functional requirements:*** describe the capabilities that a solution must have in terms of the behaviour and information that the solution will manage, and
-- ***non-functional requirements*** or quality of service requirements: do not relate directly to the behaviour of functionality of the solution, but rather describe conditions under which a solution must remain effective or qualities that a solution must have
+**When** I go to the Login page
 
-**Transition requirements:** describe the capabilities that the solution must have and the conditions the solution must meet to facilitate transition from the current state to the future state, but which are not needed once the change is complete. They are differentiated from other requirements types because they are of a temporary nature. Transition requirements address topics such as data conversion, training, and business continuity.
+**Then** I should see a hyperlink to Register, which should be positioned as in the mockup below:
 
-## Concepts
+![Login page](Img/login-page.png "Login page")
 
-![concepts](Img/concepts.jpg "concepts")
+#### AC#2 – Register Form
 
-## BRD
+**Given**
 
-- [How to Write a Business Requirements Document](http://www.requirementsnetwork.com/documents.htm)
-- [A High-level Review from SixSigma perspective](https://www.isixsigma.com/implementation/project-selection-tracking/business-requirements-document-high-level-review/)
-- [Traceability definition](https://en.wikipedia.org/wiki/Requirements_traceability)
+* I am an unregistered user
+* AC#1 is in place
 
-![navigation](Img/navigation.jpg "navigation")
+**When** I follow the hyperlink to Register
 
-## FSD
+**Then** I should see a form called **Register a new account**, having the following fields:
 
-- [What goes into a FSD (Functional Specifications Document)](https://www.bridging-the-gap.com/functional-specification/)
-- [A sample](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=3&cad=rja&uact=8&ved=2ahUKEwjSi4zV7OfdAhXOyqQKHS6NDmEQFjACegQICBAC&url=https%3A%2F%2Fuit.stanford.edu%2Fsites%2Fdefault%2Ffiles%2F2017%2F08%2F30%2FAS%2520Functional%2520Specification%2520Document%2520Template_0.docx&usg=AOvVaw2pBQnjcXy51DVuTUpRJkER) (it will download a file)
+| Field Name           | Field Type                                                                                                             | Mandatory/Optional Field     | Position of the Field                               | Default Value     |
+|----------------------|------------------------------------------------------------------------------------------------------------------------|------------------------------|-----------------------------------------------------|-------------------|
+| Username             | Free text <br>  Min 6 characters  <br> Max 256 characters                                                                      | Mandatory                    | Below Register a new account – see mockup below     | username          |
+| Email                | Free text <br>  Max 256 characters <br> Email format                                                                          | Mandatory                    | Below Username – see mockup below                   | email address     |
+| Password             | Free text <br>  Min 6 characters  <br> Max 256 characters, key sensitive                                                       | Mandatory                    | Below Email – see mockup below                      | password          |
+| Confirm Password     | Free text <br> Max 256 characters <br> **Validation on the value:**   It should be same value as the one in “Password” field     | Mandatory                    | Below Password– see mockup below                    | password          |
 
-## Requirements, epics, user stories, acceptance criteria, use cases
+**Register Form mockup:**
 
-- [Agile Business Consortium – Requirements and User Stories handbook](https://www.agilebusiness.org/content/requirements-and-user-stories)
-- [5 Common User Story Mistakes](https://www.romanpichler.com/blog/5-common-user-story-mistakes/)
-- [Acceptance Criteria. Did We Build the Right Product? And, Did We Build the Product Right?](https://www.leadingagile.com/2014/09/acceptance-criteria/)
-- [User stories vs. Epics vs. Themes](https://www.scrumalliance.org/community/articles/2014/march/stories-versus-themes-versus-epics)
-- [Use Cases vs. User Stories](https://www.stellman-greene.com/2009/05/03/requirements-101-user-stories-vs-use-cases/)
-- [Stakeholders](#stakeholders)
+![Register Page](Img/register-page.png "Register Page")
 
-## Stakeholders
+#### AC#3 – New Account Creation
 
-Generic list of stakeholders includes the following roles:
+**Given** I am an unregistered user
 
-- business analyst,
-- customer,
-- domain subject matter expert,
-- end user,
-- implementation subject matter expert,
-- operational support,
-- project manager,
-- regulator,
-- sponsor,
-- supplier and
-- tester
+**When** fill out all the Register form fields by complying with the validations and I click on **Register** button
 
-**[Not to be confused with a Shareholder](https://www.investopedia.com/terms/s/shareholder.asp)!**
+**Then**
 
-## MVP
+* **“Registration Successful”** Message will be displayed
+* A new account will be created
+* I will be automatically redirected to the Login page (see mockup in AC#1).
 
-- [What is a MVP](https://blog.leanstack.com/minimum-viable-product-mvp-7e280b0b9418)
-- [3 examples of smart MVPs](https://www.youtube.com/watch?v=xPJoq_QVsY4)
-- [Quickly validate your start-up](https://www.youtube.com/watch?v=jHyU54GhfGs). It involves cats :)
+#### AC#4 – New User Login**
 
-## UML
+**Given**
 
-- [According to Wikipedia](https://en.wikipedia.org/wiki/Unified_Modeling_Language)
-- [According to originators](www.uml.org/)
+* AC#3 in place
+* I am redirected to the Login page
 
-## Tools
+**When** fill out all the Login form fields by complying with the validations and I click on **Login** button
 
-![tools](Img/tools.jpg "tools")
+**Then** I will be automatically logged in and redirected to Dashboard page**.**
 
-- [JAMA](https://www.jamasoftware.com/) - for business requirements management
-- [JIRA](https://www.atlassian.com/software/jira) – originally designed for incident management. Started to be used in agile for user stories/epics management
-- [Enterprise Architect](https://sparxsystems.com/products/ea/) - for modelling
-- [Balsamiq](https://balsamiq.com/products/), [Moqups](https://moqups.com/) & [Axure](https://www.axure.com/) - for prototyping
-- [ALM](https://software.microfocus.com/en-us/products/application-lifecycle-management/overview) - for testing
-- [SharePoint](https://en.wikipedia.org/wiki/SharePoint) and [Confluence](https://en.wikipedia.org/wiki/Confluence_(software)) - for content management
-- [Camtasia](https://www.techsmith.com/video-editor.html) - for smart user guides
+### USER STORY #5 – Error Messages for Register Form
 
-## Skills
+**As an** unregistered user
 
-![skills](Img/skills.jpg "skills")
+**I want to** receive the proper error messages when invalid data is input in the Register form
 
-## Analysis process sneak peak (Agile)
+**So that** I succeed in creating and activating my account in the FX Trading application
 
-![analysis_process_sneak_peak](Img/analysis_process_sneak_peak.jpg "analysis_process_sneak_peak")
+**Acceptance Criteria:**
 
-## Food for thought
+#### AC#1 – Error Message for missing Username
 
-[Why a BA is so tired? Why is Business Analysis so hard?](www.its-all-design.com/why-is-business-analysis-so-hard/) (2013 dated, same story today)
+**Given** I am an unregistered user
+
+**When**
+
+* I am in the Register form
+* Do not fill in any username
+* Click on Register button
+
+**Then** the following message should be displayed, in bold red: ‘Username is required!’
+
+#### AC#2 – Error Message for invalid Username
+
+**Given** I am an unregistered user
+
+**When**
+
+* I am in the Register form
+* I fill in an username which doesn’t meet the validation criteria mentioned in User Story#4, AC#2
+* Click on Register button
+
+**Then** the following message should be displayed, in bold red: ‘Username should contain letters, special characters (-, _, .) and must have at least 6 characters!’
+
+#### AC#3– Error Message for missing Email address
+
+**Given** I am an unregistered user
+
+**When**
+
+* I am in the Register form
+* Do not fill in any email address
+* Click on Register button
+
+**Then** the following message should be displayed, in bold red: ‘Email is required!’
+
+#### AC#4 – Error Message for invalid Email address
+
+**Given** I am an unregistered user
+
+**When**
+
+* I am in the Register form
+* I fill in an email address which doesn’t meet the validation criteria mentioned in User Story#4, AC#2
+* Click on Register button
+
+**Then** the following message should be displayed, in bold red: ‘Email address must be have the format firstname.lastname@email.com!”
+
+#### AC#5 – Error Message for missing Password
+
+**Given** I am an unregistered user
+
+**When**
+
+* I am in the Register form
+* Do not fill in any password
+* Click on Register button
+
+**Then** the following message should be displayed, in bold red: ‘Password is required!’
+
+#### AC#6 – Error Message for invalid Password
+
+**Given** I am an unregistered user
+
+**When**
+
+* I am in the Register form
+* I fill in a password which doesn’t meet the validation criteria mentioned in User Story#4, AC#2
+* Click on Register button
+
+**Then** the following message should be displayed, in bold red: ‘Password must have at least 6 characters!’
+
+#### AC#7 – Error Message for missing Password confirmation
+
+**Given** I am an unregistered user
+
+**When**
+
+* I am in the Register form
+* Do not confirm the password
+* Click on Register button
+
+**Then** the following message should be displayed, in bold red: ‘Password confirmation is required!’
+
+#### AC#8 – Error Message for invalid Password confirmation
+
+**Given** I am an unregistered user
+
+**When**
+
+* I am in the Register form, Password Confirmation field,
+* I fill in a password which doesn’t meet the validation criteria mentioned in User Story#4, AC#2
+* Click on Register button
+
+**Then** the following message should be displayed, in bold red: ‘Passwords do not match! Please fill in the correct password!’
+
+### USER STORY #6 – Fx Rates View
+
+**As a** Trader (authenticated user in FX Trading application)
+
+**I want to** be able to see one or more Fx Rates Views
+
+**So that** I can decide on the transactions to be made.
+
+**Acceptance Criteria:**
+
+#### AC#1 – Fx Rates View Display
+
+**Given that** I am a Trader
+
+**When** I authenticate in the FX Trading application
+
+**Then** I want to see a separate section called Fx Rates View as shown in the screenshot below:
+
+![Dashboard Page](Img/dashboard-page.png "Dashboard Page")
+
+#### AC#2 – Fx Rates View creation
+
+**Given that** I am a Trader
+
+**When** I authenticate in the FX Trading application
+
+**Then** I want to create one or more Fx Rates widgets by clicking on the button “+”as shown in the screenshot below:
+
+![Fx Rates view](Img/fx-rates-view.png "Fx Rates view")
+
+#### AC#3 – Maximum number of Fx Rates widgets
+
+**Given that** I am a Trader, authenticated in the FX Trading application
+
+**When** I am adding Fx Rates widgets
+
+**Then** I want to be allowed to add a maximum of 10 widgets.
+
+>**Note:** _When the maximum of views has been reached, then the “+” button should not be shown anymore._
+
+### USER STORY #7 – Currency selection widget
+
+**As a** Trader (authenticated user in FX Trading application)
+
+**I want to** be able to see the exchange rates in real time for more currencies
+
+**So that** I can decide on the transactions to be made.
+
+**Acceptance Criteria:**
+
+#### AC#1 – Currency selection screen
+
+**Given that** I am a Trader, authenticated in the FX Trading application
+
+**When** I click on the “+” button
+
+**Then** I want a new widget called “Pick a Currency” to be shown having the following fields:
+
+| Field Name     | Field Type                                                              | Mandatory/Optional Field     | Position of the Field                        | Default Value     |
+|----------------|-------------------------------------------------------------------------|------------------------------|----------------------------------------------|-------------------|
+| Primary        | Dropdown with the following reference data: <br> EUR <br> USD <br> GBP <br> RON     | Mandatory                    | Below Pick a Currency – see mockup below     | Please select     |
+| Secondary      | Dropdown with the following reference data: <br> EUR <br> USD <br> GBP <br> RON     | Mandatory                    | Below Primary – see mockup below             | Please select     |
+| OK             | Button                                                                  | Mandatory                    | Below Secondary – see mockup below           |                   |
+
+![Widget](Img/widget-step-1.png "Widget pick a currency")
+
+#### AC#2 – Saving data for Currency selection screen**
+
+**Given that** I am a Trader, authenticated in the FX Trading application
+
+**When** I fill in all mandatory data in Currency selection widget and click the  **“OK”** button
+
+**Then** I want my data to be saved and displayed in the widget, as per the screenshot below:
+
+![Widget](Img/widget-step-2.png "Widget buy")
+
+### User Role Matrix
+
+| Action                     | Administrator | Trader |
+|----------------------------|---------------|--------|
+| Login                      | x             | x      |
+| Logout                     | x             | x      |
+| Change password            | x             | x      |
+| Update profile information | x             | x      |
+| Assign roles               | x             |        |
+| Ban users                  | x             |        |
+| Add widgets                | x             |        |
+| Trade                      |               | x      |
+| View Past Transactions     | x             | x      |
+| Filter Past Transactions   | x             | x      |
