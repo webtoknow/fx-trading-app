@@ -11,7 +11,7 @@
 
 ## Exercise
 
-Analyse the [user requirements and stories](../../Week_02/Exercise) and based on them try and sketch a prototype for the three main pages. Get feedback from the user and improve your sketches until you reach the optimal solution for their needs.
+Analyse the [user requirements and stories](../../Week_02/Exercise/README.md) and based on them try and sketch a prototype for the three main pages. Get feedback from the user and improve your sketches until you reach the optimal solution for their needs.
 
 ## Solution - Mock-up
 
