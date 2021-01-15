@@ -346,7 +346,7 @@ It will still allow the user to select or manually input another Transaction Dat
 * I fill in an email address which doesn’t meet the validation criteria mentioned in User Story#4, AC#2
 * Click on Register button
 
-**Then** the following message should be displayed, in bold red: ‘Email address must be have the format firstname.lastname@email.com!”
+**Then** the following message should be displayed, in bold red: ‘Email address must have the format firstname.lastname@email.com!”
 
 #### AC#5 – Error Message for missing Password
 
