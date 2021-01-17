@@ -24,8 +24,6 @@ A page that allows the creation of a new account.
 
 The page contains the following elements:
 
-page title: “Register a new account”
-
 - “username” field
 - “email” field
 - “password” field
@@ -38,8 +36,6 @@ page title: “Register a new account”
 A page that allows an user to login, giving them access to the FX Trading Dashboard.
 
 The page contains the following elements:
-
-Page title: “Login to your account”
 
 - username field
 - password field
@@ -168,7 +164,7 @@ It allows the user to select from a list of values with all defined Currency Pai
 
 **When** I try to filter based on multiple Currency Pairs at a time
 
-**Then** the system will not allow this action – once a new Ccy Pair value is selected, the previously selected one will get de-selected.
+**Then** the system will not allow this action – once a new Ccy Pair value is selected, the previously selected one will get un-selected.
 
 ### USER STORY #3 – Transactions Date Filter
 
@@ -231,7 +227,7 @@ It will still allow the user to select or manually input another Transaction Dat
 
 **I want to** be able to register in the FX Trading application
 
-**So that** I can perform my trending activity.
+**So that** I can perform my trading activity.
 
 **Acceptance Criteria:**
 
