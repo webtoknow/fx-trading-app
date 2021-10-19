@@ -13,7 +13,7 @@ The agenda has the following content:
   - [Introduction](https://drive.google.com/file/d/1ueFpjdAEXlskXxM4ao2qIN9ow5X18fVz/view?usp=sharing)
   - [Exercise](Week_02/Exercise/README.md)
 - Week 3 - Design
-  - [Introduction](https://slides.com/denisacretu/fx-trading-app/fullscreen)
+  - [Introduction](https://docs.google.com/presentation/d/1K6eCHt7JcXK07WmPPAKXb9Ay89jfrf8y)
   - [Exercise](Week_03/Exercise/README.md)
 - Week 4 – Architecture and setup
   - [Introduction](Week_04/Theory/README.md)
