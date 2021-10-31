@@ -13,7 +13,15 @@ import { UserService } from '../../services/user.service';
 })
 export class RegisterPageComponent implements OnInit {
 
-  registerForm: FormGroup;
+  registerForm: FormGroup = this.formBuilder.group({
+    username: ['', Validators.required],
+    email: ['', Validators.required],
+    password: ['', [Validators.required, Validators.minLength(6)]],
+    confirmPassword: ['', Validators.required]
+  }, {
+    validator: this.mustMatch('password', 'confirmPassword')
+  });
+
   loading = false;
   submitted = false;
 
@@ -25,16 +33,30 @@ export class RegisterPageComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.registerForm = this.formBuilder.group({
-      username: ['', Validators.required],
-      email: ['', Validators.required],
-      password: ['', [Validators.required, Validators.minLength(6)]],
-      confirmPassword: ['', Validators.required]
-    })
   }
 
   // Convenience getter for easy access to form fields
   get f() { return this.registerForm.controls; }
+
+  // custom validator to check that two fields match
+  mustMatch(controlName: string, matchingControlName: string) {
+    return (formGroup: FormGroup) => {
+      const control = formGroup.controls[controlName];
+      const matchingControl = formGroup.controls[matchingControlName];
+
+      if (matchingControl.errors && !matchingControl.errors['mustMatch']) {
+        // return if another validator has already found an error on the matchingControl
+        return;
+      }
+
+      // set error on matchingControl if validation fails
+      if (control.value !== matchingControl.value) {
+        matchingControl.setErrors({ mustMatch: true });
+      } else {
+        matchingControl.setErrors(null);
+      }
+    }
+  }
 
   onSubmit() {
     this.submitted = true;
@@ -48,11 +70,12 @@ export class RegisterPageComponent implements OnInit {
     this.userService.register(this.registerForm.value)
       .pipe(first())
       .subscribe(
-        data => {
+        (data: any) => {
           this.toastr.success('Registration successful!');
+          this.loading = false;
           this.router.navigate(['/login']);
         },
-        error => {
+        (error: string) => {
           this.toastr.error(error);
           this.loading = false;
         }
