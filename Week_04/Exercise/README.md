@@ -1,6 +1,6 @@
 # Week 4 - Architecture and setup
 
-## Project arhitecture
+## Project architecture
 
 ![Architecture - System Contex](Img/fx-trading-app-architecture-System-Context.png "Architecture - System Contex")
 
@@ -10,7 +10,7 @@ We can also download a draw.io diagram from [here](https://drive.google.com/file
 
 ## Clone repo
 
-We can clone the repozitory using GIT and the command below or we can download it directly from Github.
+We can clone the repository using GIT and the command below or we can download it directly from Github.
 
 ```bash
 git clone https://github.com/WebToLearn/fx-trading-app.git
@@ -35,6 +35,8 @@ Let's generate a new Angular project using CLI
 ```bash
 ng new ui
 ```
+
+> When prompting the question: Would you like to add Angular routing?, please answer with Y. Also, we will use CSS as stylesheet format.
 
 Start the project
 
