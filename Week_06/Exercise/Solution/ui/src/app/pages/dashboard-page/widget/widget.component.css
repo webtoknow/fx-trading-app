@@ -27,16 +27,6 @@
     font-size: 24px;
   }
   
-  .label-long {
-    width: 80px;
-    justify-content: flex-start;
-  }
-  
-  .label-short {
-    width: 60px;
-    justify-content: flex-start;
-  }
-  
   .form-control {
     display: flex;
     flex-grow: 1;

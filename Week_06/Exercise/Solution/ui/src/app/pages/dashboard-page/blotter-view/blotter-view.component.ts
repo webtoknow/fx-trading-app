@@ -12,15 +12,16 @@ import { takeUntil } from 'rxjs/operators';
 })
 export class BlotterViewComponent implements OnInit {
 
-  private filter = {
+  filter = {
     ccyPair: '',
-    date: ''
+    date: 0
   };
   
   private unsubscribe = new Subject();
-  private transactions: Transaction[] = [];
+  transactions: Transaction[] = [];
   private initialTransactions: Transaction[] = [];
-  private currenciesPairs: string[] = [];
+  
+  currenciesPairs: (string | undefined)[] = [];
 
   constructor(
     private tradeService: TradeService
@@ -48,7 +49,7 @@ export class BlotterViewComponent implements OnInit {
       });
   }
 
-  getDateWithoutHourAndMinuteAndSeconds(date) {
+  getDateWithoutHourAndMinuteAndSeconds(date: number) {
     return new Date(new Date(date).getFullYear(), new Date(date).getMonth(), new Date(date).getDay());
   }
 
@@ -61,7 +62,7 @@ export class BlotterViewComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    this.unsubscribe.next();
+    this.unsubscribe.next('');
     this.unsubscribe.complete();
     }
 }
