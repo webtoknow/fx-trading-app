@@ -16,11 +16,11 @@ export class BlotterViewComponent implements OnInit {
     ccyPair: '',
     date: 0
   };
-  
+
   private unsubscribe = new Subject();
   transactions: Transaction[] = [];
   private initialTransactions: Transaction[] = [];
-  
+
   currenciesPairs: (string | undefined)[] = [];
 
   constructor(
@@ -38,7 +38,7 @@ export class BlotterViewComponent implements OnInit {
       .subscribe(response => {
         // Create transaction transform list by adding ccyPair
         const transactionsWithCcyPair: Transaction[] = response
-          .map(transaction => ({ ...transaction, ccyPair: `${transaction.primaryCcy}/${transaction.secondaryCcy}`}))
+          .map(transaction => ({ ...transaction, ccyPair: `${transaction.primaryCcy}/${transaction.secondaryCcy}` }))
         this.transactions = transactionsWithCcyPair;
         this.initialTransactions = [...transactionsWithCcyPair];
         // Get all Ccy pairs for select
@@ -64,5 +64,5 @@ export class BlotterViewComponent implements OnInit {
   ngOnDestroy() {
     this.unsubscribe.next('');
     this.unsubscribe.complete();
-    }
+  }
 }
