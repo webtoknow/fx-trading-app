@@ -7,7 +7,7 @@
   <div class="filter-input-container">
     <div class="flex-vertical-centered filter-group">
       <span>Ccy&nbsp;Pair&nbsp;&nbsp;</span>
-      <select name="Ccy" id="Ccy" class="form-control form-control-sm" [(ngModel)]="filter.ccyPair" (ngModelChange)="filterBy($event)">
+      <select name="Ccy" id="Ccy" class="form-control form-control-sm" [(ngModel)]="filter.ccyPair" (ngModelChange)="filterBy()">
         <option value="" selected>Please select&nbsp;&nbsp;</option>
         <option *ngFor="let currencyPair of currenciesPairs" [value]="currencyPair">{{ currencyPair }}</option>
       </select>
@@ -21,7 +21,7 @@
           class="form-control form-control-sm"
           placeholder="Please select&nbsp;"
           [(ngModel)]="filter.date"
-          (ngModelChange)="filterBy($event)"
+          (ngModelChange)="filterBy()"
           [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }"
           #dp="bsDatepicker"
           bsDatepicker>

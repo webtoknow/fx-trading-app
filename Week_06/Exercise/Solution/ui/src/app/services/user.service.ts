@@ -6,10 +6,10 @@ import { backendUrl } from '../constants';
 
 @Injectable()
 export class UserService {
-    constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) { }
 
-    register(user: User) {
-        return this.http.post(backendUrl.authService.register, user) as any;
-    }
-    
+  register(user: User) {
+    return this.http.post(backendUrl.authService.register, user) as any;
+  }
+
 }

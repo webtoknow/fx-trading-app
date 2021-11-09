@@ -1,20 +1,45 @@
 # Week 6 - Create Dashboard page with Angular
 
 ## Table of contents
-
+- [Exercise 0 - Configure and start Mock Server](#exercise-0---configure-and-start-mock-server)
 - [Exercise 1 - Create blotter-view, fx-rates-view and widget components](#exercise-1---create-blotter-view-fx-rates-view-and-widget-components)
-- [Exercise 2 - Install and use mock server using JSON Server](#exercise-2---install-and-use-mock-server-using-json-server)
-- [Exercise 3 - Blotter View page](#exercise-3---blotter-view-page)
+- [Exercise 2 - Blotter View page](#exercise-2---blotter-view-page)
   - [Transaction model](#transaction-model)
   - [Trade service](#trade-service)
   - [Update Application Module](#update-application-module)
   - [Implement polling mechanism](#implement-polling-mechanism)
   - [Blotter View component](#blotter-view-component)
-- [Exercise 4 - FX Rates View page](#exercise-4---fx-rates-view-page)
+- [Exercise 3 - FX Rates View page](#exercise-3---fx-rates-view-page)
   - [Rate model](#rate-model)
   - [Update Trade service](#update-trade-service)
   - [Widget component](#widget-component)
   - [FX Rates View component](#fx-rates-view-component)
+
+## Exercise 0 - Configure and start Mock Server
+
+Mock server is used to create a fake API to mock the backend data using [JSON Server](https://github.com/typicode/json-server).
+
+Let's install its packages:
+
+```bash
+cd fx-trading-app\Week_05\Exercise\Code\mock-server
+npm install
+```
+
+Start all microservices in a single terminal:
+
+```bash
+npm start
+```
+
+Now we can access these APIs:
+
+- `http://localhost:8200/user/authenticate` - sign-in
+- `http://localhost:8200/user/register` - register
+- `http://localhost:8210/transactions` - get all transactions
+- `http://localhost:8220/currencies` - get all currencies
+- `http://localhost:8220/fx-rate` - get fx rates for specific currencies
+
 
 ## Exercise 1 - Create blotter-view, fx-rates-view and widget components
 
@@ -105,33 +130,7 @@ and in *dashboard-page.component.css*:
     opacity: 0.8;
 }
 ```
-
-## Exercise 2 - Install and use mock server using JSON Server
-
-Because we do not have a backend server and a link to a real database at this moment, we will simulate having some data using *JSON Server* and NodeJS.
-
-Let's install its packages:
-
-```bash
-cd fx-trading-app\Week_06\Exercise\Code\ui\mock-server
-npm install
-```
-
-Start all microservices in a single terminal:
-
-```bash
-npm start
-```
-
-Now we can access these APIs:
-
-- `http://localhost:8200/user/authenticate` - sign-in
-- `http://localhost:8200/user/register` - register
-- `http://localhost:8210/transactions` - get all transactions
-- `http://localhost:8220/currencies` - get all currencies
-- `http://localhost:8220/fx-rate` - get fx rates for specific currencies
-
-## Exercise 3 - Blotter View page
+## Exercise 2 - Blotter View page
 
 ### Transaction model
 
@@ -145,7 +144,7 @@ export interface Transaction {
   secondaryCcy: string;
   rate: number;
   action: string;
-  notional: number;
+  notional: number | null;
   tenor: string;
   date: number;
   ccyPair?: string
@@ -235,7 +234,7 @@ import {startWith, switchMap} from "rxjs/operators";
   <div class="filter-input-container">
     <div class="flex-vertical-centered filter-group">
       <span>Ccy&nbsp;Pair&nbsp;&nbsp;</span>
-      <select name="Ccy" id="Ccy" class="form-control form-control-sm" [(ngModel)]="filter.ccyPair" (ngModelChange)="filterBy($event)">
+      <select name="Ccy" id="Ccy" class="form-control form-control-sm" [(ngModel)]="filter.ccyPair" (ngModelChange)="filterBy()">
         <option value="" selected>Please select&nbsp;&nbsp;</option>
         <option *ngFor="let currencyPair of currenciesPairs" [value]="currencyPair">{{ currencyPair }}</option>
       </select>
@@ -249,7 +248,7 @@ import {startWith, switchMap} from "rxjs/operators";
           class="form-control form-control-sm"
           placeholder="Please select&nbsp;"
           [(ngModel)]="filter.date"
-          (ngModelChange)="filterBy($event)"
+          (ngModelChange)="filterBy()"
           [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }"
           #dp="bsDatepicker"
           bsDatepicker>
@@ -389,15 +388,16 @@ import { takeUntil } from 'rxjs/operators';
 })
 export class BlotterViewComponent implements OnInit {
 
-  private filter = {
+  filter = {
     ccyPair: '',
-    date: ''
+    date: 0
   };
   
   private unsubscribe = new Subject();
-  private transactions: Transaction[] = [];
+  transactions: Transaction[] = [];
   private initialTransactions: Transaction[] = [];
-  private currenciesPairs: string[] = [];
+  
+  currenciesPairs: (string | undefined)[] = [];
 
   constructor(
     private tradeService: TradeService
@@ -425,7 +425,7 @@ export class BlotterViewComponent implements OnInit {
       });
   }
 
-  getDateWithoutHourAndMinuteAndSeconds(date) {
+  getDateWithoutHourAndMinuteAndSeconds(date: number) {
     return new Date(new Date(date).getFullYear(), new Date(date).getMonth(), new Date(date).getDay());
   }
 
@@ -438,7 +438,7 @@ export class BlotterViewComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    this.unsubscribe.next();
+    this.unsubscribe.next('');
     this.unsubscribe.complete();
     }
 }
@@ -454,7 +454,7 @@ So, in this file:
 - *filterBy* method does the filtering functionality - by ccyPair and/or date
 - *ngOnDestroy* unsubscribes from getting transactions
 
-## Exercise 4 - FX Rates View page
+## Exercise 3 - FX Rates View page
 
 ### Rate model
 
@@ -474,16 +474,16 @@ At same path, *Week_06/Exercise/Code/ui/src/app/models*, we want to have the *wi
 
 ```JavaScript
 export class Widget {
-  
+
   constructor(
-    public primaryCcy: string,
-    public secondaryCcy: string,
-    public buyRate: number,
-    public sellRate: number,
-    public notional: number,
-    public tenor: string,
-    public pickCCYState: boolean,
-  ) {  }
+    public primaryCcy: string = '',
+    public secondaryCcy: string = '',
+    public buyRate: number = 0,
+    public sellRate: number = 0,
+    public notional: number | null = null,
+    public tenor: string = '',
+    public pickCCYState: boolean = true,
+  ) { }
 
 }
 ```
@@ -540,23 +540,28 @@ We need some more methods in *trade.service.ts*:
   <div *ngIf="widget.pickCCYState">
     <h4 class="widget-title">Pick a currency</h4>
     <div class="content-container">
-      <div class="form-inline form-inline-long form-group">
-          <label class="label-long" for="primaryCcy">Primary</label>
+      <div class="mb-3 row">
+        <label class="col-sm-3 col-form-label" for="primaryCcy">Primary</label>
+        <div class="col-sm-9">
           <select name="primaryCcy" id="primaryCcy" class="form-control" [(ngModel)]="widget.primaryCcy" required>
             <option value="" disabled selected>Please select</option>
             <option *ngFor="let currency of currencies" [value]="currency">{{ currency }}</option>
           </select>
         </div>
-        <div class="form-inline form-inline-long form-group">
-          <label class="label-long" for="secondaryCcy">Secondary</label>
+
+      </div>
+      <div class="mb-3 row">
+        <label class="col-sm-3 col-form-label" for="secondaryCcy">Secondary</label>
+        <div class="col-sm-9">
           <select name="secondaryCcy" id="secondaryCcy" class="form-control" [(ngModel)]="widget.secondaryCcy" required>
             <option value="" disabled selected>Please select</option>
             <option *ngFor="let currency of currencies" [value]="currency">{{ currency }}</option>
           </select>
         </div>
-        <div class="btn-wraper">
-          <button class="btn btn-primary" (click)="onPickCurrency()">Ok</button>
-        </div>
+      </div>
+      <div class="btn-wraper">
+        <button class="btn btn-primary" (click)="onPickCurrency()">Ok</button>
+      </div>
     </div>
   </div>
 
@@ -572,27 +577,33 @@ We need some more methods in *trade.service.ts*:
       <div>
         <span class="widget-subtitle">SELL: </span>
         <span class="rate">{{ widget.sellRate | number:'1.1-2' }}</span>
-        <span class='fa' [ngClass]="{'fa-caret-up rate-up': sellRateTrend === 'up', 'fa-caret-down rate-down': sellRateTrend === 'down' }"></span>
+        <span class='fa'
+          [ngClass]="{'fa-caret-up rate-up': sellRateTrend === 'up', 'fa-caret-down rate-down': sellRateTrend === 'down' }"></span>
       </div>
       <div>
         <span class="widget-subtitle">BUY: </span>
         <span class="rate">{{ widget.buyRate | number:'1.1-2' }}</span>
-        <span class="fa" [ngClass]="{'fa-caret-up rate-up': buyRateTrend === 'up', 'fa-caret-down rate-down': buyRateTrend === 'down' }"></span>
+        <span class="fa"
+          [ngClass]="{'fa-caret-up rate-up': buyRateTrend === 'up', 'fa-caret-down rate-down': buyRateTrend === 'down' }"></span>
       </div>
     </div>
     <div class="content-container">
       <!-- Form  -->
-      <div class="form-inline form-group">
-        <label class="label-short" for="amount">Amount</label>
-        <input type="number" class="form-control" id="amount" placeholder="Type the amount" [(ngModel)]="widget.notional"
-          required>
+      <div class="mb-3 row">
+        <label class="col-sm-3 col-form-label" for="amount">Amount</label>
+        <div class="col-sm-9">
+          <input type="number" class="form-control" id="amount" placeholder="Type the amount"
+            [(ngModel)]="widget.notional" required>
+        </div>
       </div>
-      <div class="form-inline form-inline-short form-group">
-        <label class="label-short" for="primaryCcy">Tenor</label>
-        <select name="tenor" id="tenor" class="form-control" [(ngModel)]="widget.tenor" required>
-          <option value="" disabled selected>Please select</option>
-          <option *ngFor="let tenor of tenors" [value]="tenor">{{ tenor }}</option>
-        </select>
+      <div class="mb-3 row">
+        <label class="col-sm-3 col-form-label" for="primaryCcy">Tenor</label>
+        <div class="col-sm-9">
+          <select name="tenor" id="tenor" class="form-control" [(ngModel)]="widget.tenor" required>
+            <option value="" disabled selected>Please select</option>
+            <option *ngFor="let tenor of tenors" [value]="tenor">{{ tenor }}</option>
+          </select>
+        </div>
       </div>
       <!-- Buttons  -->
       <div class="btns-wrapper">
@@ -615,105 +626,95 @@ We can notice here:
 
 ```CSS
 .content-widget {
-  width: 100%;
-  position: relative;
-}
-
-.widget-title {
-  padding: 1rem 1rem 10px;
-  border-bottom: 1px solid #DDDDDD;
-  margin: 0;
-  font-size: 20px;
-  font-weight: bold;
-}
-
-.widget-subtitle {
-  font-size: 20px;
-  color: #7C7C7C;
-  font-weight: bold;
-}
-
-.widget-primary {
-  font-size: 24px;
-  color: #373A3C;
-}
-
-.widget-primary-currency {
-  color: #373A3C;
-  font-size: 24px;
-}
-
-.label-long {
-  width: 80px;
-  justify-content: flex-start;
-}
-
-.label-short {
-  width: 60px;
-  justify-content: flex-start;
-}
-
-.form-control {
-  display: flex;
-  flex-grow: 1;
-}
-
-.btn-wraper {
-  display: grid;
-  justify-content: flex-end;
-}
-
-.btns-wrapper {
-  display: flex;
-  justify-content: space-between;
-}
-
-.rates-container {
-  display: flex;
-  justify-content: space-between;
-  background: #F2F2F2;
-  padding: 10px 1rem;
-}
-
-.rate-up {
-  color: green;
-}
-
-.rate-down {
-  color: red;
-}
-
-.rate {
-  font-size: 30px;
-  font-weight: bold;
-}
-
-.content-container {
-  padding: 1rem;
-}
-
-.close {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  font-size: 15px;
-}
-
-.no-border {
-  border:0;
-}
-
-.exchange {
-  color: #F0AD4E;
-  font-size: 18px;
-  cursor: pointer;
-}
-
-@media only screen and (max-width: 1440px) {
-  .rate {
-    font-size: 26px;
+    width: 100%;
+    position: relative;
   }
-}
+  
+  .widget-title {
+    padding: 1rem 1rem 10px;
+    border-bottom: 1px solid #DDDDDD;
+    margin: 0;
+    font-size: 20px;
+    font-weight: bold;
+  }
+  
+  .widget-subtitle {
+    font-size: 20px;
+    color: #7C7C7C;
+    font-weight: bold;
+  }
+  
+  .widget-primary {
+    font-size: 24px;
+    color: #373A3C;
+  }
+  
+  .widget-primary-currency {
+    color: #373A3C;
+    font-size: 24px;
+  }
+  
+  .form-control {
+    display: flex;
+    flex-grow: 1;
+  }
+  
+  .btn-wraper {
+    display: grid;
+    justify-content: flex-end;
+  }
+  
+  .btns-wrapper {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .rates-container {
+    display: flex;
+    justify-content: space-between;
+    background: #F2F2F2;
+    padding: 10px 1rem;
+  }
+  
+  .rate-up {
+    color: green;
+  }
+  
+  .rate-down {
+    color: red;
+  }
+  
+  .rate {
+    font-size: 30px;
+    font-weight: bold;
+  }
+  
+  .content-container {
+    padding: 1rem;
+  }
+  
+  .close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 15px;
+  }
+  
+  .no-border {
+    border:0;
+  }
+  
+  .exchange {
+    color: #F0AD4E;
+    font-size: 18px;
+    cursor: pointer;
+  }
+  
+  @media only screen and (max-width: 1440px) {
+    .rate {
+      font-size: 26px;
+    }
+  }
 ```
 
 - **widget.component.ts**:
@@ -734,12 +735,12 @@ import { ToastrService } from 'ngx-toastr';
 export class WidgetComponent implements OnInit, OnDestroy {
   tenors = ['SP', '1M', '3M'];
   unsubscribe = new Subject();
-  buyRateTrend: string;
-  sellRateTrend: string;
+  buyRateTrend: string = '';
+  sellRateTrend: string = '';
   
-  @Input() widget: Widget;
-  @Input() index: number;
-  @Input() currencies: string[];
+  @Input() widget: Widget = new Widget();
+  @Input() index: number = 0;
+  @Input() currencies: string[] = [];
   @Output() deleted = new EventEmitter<number>();
 
   constructor(
@@ -757,7 +758,7 @@ export class WidgetComponent implements OnInit, OnDestroy {
   onSell() {
     const { notional, tenor } = this.widget;
     if (notional && tenor) {
-      const username: string  = JSON.parse(localStorage.getItem('currentUser')).username;
+      const username: string  = JSON.parse(localStorage.getItem('currentUser') || '').username || '';
       this.tradeService.saveTransaction({
       username: username,
       primaryCcy: this.widget.primaryCcy,
@@ -773,13 +774,13 @@ export class WidgetComponent implements OnInit, OnDestroy {
     }
     else {
       this.toastr.error('Please fill in both Amount and Tenor!');
-    }
+    } 
   }
   
   onBuy() {
     const { notional, tenor } = this.widget;
     if (notional && tenor) {
-      const username: string  = JSON.parse(localStorage.getItem('currentUser')).username;
+      const username: string  = JSON.parse(localStorage.getItem('currentUser') || '').username || '';
       this.tradeService.saveTransaction({
       username: username,
       primaryCcy: this.widget.primaryCcy,
@@ -837,7 +838,7 @@ export class WidgetComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.unsubscribe.next();
+    this.unsubscribe.next('');
     this.unsubscribe.complete();
     }
 }
@@ -874,7 +875,6 @@ FX Rates View component is the left-side of the screen, containing all *Widget* 
     <span class="fa fa-plus button-plus"></span>
   </button>
 </div>
-
 ```
 
 So, as we can see:

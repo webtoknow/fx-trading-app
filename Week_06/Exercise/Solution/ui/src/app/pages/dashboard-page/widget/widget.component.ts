@@ -13,12 +13,12 @@ import { ToastrService } from 'ngx-toastr';
 export class WidgetComponent implements OnInit, OnDestroy {
   tenors = ['SP', '1M', '3M'];
   unsubscribe = new Subject();
-  buyRateTrend: string;
-  sellRateTrend: string;
+  buyRateTrend: string = '';
+  sellRateTrend: string = '';
   
-  @Input() widget: Widget;
-  @Input() index: number;
-  @Input() currencies: string[];
+  @Input() widget: Widget = new Widget();
+  @Input() index: number = 0;
+  @Input() currencies: string[] = [];
   @Output() deleted = new EventEmitter<number>();
 
   constructor(
@@ -36,7 +36,7 @@ export class WidgetComponent implements OnInit, OnDestroy {
   onSell() {
     const { notional, tenor } = this.widget;
     if (notional && tenor) {
-      const username: string  = JSON.parse(localStorage.getItem('currentUser')).username;
+      const username: string  = JSON.parse(localStorage.getItem('currentUser') || '').username || '';
       this.tradeService.saveTransaction({
       username: username,
       primaryCcy: this.widget.primaryCcy,
@@ -58,7 +58,7 @@ export class WidgetComponent implements OnInit, OnDestroy {
   onBuy() {
     const { notional, tenor } = this.widget;
     if (notional && tenor) {
-      const username: string  = JSON.parse(localStorage.getItem('currentUser')).username;
+      const username: string  = JSON.parse(localStorage.getItem('currentUser') || '').username || '';
       this.tradeService.saveTransaction({
       username: username,
       primaryCcy: this.widget.primaryCcy,
@@ -116,7 +116,7 @@ export class WidgetComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.unsubscribe.next();
+    this.unsubscribe.next('');
     this.unsubscribe.complete();
     }
 }
