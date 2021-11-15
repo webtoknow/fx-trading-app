@@ -24,10 +24,10 @@ public class UserLogin {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(name = "token")
+    @Column(columnDefinition = "token")
     private String token;
 
-    @Column(name = "token_expire_time")
+    @Column(columnDefinition = "token_expire_time")
     private String tokenExpireTime;
 
 }
