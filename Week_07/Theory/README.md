@@ -3,8 +3,11 @@
 
 - [Spring Boot](#spring-boot)
   	- [About](#about)
-  	- [Annotations](#annotations)
-  	- [Code Example](#code-example)
+  	- [Spring Data](#springData)
+  	- [Entities](#entities)
+  	- [Repository](#repository)
+  	- [Service](#service)
+  	- [Controller](#controller)
 - [Security in today context](#security-in-today-context)
 	+ [Digital security](#digital-security)
 	+ [Application security](#application-security)
@@ -18,10 +21,6 @@
 - [JWT approach](#jwt-approach)
 	- [Overview](#overview)	
 	- [Creation and usage](#creation-and-usage)
-- [Jpa](#Jpa)
-  	- [Jpa Introduction](#jpa-introduction)
-  	- [Jpa Entity](#jpa-entity)
-  	- [Spring Data](#spring-data)
 - [References](#references)
 
 ## About
@@ -39,74 +38,156 @@ The Spring Boot Maven plugin provides many convenient features:
 You can override any version you wish, but it will default to Boot’s chosen set of versions.
 
 
-## Annotations
+## Spring Data
+
+Spring Data JPA is the part of the application that connects our Spring data Java application to the database.
+
+The communication between our spring/java application with the database for storing and retrieving data is always done through this layer.
 
 
 
-@SpringBootApplication:
-
-1) @Configuration tags the class as a source of bean definitions for the application context.
-
-2) @EnableAutoConfiguration tells Spring Boot to start adding beans based on classpath settings, other beans, and various property settings.
-
-Normally you would add @EnableWebMvc for a Spring MVC app, but Spring Boot adds it automatically when it sees spring-webmvc on the classpath. 
-
-This flags the application as a web application and activates key behaviors such as setting up a DispatcherServlet.(receives requests and maps to the coresponding classes)
-
-
-3) @ComponentScan tells Spring to look for other components, configurations, and services in the hello package, allowing it to find the controllers.
-
-
-The main() method uses Spring Boot’s SpringApplication.run() method to launch an application.
-
-
-There is also a CommandLineRunner method marked as a @Bean and this runs on start up. 
-It retrieves all the beans that were created either by your app or were automatically added thanks to Spring Boot. 
-
-
-
-## Code Example
+## Entities
+Entities are part of the Spring Data and they represent a mapping of the java Classes to the tables in the databases.
+We can see that every entity class has a corresponding table in the database. Every member of the class is mapped to a column in the database. 
+Usually the entities can be found in a package named 'model' or 'entities'.
+All entities are marked with the @Entity
 
 
 ```Java
-package hello;
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@Table(name = "user_login")
+public class UserLogin {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_login_id", updatable = false, nullable = false)
+    private Long userLoginId;
 
-@SpringBootApplication
-public class Application {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
-    }
+    @Column(name = "token")
+    private String token;
 
-    @Bean
-    public CommandLineRunner commandLineRunner(ApplicationContext ctx) {
-        return args -> {
+    @Column(name = "token_expire_time")
+    private String tokenExpireTime;
 
-            System.out.println("Let's inspect the beans provided by Spring Boot:");
-
-            String[] beanNames = ctx.getBeanDefinitionNames();
-            Arrays.sort(beanNames);
-
-            for (String beanName : beanNames) {
-                System.out.println(beanName);
-            }
-        };
-    }
 }
 ```
 
+```Java
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@Table(name = "user_login")
+public class UserLogin {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_login_id", updatable = false, nullable = false)
+    private Long userLoginId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @Column(name = "token")
+    private String token;
+
+    @Column(name = "token_expire_time")
+    private String tokenExpireTime;
+
+}
+```
+
+## Repository
+Repositories are part of Spring Data and they represent a Class that contains the actions/interations that are performed on the database. Actions can be either adding new data in the database(register a new user) or retrieving data from the database(finding and existing user). 
+Usually the repositories can be found in a package named 'repository'.
+
+Spring data provides a base class JpaRepository that helps us from writting the following methods:
+
+- findAll
+- count, delete, deleteAll, deleteAll, deleteById, existsById, findById, save
+- exists, findOne
+- deleteAllInBatch()
+- deleteInBatch(Iterable<T> entities)
+  
+  
+The repository interface is used for extending the CRUD interface. This interface adds the layer of a repository in the program. Spring Data JPA provides two major ways of creating queries. These queries are then used in the repository interface to fetch the data from the database.
+
+Repositories are usually marked with @Repository annotation.
+
 
 ```Java
-package hello.controllers;
+@Repository
+public interface UserRepository extends JpaRepository<User, Long> {
+    public User findByUserId(Long userId);
+
+    @Query("SELECT u FROM User u WHERE u.userName = ?1 and u.password = ?2")
+    public User findUserByStatusAndName(String userName, String password);
+}
+```
+## Service
+The Service Classes contain only the business related logic( a certain functionality for an operation). The service classes interact directly with the repository classes in order to perform an operation, usually the service class needs information from the database or  changes information into the database.
+The service classes can be found in the service package.
+
+## Controller
+The Controller classes contain the endpoints(the access points) from which an outside system can interact with our application. Basically the communication with the outside system is done via the endpoints specified in the Controller class. The endpoint receives the data from the outside system and passes it to the service class in order to execute the business logic of the operation that the outside system demanded.
+
+Outside System ------> [Controller -> Service -> Repository] ------> Database
+
+## Code Example
+
+```Java
+package com.project.user.administration.controller;
+
+import com.project.user.administration.services.UserService;
+import com.project.user.administration.vo.UserAuthorizeResponseVo;
+import com.project.user.administration.vo.UserTokenResponseVo;
+import com.project.user.administration.vo.UserRequestVo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.text.ParseException;
 
 @RestController
-public class HelloController {
+//@CrossOrigin
+public class UserController {
 
-    @RequestMapping("/")
-    public String index() {
-        return "Greetings from Spring Boot!";
+    @Autowired
+    private UserService userService;
+
+    @GetMapping("/user/{userId}")
+    @CrossOrigin
+    public UserRequestVo getAnswersByQuestionId(@PathVariable Long userId) {
+        return userService.findByUserId(userId);
     }
+
+    @PostMapping("/user/register")
+    @CrossOrigin
+    public void registerNewUser(@RequestBody UserRequestVo userRequestVo) {
+        userService.registerNewUser(userRequestVo);
+    }
+
+    @PostMapping("/user/authenticate")
+    @CrossOrigin
+    public UserTokenResponseVo login(@RequestBody UserRequestVo userRequestVo) {
+        return userService.validateUserCredentialsAndGenerateToken(userRequestVo);
+    }
+
+    @PostMapping("/user/authorize")
+    @CrossOrigin
+    public UserAuthorizeResponseVo authorize(@RequestBody UserRequestVo userRequestVo) throws ParseException {
+        return userService.authorizeV2(userRequestVo);
+    }
+
 }
 ```
 
@@ -357,132 +438,10 @@ eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJiMDhmODZhZi0zNWRhLTQ4ZjItOGZ
 >>You may notice that the header and the payload are concatenated to create the signature but are sent as distinct entities.
 
 
-## Jpa Introduction
-
-### What?
-Java Persistence API is a collection of classes and methods to persistently store the vast amounts of data into a database ,
-
-### Why?
-To reduce the burden of writting code for relational object management, a programmer follows the ‘JPA Provider’ framework, which allows easy interaction with database instance. Here the required framework is taken over by JPA.
-
-### Who?
-JPA is an open source API, therefore various enterprise vendors such as Oracle, Redhat, Eclipse, etc. provide new products by adding the JPA persistence flavor in them. Some of these products include:
-Hibernate, Eclipselink, Toplink, Spring Data JPA, etc.
-
-
-### Jpa Entity
-
-
-```Java
-
-@Entity
-@Table(name = "employee")
-public class Employee implements Serializable {
-
-	private static final long serialVersionUID = -3009157732242241606L;
-  
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name="id")
-	private long id;
-
-	@Column(name = "firstname")
-	private String firstName;
-
-	@Column(name = "lastname")
-	private String lastName;
-	
-	@Column(name = "age")
-	private int age;
-
-	protected Employee() {
-	}
-
-	public Employee(String firstName, String lastName,int age) {
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.age = age;
-	}
-	
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public String getFirstName() {
-		return firstName;
-	}
-
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-
-	public String getLastName() {
-		return lastName;
-	}
-
-	public void setLast_Name(String lastName) {
-		this.lastName = lastName;
-	}
-
-	public int getAge() {
-		return age;
-	}
-
-	public void setAge(int age) {
-		this.age = age;
-	}
-}
-
-```
-
-### Spring Data
-
-This spring-module provides spring data repository interfaces which are implemented to create JPA repositories.
-
-#### No More DAO Implementations
-
-Spring data provides a base class JpaRepository that helps us from writting the following methods:
-
-- findAll
-- count, delete, deleteAll, deleteAll, deleteById, existsById, findById, save
-- exists, findOne
-- deleteAllInBatch()
-- deleteInBatch(Iterable<T> entities)
-  
-  
-The repository interface is used for extending the CRUD interface. This interface adds the layer of a repository in the program. Spring Data JPA provides two major ways of creating queries. These queries are then used in the repository interface to fetch the data from the database.
-
-
-
-```Java
-
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
-
-@Repository
-public interface EmployeeRepository extends CrudRepository<Employee, Long>{
-	List findByLastName(String lastName);
-	
-@Query("SELECT e FROM Employee e WHERE e.age = :age")
-    public List findByAge(@Param("age") int age);
-}
-
-
-```
-
-
-
 ## SpringBoot
 
 Spring Boot is an open source Java-based framework used to create Micro Services.
 It is easy to create a stand-alone and production ready spring application.
-
 
 
 The Spring Boot Maven plugin provides many convenient features:
@@ -514,175 +473,8 @@ This flags the application as a web application and activates key behaviors such
 The main() method uses Spring Boot’s SpringApplication.run() method to launch an application.
 
 
-There is also a CommandLineRunner method marked as a @Bean and this runs on start up. 
-It retrieves all the beans that were created either by your app or were automatically added thanks to Spring Boot. 
 
 
-
-## Code Example
-
-
-```Java
-package hello;
-
-
-@SpringBootApplication
-public class Application {
-
-    public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
-    }
-
-    @Bean
-    public CommandLineRunner commandLineRunner(ApplicationContext ctx) {
-        return args -> {
-
-            System.out.println("Let's inspect the beans provided by Spring Boot:");
-
-            String[] beanNames = ctx.getBeanDefinitionNames();
-            Arrays.sort(beanNames);
-
-            for (String beanName : beanNames) {
-                System.out.println(beanName);
-            }
-        };
-    }
-}
-```
-
-
-```Java
-package hello.controllers;
-
-@RestController
-public class HelloController {
-
-    @RequestMapping("/")
-    public String index() {
-        return "Greetings from Spring Boot!";
-    }
-}
-```
-
-
-## Jpa Introduction
-
-### What?
-Java Persistence API is a collection of classes and methods to persistently store the vast amounts of data into a database ,
-
-### Why?
-To reduce the burden of writting code for relational object management, a programmer follows the ‘JPA Provider’ framework, which allows easy interaction with database instance. Here the required framework is taken over by JPA.
-
-### Who?
-JPA is an open source API, therefore various enterprise vendors such as Oracle, Redhat, Eclipse, etc. provide new products by adding the JPA persistence flavor in them. Some of these products include:
-Hibernate, Eclipselink, Toplink, Spring Data JPA, etc.
-
-
-### Jpa Entity
-
-
-```Java
-
-@Entity
-@Table(name = "employee")
-public class Employee implements Serializable {
-
-	private static final long serialVersionUID = -3009157732242241606L;
-  
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name="id")
-	private long id;
-
-	@Column(name = "firstname")
-	private String firstName;
-
-	@Column(name = "lastname")
-	private String lastName;
-	
-	@Column(name = "age")
-	private int age;
-
-	protected Employee() {
-	}
-
-	public Employee(String firstName, String lastName,int age) {
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.age = age;
-	}
-	
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public String getFirstName() {
-		return firstName;
-	}
-
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-
-	public String getLastName() {
-		return lastName;
-	}
-
-	public void setLast_Name(String lastName) {
-		this.lastName = lastName;
-	}
-
-	public int getAge() {
-		return age;
-	}
-
-	public void setAge(int age) {
-		this.age = age;
-	}
-}
-
-```
-
-### Spring Data
-
-This spring-module provides spring data repository interfaces which are implemented to create JPA repositories.
-
-#### No More DAO Implementations
-
-Spring data provides a base class JpaRepository that helps us from writting the following methods:
-
-- findAll
-- count, delete, deleteAll, deleteAll, deleteById, existsById, findById, save
-- exists, findOne
-- deleteAllInBatch()
-- deleteInBatch(Iterable<T> entities)
-  
-  
-The repository interface is used for extending the CRUD interface. This interface adds the layer of a repository in the program. Spring Data JPA provides two major ways of creating queries. These queries are then used in the repository interface to fetch the data from the database.
-
-
-
-```Java
-
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
-
-@Repository
-public interface EmployeeRepository extends CrudRepository<Employee, Long>{
-	List findByLastName(String lastName);
-	
-@Query("SELECT e FROM Employee e WHERE e.age = :age")
-    public List findByAge(@Param("age") int age);
-}
-
-
-```
 
 
 ### References
