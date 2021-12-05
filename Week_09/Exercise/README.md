@@ -100,7 +100,7 @@ public class Transaction {
   @Column
   private String tenor;
 
-  @Column(insertable = false)
+  @Column
   private Date date;
 
   //TODO: Generate getters and setters
@@ -437,17 +437,18 @@ If the first one is missing then the deserialization will fail.
     transaction.setSecondaryCcy(vo.getSecondaryCcy());
     transaction.setNotional(vo.getNotional());
     transaction.setTenor(vo.getTenor());
+    transaction.setDate(new Date());
 
     repository.save(transaction);
   }
 
    private QuoteResponse getCurrentRate(String primaryCcy, String secondaryCcy) {
         return proxyRatesService.getRate(primaryCcy, secondaryCcy);
-    }
+   }
 ```
 
 Note:
-* you have to add missing imports
+* you have to add missing imports (import from Spring framework and Apache Commons Lang3)
 * add a dependency of QuoteProxyService. Hint: use @Autowired.
   
 
@@ -471,185 +472,67 @@ Now the implementation for the creation of trades should be done and you can tes
  
 ## <a name="exercise-V">Exercise V - Secure the API</a>
 
-In this exercise we will secure the REST API through a custom method.   
-Each call to the REST API will be intercepted and verified by interogating the users service for authorization.
-
-**Important Note**: this mechanism was primarily chosen to illustrate communications between microservices and is probably not the best way to implement authorization.  
-Since we are using JWT the simplest way is to verify the token in the trading service and not delegate to users service.
-
-1. Firstly we add a service that checks whether a given token is valid.  
-This service will call the authorization microservice that will do the actual validation.  
+1. Add the following dependencies in pom.xml. After adding the dependencies, do a maven clean and install. Reload the dependencies in the IDE if needed.
 
 ```
-package com.banking.sofware.design.fxtrading.service;
+<dependency>
+	<groupId>org.springframework.security.oauth.boot</groupId>
+	<artifactId>spring-security-oauth2-autoconfigure</artifactId>
+	<version>2.6.1</version>
+</dependency>
 
-import com.banking.sofware.design.fxtrading.dto.AuthRequest;
-import com.banking.sofware.design.fxtrading.dto.AuthResponse;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+<dependency>
+	<groupId>org.springframework.security.oauth</groupId>
+	<artifactId>spring-security-oauth2</artifactId>
+	<version>2.5.1.RELEASE</version>
+</dependency>
 
-@Service
-public class UserAuthProxyService {
+<dependency>
+	<groupId>org.springframework.security</groupId>
+	<artifactId>spring-security-jwt</artifactId>
+	<version>1.1.1.RELEASE</version>
+</dependency>
+```
 
-    @Value("${user.auth.url}")
-    private String userAuthorization;
+2. Add the annotation @EnableResourceServer to FxTradingApplication class (and add required import)  
+This enables Oauth2 security to the server API.  
 
+3. Add the following property in application.properties 
 
-    public AuthResponse authorizeUser(String token) {
-        RestTemplate restTemplate = new RestTemplate();
-        return restTemplate.postForObject(userAuthorization, new AuthRequest(token), AuthResponse.class);
-    }
+```
+security.oauth2.resource.jwt.key-value=secret
+```
+
+Explanation:
+This property sets the key that will be used to validate the JWT tokens received in the Authorization header.  
+For simplicity the key used is symmetrical. In this example it has to be the same key used when generating the token in user administration service.
+
+4. Add the following class under *configuration* package:
+
+```
+
+package com.banking.sofware.design.fxtrading.configuration;
+
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
+
+@Configuration
+public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
+
+	@Override
+	public void configure(HttpSecurity http) throws Exception {
+		http.cors().and().authorizeRequests().anyRequest().authenticated();
+	}
 
 }
-```
-
-2 Now we have to create an object for serializing the request to the authorization service and one for deserializing the response.
-
-Under *dto* add:
 
 ```
-package com.banking.sofware.design.fxtrading.dto;
 
-public class AuthRequest {
+Explanation:  
+This class configures the security of the service.  
+It is configured to allow CORS. If we don't allow CORS then the browser won't be able to make server requests to a different domain from the one serving the frontend resources.
 
-    private String token;
-
-    public AuthRequest(String token) {
-        this.token = token;
-    }
-
-    public String getToken() {
-        return token;
-    }
-}
-```
-
-And the response:
-
-```
-package com.banking.sofware.design.fxtrading.dto;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class AuthResponse {
-
-  private String userName;
-  private boolean isValid;
-  
-  //generate getters and setters
-  
-}
-```
-
-3. Under package *fxtrading* we will create a package *filter*  
-We create a security filter in this package. This filter will intercept each HTTP call to fxtrading service.
-
-
-
-If the request contains the header Authorization starting with the string "Bearer " then the authorization service will be invoked to see if the token is valid.  
-If the token is valid then the actual call will be allowed.  
-The filter has to allow the browser's OPTIONS call.  
-
-```
-package com.banking.sofware.design.fxtrading.filter;
-
-import java.io.IOException;
-import java.util.ArrayList;
-
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
-
-import com.banking.sofware.design.fxtrading.dto.AuthResponse;
-import com.banking.sofware.design.fxtrading.service.UserAuthProxyService;
-
-public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
-
-  private static final String HEADER = "Authorization";
-  private  static final String TOKEN_PREFIX = "Bearer ";
-
-  private static final Logger log = LoggerFactory.getLogger(BasicAuthenticationFilter.class);
-
-  public JwtAuthorizationFilter(AuthenticationManager authManager) {
-    super(authManager);
-  }
-
-  @Override
-  protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain)
-          throws IOException, ServletException {
-    String header = req.getHeader(HEADER);
-
-    if(RequestMethod.OPTIONS.name().equals(req.getMethod())) {
-      chain.doFilter(req, res);
-      return;
-    }
-
-    if (header == null || !header.startsWith(TOKEN_PREFIX)) {
-      res.setStatus(401);
-      return;
-    }
-
-    try {
-      UsernamePasswordAuthenticationToken authentication = getAuthentication(req);
-      if (authentication == null) {
-        authorizationFailed(req, res);
-        return;
-      }
-      SecurityContextHolder.getContext().setAuthentication(authentication);
-      chain.doFilter(req, res);
-    } catch (Exception e) {
-      authorizationFailed(req, res);
-      return;
-    }
-  }
-
-  private void authorizationFailed(HttpServletRequest req, HttpServletResponse res) {
-    log.info("Authorization failed on endpoint: {} {} with authorization header: {}", req.getMethod(), req.getRequestURI(), req.getHeader(HEADER));
-    res.setStatus(401);
-  }
-
-  private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
-    String token = request.getHeader(HEADER);
-    if (token != null) {
-      String parsedToken = token.replace(TOKEN_PREFIX, "");
-      try {
-        WebApplicationContext webApplicationContext = WebApplicationContextUtils
-                .getWebApplicationContext(request.getServletContext());
-        UserAuthProxyService authorizationService = webApplicationContext.getBean(UserAuthProxyService.class);
-        AuthResponse response = authorizationService.authorizeUser(parsedToken);
-        if (response.isValid()) {
-          return new UsernamePasswordAuthenticationToken(response.getUserName(), null, new ArrayList<>());
-        }
-      } catch (Exception e) {
-        throw new RuntimeException("Authorization failed");
-      }
-    }
-    return null;
-  }
-}
-```
-
-4. Finally we must add the filter to Spring Security's filter chain. 
-We will change the configuration in CustomWebSecurityConfigurerAdapter class for the below one. And adding missing imports.
-
-```
-   http.csrf().disable().addFilterBefore(new JwtAuthorizationFilter(authenticationManager()), BasicAuthenticationFilter.class);
-```
-
-This line will register the custom filter and each call will be intercepted by it.
 
 After this you can test the API and notice that without the Authorization header the requests will be rejected with 401 status code.
 
