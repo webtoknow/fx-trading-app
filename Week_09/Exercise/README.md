@@ -21,7 +21,7 @@ Notes:
 1. Under *fxtrading* package there is the main class of the Spring Boot application: FxTradingApplication
 2. The pom.xml file contains the required Maven dependencies: Spring Web, Spring JPA, PostgreSQL, etc
 3. Properties are set in /src/main/resources/application.properties. 
-For example: Tomcat server is defined to run on port 8210 by setting property *server.port*
+For example: Tomcat server is defined to run on port 8210 by setting property *server.port*  
 Also database properties are set. The database properties must match the database setup done in the next exercise.
 
 ## <a name="exercise-II">Exercise II - Database Setup </a>
@@ -47,17 +47,17 @@ spring.datasource.password=<VALUE>
 
 For this exercise we will need to create(guidance below):
 1. a Hibernate @Entity class that maps to the *transactions* table
-2. a TransactionVo class that will be used to serialize/deserialize data going through the @RestController(wich will be created after)
+2. a TransactionVo class that will be used to serialize/deserialize data going through the @RestController(which will be created after)
 3. a class that implements Spring's Converter interface. It will convert Transaction @Entity objects to POJO TransactionVo objects.
 4. a @Configuration that defines the @Bean conversionService. 
-The conversionService bean should be configured by registering all required converters(in this case we only have one for transactions).
+The conversionService bean should be configured by registering the required converters(in this case we only have the one specified above).
 5. a @Repository interface extending JpaRepository
 6. a @Service class
 7. a @RestController class
 
 Indications:
 
-1.  Under package *fxtrading* create package *entities*
+1.  Under package *fxtrading* create package *entities*  
 Create inside the package the class Transaction that maps to transactions table:
 
 ```
@@ -150,13 +150,13 @@ public class TransactionVo {
 ```
 
 3. a
-For teaching purposes in this microservice the rates are stored as integer numbers in the database.  
+As an example of data transformation, in this microservice the rates are stored as integer numbers in the database.  
 This microservice will use only the first four decimal places of fx rates.  
 The rates will need to be converted from decimal to integers and vice versa when needed.   
 For conversion we will multiply or divide with a constant of 10000 defined in a constant class  
 
 Create package *util* under *fxtrading*  
-In it add class MiscUtil:  
+In it add class RateUtil:  
 
 ```
 package com.banking.sofware.design.fxtrading.util;
@@ -164,10 +164,10 @@ package com.banking.sofware.design.fxtrading.util;
 import java.math.BigDecimal;
 
 //question: why use final? 
-public final class MiscUtil {
+public final class RateUtil {
 
   //question: why use private?
-  private MiscUtil() { }
+  private RateUtil() { }
 
   public static final BigDecimal RATE_MULTIPLIER = BigDecimal.valueOf(10000);
 
@@ -176,7 +176,8 @@ public final class MiscUtil {
 
 3. b
 Under *fxtrading* create package *converters*.
-Add to it a new class named Transaction2TransactionVo
+Add to it a new class named Transaction2TransactionVo  
+You have to add code as indicated by placeholders
 
 ```
 package com.banking.sofware.design.fxtrading.converters;
@@ -184,7 +185,7 @@ package com.banking.sofware.design.fxtrading.converters;
 import org.springframework.core.convert.converter.Converter;
 
 import com.banking.sofware.design.fxtrading.entities.Transaction;
-import com.banking.sofware.design.fxtrading.util.MiscUtil;
+import com.banking.sofware.design.fxtrading.util.RateUtil;
 import com.banking.sofware.design.fxtrading.vo.TransactionVo;
 
 public class Transaction2TransactionVo implements Converter<Transaction, TransactionVo> {
@@ -196,8 +197,8 @@ public class Transaction2TransactionVo implements Converter<Transaction, Transac
     vo.setUsername(source.getUsername());
     vo.setPrimaryCcy(source.getPrimaryCcy());
     vo.setSecondaryCcy(source.getSecondaryCcy());
-	//TODO: set rate by dividing with constant
-    //vo.setRate(<!--REPLACE WITH CODE-->);
+    //TODO: set rate by dividing with constant from RateUtil: RATE_MULTIPLIER
+    vo.setRate(<!--REPLACE WITH CODE-->);
 	
     vo.setAction(source.getAction());
     vo.setNotional(source.getNotional());
@@ -208,7 +209,7 @@ public class Transaction2TransactionVo implements Converter<Transaction, Transac
      * but if an entity field can be null we need to take care at conversion to
      * avoid Null Pointer Exception
      **/
-    //vo.setDate(<!--REPLACE WITH CODE-->);
+    vo.setDate(<!--REPLACE WITH CODE-->);
     return vo;
   }
 
@@ -239,8 +240,8 @@ public class ConversionConfiguration {
 	    ConversionServiceFactoryBean bean = new ConversionServiceFactoryBean();
 	    
 	    Set<Converter<?, ?>> converters = new HashSet<>();
-		//TODO: Instantiate and add the converter created previously to the converter list
-	    //converters.add(<!--REPLACE WITH CODE-->);
+	    //TODO: Instantiate and add the converter created previously to the converter list
+	    converters.add(<!--REPLACE WITH CODE-->);
 	    bean.setConverters(converters); //add converters
 	    bean.afterPropertiesSet();
 	    return bean.getObject();
@@ -249,10 +250,10 @@ public class ConversionConfiguration {
 ```
 
 
-5. Create package *repo* under *fxtrading* and add:
+5. Create package *repository* under *fxtrading* and add:
 
 ```
-package com.banking.sofware.design.fxtrading.repo;
+package com.banking.sofware.design.fxtrading.repository;
 
 import java.math.BigDecimal;
 
@@ -274,7 +275,7 @@ public interface FxTradingRepository extends JpaRepository<Transaction, BigDecim
 package com.banking.sofware.design.fxtrading.service;
 
 import com.banking.sofware.design.fxtrading.entities.Transaction;
-import com.banking.sofware.design.fxtrading.repo.FxTradingRepository;
+import com.banking.sofware.design.fxtrading.repository.FxTradingRepository;
 import com.banking.sofware.design.fxtrading.vo.TransactionVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
@@ -429,7 +430,7 @@ If the first one is missing then the deserialization will fail.
     transaction.setAction(action.toUpperCase());
     QuoteResponse ratePair = getCurrentRate(vo.getPrimaryCcy(), vo.getSecondaryCcy());
     BigDecimal rate = "BUY".equalsIgnoreCase(action) ? ratePair.getBuyRate() : ratePair.getSellRate();
-    transaction.setRate(rate.multiply(MiscUtil.RATE_MULTIPLIER).setScale(0, RoundingMode.HALF_UP));
+    transaction.setRate(rate.multiply(RateUtil.RATE_MULTIPLIER).setScale(0, RoundingMode.HALF_UP));
 
     transaction.setUsername(vo.getUsername());
     transaction.setPrimaryCcy(vo.getPrimaryCcy());
@@ -671,7 +672,7 @@ package com.banking.sofware.design.fxtrading.service;
 
 import com.banking.sofware.design.fxtrading.entities.Transaction;
 import com.banking.sofware.design.fxtrading.dto.QuoteResponse;
-import com.banking.sofware.design.fxtrading.repo.FxTradingRepository;
+import com.banking.sofware.design.fxtrading.repository.FxTradingRepository;
 import com.banking.sofware.design.fxtrading.vo.TransactionVo;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
