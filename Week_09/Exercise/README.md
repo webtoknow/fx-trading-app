@@ -303,7 +303,7 @@ public class FxTradingService {
 }
 ```
 
-7. Create new package *rest* in *fxtrading*
+7. Create new package *rest* in *fxtrading* and add the REST controller below
 
 ```
 package com.banking.sofware.design.fxtrading.rest;
@@ -332,7 +332,7 @@ public class FxTradingRestController {
         try {
             return tradingService.getTransactions();
         } catch (Exception e) {
-            response.setStatus(400);
+            response.setStatus(500);
             return null;
         }
     }
@@ -460,7 +460,7 @@ Note:
     try {
       tradingService.makeTransaction(transaction);
     } catch (Exception e) {
-      response.setStatus(400);
+      response.setStatus(500);
     }
   }
   ```
