@@ -9,7 +9,7 @@ Before developing the Fxtrading service you can take a look at the application a
 - [Exercise II - Database Setup](#exercise-II)
 - [Exercise III - Implement REST endpoint for displaying list of all trades](#exercise-III)
 - [Exercise IV - Implement functionality for saving trades](#exercise-IV)
-- [Exercise V - Secure the API with authorization filter](#exercise-V)
+- [Exercise V - Secure the API](#exercise-V)
 - [Exercise VI - Unit test](#exercise-VI)
 
 
@@ -18,11 +18,11 @@ Before developing the Fxtrading service you can take a look at the application a
 Import in the IDE the starter project. It should be imported as a Maven project.
 
 Notes:
-1. Under *fxtrading* package there is the main class of the application: FxTradingApplication
-2. The pom.xml file contains the required Maven dependencies: Spring Web, Spring JPA, Spring Security, PostgreSQL
-3. Properties are already set in /src/main/resources/application.properties. 
+1. Under *fxtrading* package there is the main class of the Spring Boot application: FxTradingApplication
+2. The pom.xml file contains the required Maven dependencies: Spring Web, Spring JPA, PostgreSQL, etc
+3. Properties are set in /src/main/resources/application.properties. 
 For example: Tomcat server is defined to run on port 8210 by setting property *server.port*
-4. Under the root package there is a *configuration* package containing the class CustomWebSecurityConfigurerAdapter. This overrides the default Spring Security configuration
+Also database properties are set. The database properties must match the database setup done in the next exercise.
 
 ## <a name="exercise-II">Exercise II - Database Setup </a>
 
@@ -468,7 +468,7 @@ Note:
 
 Now the implementation for the creation of trades should be done and you can test it with a tool like Postman.  
  
-## <a name="exercise-V">Exercise V - Secure the API with authorization filter </a>
+## <a name="exercise-V">Exercise V - Secure the API</a>
 
 In this exercise we will secure the REST API through a custom method.   
 Each call to the REST API will be intercepted and verified by interogating the users service for authorization.
