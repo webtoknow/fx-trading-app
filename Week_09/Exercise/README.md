@@ -11,6 +11,7 @@ Before developing the Fxtrading service you can take a look at the application a
 - [Exercise IV - Implement functionality for saving trades](#exercise-IV)
 - [Exercise V - Secure the API](#exercise-V)
 - [Exercise VI - Unit test](#exercise-VI)
+- [Bonus - Unit test](#bonus-I)
 
 
 ## <a name="exercise-I">Exercise I - Importing initial project setup in IDE </a>
@@ -546,53 +547,54 @@ Authorization : Bearer <TOKEN>
 
 ## <a name="exercise-VI">Exercise VI - Unit test </a>
 
-Unit testing is a subject in its own right and would require considerably more time to do it justice.  
-However you can take a look at the below test.  
-You can add it under the test folder(src/**test**/java) in package *com.banking.sofware.design.fxtrading.service*  
+You can add the following test under the test folder(src/**test**/java) in package *com.banking.sofware.design.fxtrading.service*  
 
 ```
+
 package com.banking.sofware.design.fxtrading.service;
 
-import com.banking.sofware.design.fxtrading.entities.Transaction;
-import com.banking.sofware.design.fxtrading.dto.QuoteResponse;
-import com.banking.sofware.design.fxtrading.repository.FxTradingRepository;
-import com.banking.sofware.design.fxtrading.vo.TransactionVo;
-import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
-import org.mockito.internal.util.reflection.FieldSetter;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.verify;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.banking.sofware.design.fxtrading.dto.QuoteResponse;
+import com.banking.sofware.design.fxtrading.entities.Transaction;
+import com.banking.sofware.design.fxtrading.repository.FxTradingRepository;
+import com.banking.sofware.design.fxtrading.vo.TransactionVo;
+
+@ExtendWith(MockitoExtension.class)
 public class FxTradingServiceTest {
+	
+    @Mock 
+    private QuoteProxyService quoteMock;
+	
+    @Mock
+    private FxTradingRepository repositoryMock;
+
+    @InjectMocks
+    private FxTradingService service;
 
     @Test
     public void makeTransaction() throws Exception{
-
+    	
         //setup
-        FxTradingService service = new FxTradingService();
-        QuoteProxyService quoteMock = Mockito.mock(QuoteProxyService.class);
-        FxTradingRepository repositoryMock = Mockito.mock(FxTradingRepository.class);
-
-        FieldSetter.setField(service,
-                service.getClass().getDeclaredField("proxyRatesService"),
-                quoteMock);
-        FieldSetter.setField(service,
-                service.getClass().getDeclaredField("repository"),
-                repositoryMock);
-
         TransactionVo vo = new TransactionVo();
         vo.setAction("BUY");
-        vo.setNotional(BigDecimal.valueOf(10000));
+        vo.setNotional(BigDecimal.valueOf(1000));
         vo.setTenor("SP");
         vo.setPrimaryCcy("EUR");
         vo.setSecondaryCcy("RON");
-        Mockito.when(quoteMock.getRate(vo.getPrimaryCcy(), vo.getSecondaryCcy()))
+        when(quoteMock.getRate(vo.getPrimaryCcy(), vo.getSecondaryCcy()))
                 .thenReturn(new QuoteResponse(BigDecimal.valueOf(1.1234),BigDecimal.valueOf(1.4321)));
-
 
         //method under test
         service.makeTransaction(vo);
@@ -601,6 +603,7 @@ public class FxTradingServiceTest {
         ArgumentCaptor<Transaction> capturedTransaction = ArgumentCaptor.forClass(Transaction.class);
         verify(repositoryMock).save(capturedTransaction.capture());
         assertEquals(BigDecimal.valueOf(11234), capturedTransaction.getValue().getRate());
+        assertEquals(BigDecimal.valueOf(1000), capturedTransaction.getValue().getNotional());
     }
 }
 ```
@@ -609,3 +612,10 @@ Notice there are three parts to the method (They follow a style named <a href="h
 * in the first part the test setup is made: mock objects and test input are prepared (the tested system is brought into a predetermined state)
 * in the second part the tested method is invoked
 * finally in the third part the results are verified by using asserts(the post-conditions are checked)
+
+## <a name="bonus-I"> Bonus - Unit test</a>
+
+Create a test for the converter *Transaction2TransactionVo*
+You can put it in the test folder(src/**test**/java) in a package called *com.banking.sofware.design.fxtrading.converters*
+
+You have to assert that the rate and date fiels have been transformed appropriately.
