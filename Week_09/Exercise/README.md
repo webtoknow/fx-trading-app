@@ -2,7 +2,7 @@
 
 Before developing the Fxtrading service you can take a look at the application architecture.
 
-![alt text](https://github.com/WebToLearn/fx-trading-app/blob/fxtrading-docs/Week_09/Exercise/architecture.png)
+![alt text](https://github.com/WebToLearn/fx-trading-app/blob/master/Week_09/Exercise/architecture.png)
 
 
 - [Exercise I - Importing initial project setup in IDE](#exercise-I)
@@ -618,4 +618,4 @@ Notice there are three parts to the method (They follow a style named <a href="h
 Create a test for the converter *Transaction2TransactionVo*
 You can put it in the test folder(src/**test**/java) in a package called *com.banking.sofware.design.fxtrading.converters*
 
-You have to assert that the rate and date fiels have been transformed appropriately.
+You have to assert that the rate and date fields have been transformed appropriately.
