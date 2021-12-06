@@ -9,8 +9,9 @@ Before developing the Fxtrading service you can take a look at the application a
 - [Exercise II - Database Setup](#exercise-II)
 - [Exercise III - Implement REST endpoint for displaying list of all trades](#exercise-III)
 - [Exercise IV - Implement functionality for saving trades](#exercise-IV)
-- [Exercise V - Secure the API with authorization filter](#exercise-V)
+- [Exercise V - Secure the API](#exercise-V)
 - [Exercise VI - Unit test](#exercise-VI)
+- [Bonus - Unit test](#bonus-I)
 
 
 ## <a name="exercise-I">Exercise I - Importing initial project setup in IDE </a>
@@ -18,11 +19,11 @@ Before developing the Fxtrading service you can take a look at the application a
 Import in the IDE the starter project. It should be imported as a Maven project.
 
 Notes:
-1. Under *fxtrading* package there is the main class of the application: FxTradingApplication
-2. The pom.xml file contains the required Maven dependencies: Spring Web, Spring JPA, Spring Security, PostgreSQL
-3. Properties are already set in /src/main/resources/application.properties. 
-For example: Tomcat server is defined to run on port 8210 by setting property *server.port*
-4. Under the root package there is a *configuration* package containing the class CustomWebSecurityConfigurerAdapter. This overrides the default Spring Security configuration
+1. Under *fxtrading* package there is the main class of the Spring Boot application: FxTradingApplication
+2. The pom.xml file contains the required Maven dependencies: Spring Web, Spring JPA, PostgreSQL, etc
+3. Properties are set in /src/main/resources/application.properties. 
+For example: Tomcat server is defined to run on port 8210 by setting property *server.port*  
+Also database properties are set. The database properties must match the database setup done in the next exercise.
 
 ## <a name="exercise-II">Exercise II - Database Setup </a>
 
@@ -47,17 +48,17 @@ spring.datasource.password=<VALUE>
 
 For this exercise we will need to create(guidance below):
 1. a Hibernate @Entity class that maps to the *transactions* table
-2. a TransactionVo class that will be used to serialize/deserialize data going through the @RestController(wich will be created after)
+2. a TransactionVo class that will be used to serialize/deserialize data going through the @RestController(which will be created after)
 3. a class that implements Spring's Converter interface. It will convert Transaction @Entity objects to POJO TransactionVo objects.
 4. a @Configuration that defines the @Bean conversionService. 
-The conversionService bean should be configured by registering all required converters(in this case we only have one for transactions).
+The conversionService bean should be configured by registering the required converters(in this case we only have the one specified above).
 5. a @Repository interface extending JpaRepository
 6. a @Service class
 7. a @RestController class
 
 Indications:
 
-1.  Under package *fxtrading* create package *entities*
+1.  Under package *fxtrading* create package *entities*  
 Create inside the package the class Transaction that maps to transactions table:
 
 ```
@@ -100,7 +101,7 @@ public class Transaction {
   @Column
   private String tenor;
 
-  @Column(insertable = false)
+  @Column
   private Date date;
 
   //TODO: Generate getters and setters
@@ -150,13 +151,13 @@ public class TransactionVo {
 ```
 
 3. a
-For teaching purposes in this microservice the rates are stored as integer numbers in the database.  
+As an example of data transformation, in this microservice the rates are stored as integer numbers in the database.  
 This microservice will use only the first four decimal places of fx rates.  
 The rates will need to be converted from decimal to integers and vice versa when needed.   
 For conversion we will multiply or divide with a constant of 10000 defined in a constant class  
 
 Create package *util* under *fxtrading*  
-In it add class MiscUtil:  
+In it add class RateUtil:  
 
 ```
 package com.banking.sofware.design.fxtrading.util;
@@ -164,10 +165,10 @@ package com.banking.sofware.design.fxtrading.util;
 import java.math.BigDecimal;
 
 //question: why use final? 
-public final class MiscUtil {
+public final class RateUtil {
 
   //question: why use private?
-  private MiscUtil() { }
+  private RateUtil() { }
 
   public static final BigDecimal RATE_MULTIPLIER = BigDecimal.valueOf(10000);
 
@@ -176,7 +177,8 @@ public final class MiscUtil {
 
 3. b
 Under *fxtrading* create package *converters*.
-Add to it a new class named Transaction2TransactionVo
+Add to it a new class named Transaction2TransactionVo  
+You have to add code as indicated by placeholders
 
 ```
 package com.banking.sofware.design.fxtrading.converters;
@@ -184,7 +186,7 @@ package com.banking.sofware.design.fxtrading.converters;
 import org.springframework.core.convert.converter.Converter;
 
 import com.banking.sofware.design.fxtrading.entities.Transaction;
-import com.banking.sofware.design.fxtrading.util.MiscUtil;
+import com.banking.sofware.design.fxtrading.util.RateUtil;
 import com.banking.sofware.design.fxtrading.vo.TransactionVo;
 
 public class Transaction2TransactionVo implements Converter<Transaction, TransactionVo> {
@@ -196,8 +198,8 @@ public class Transaction2TransactionVo implements Converter<Transaction, Transac
     vo.setUsername(source.getUsername());
     vo.setPrimaryCcy(source.getPrimaryCcy());
     vo.setSecondaryCcy(source.getSecondaryCcy());
-	//TODO: set rate by dividing with constant
-    //vo.setRate(<!--REPLACE WITH CODE-->);
+    //TODO: set rate by dividing with constant from RateUtil: RATE_MULTIPLIER
+    vo.setRate(<!--REPLACE WITH CODE-->);
 	
     vo.setAction(source.getAction());
     vo.setNotional(source.getNotional());
@@ -208,7 +210,7 @@ public class Transaction2TransactionVo implements Converter<Transaction, Transac
      * but if an entity field can be null we need to take care at conversion to
      * avoid Null Pointer Exception
      **/
-    //vo.setDate(<!--REPLACE WITH CODE-->);
+    vo.setDate(<!--REPLACE WITH CODE-->);
     return vo;
   }
 
@@ -239,8 +241,8 @@ public class ConversionConfiguration {
 	    ConversionServiceFactoryBean bean = new ConversionServiceFactoryBean();
 	    
 	    Set<Converter<?, ?>> converters = new HashSet<>();
-		//TODO: Instantiate and add the converter created previously to the converter list
-	    //converters.add(<!--REPLACE WITH CODE-->);
+	    //TODO: Instantiate and add the converter created previously to the converter list
+	    converters.add(<!--REPLACE WITH CODE-->);
 	    bean.setConverters(converters); //add converters
 	    bean.afterPropertiesSet();
 	    return bean.getObject();
@@ -249,10 +251,10 @@ public class ConversionConfiguration {
 ```
 
 
-5. Create package *repo* under *fxtrading* and add:
+5. Create package *repository* under *fxtrading* and add:
 
 ```
-package com.banking.sofware.design.fxtrading.repo;
+package com.banking.sofware.design.fxtrading.repository;
 
 import java.math.BigDecimal;
 
@@ -274,7 +276,7 @@ public interface FxTradingRepository extends JpaRepository<Transaction, BigDecim
 package com.banking.sofware.design.fxtrading.service;
 
 import com.banking.sofware.design.fxtrading.entities.Transaction;
-import com.banking.sofware.design.fxtrading.repo.FxTradingRepository;
+import com.banking.sofware.design.fxtrading.repository.FxTradingRepository;
 import com.banking.sofware.design.fxtrading.vo.TransactionVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
@@ -302,7 +304,7 @@ public class FxTradingService {
 }
 ```
 
-7. Create new package *rest* in *fxtrading*
+7. Create new package *rest* in *fxtrading* and add the REST controller below
 
 ```
 package com.banking.sofware.design.fxtrading.rest;
@@ -331,7 +333,7 @@ public class FxTradingRestController {
         try {
             return tradingService.getTransactions();
         } catch (Exception e) {
-            response.setStatus(400);
+            response.setStatus(500);
             return null;
         }
     }
@@ -429,24 +431,25 @@ If the first one is missing then the deserialization will fail.
     transaction.setAction(action.toUpperCase());
     QuoteResponse ratePair = getCurrentRate(vo.getPrimaryCcy(), vo.getSecondaryCcy());
     BigDecimal rate = "BUY".equalsIgnoreCase(action) ? ratePair.getBuyRate() : ratePair.getSellRate();
-    transaction.setRate(rate.multiply(MiscUtil.RATE_MULTIPLIER).setScale(0, RoundingMode.HALF_UP));
+    transaction.setRate(rate.multiply(RateUtil.RATE_MULTIPLIER).setScale(0, RoundingMode.HALF_UP));
 
     transaction.setUsername(vo.getUsername());
     transaction.setPrimaryCcy(vo.getPrimaryCcy());
     transaction.setSecondaryCcy(vo.getSecondaryCcy());
     transaction.setNotional(vo.getNotional());
     transaction.setTenor(vo.getTenor());
+    transaction.setDate(new Date());
 
     repository.save(transaction);
   }
 
    private QuoteResponse getCurrentRate(String primaryCcy, String secondaryCcy) {
         return proxyRatesService.getRate(primaryCcy, secondaryCcy);
-    }
+   }
 ```
 
 Note:
-* you have to add missing imports
+* you have to add missing imports (import from Spring framework and Apache Commons Lang3)
 * add a dependency of QuoteProxyService. Hint: use @Autowired.
   
 
@@ -459,7 +462,7 @@ Note:
     try {
       tradingService.makeTransaction(transaction);
     } catch (Exception e) {
-      response.setStatus(400);
+      response.setStatus(500);
     }
   }
   ```
@@ -468,187 +471,69 @@ Note:
 
 Now the implementation for the creation of trades should be done and you can test it with a tool like Postman.  
  
-## <a name="exercise-V">Exercise V - Secure the API with authorization filter </a>
+## <a name="exercise-V">Exercise V - Secure the API</a>
 
-In this exercise we will secure the REST API through a custom method.   
-Each call to the REST API will be intercepted and verified by interogating the users service for authorization.
-
-**Important Note**: this mechanism was primarily chosen to illustrate communications between microservices and is probably not the best way to implement authorization.  
-Since we are using JWT the simplest way is to verify the token in the trading service and not delegate to users service.
-
-1. Firstly we add a service that checks whether a given token is valid.  
-This service will call the authorization microservice that will do the actual validation.  
+1. Add the following dependencies in pom.xml. After adding the dependencies, do a maven clean and install. Reload the dependencies in the IDE if needed.
 
 ```
-package com.banking.sofware.design.fxtrading.service;
+<dependency>
+	<groupId>org.springframework.security.oauth.boot</groupId>
+	<artifactId>spring-security-oauth2-autoconfigure</artifactId>
+	<version>2.6.1</version>
+</dependency>
 
-import com.banking.sofware.design.fxtrading.dto.AuthRequest;
-import com.banking.sofware.design.fxtrading.dto.AuthResponse;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+<dependency>
+	<groupId>org.springframework.security.oauth</groupId>
+	<artifactId>spring-security-oauth2</artifactId>
+	<version>2.5.1.RELEASE</version>
+</dependency>
 
-@Service
-public class UserAuthProxyService {
+<dependency>
+	<groupId>org.springframework.security</groupId>
+	<artifactId>spring-security-jwt</artifactId>
+	<version>1.1.1.RELEASE</version>
+</dependency>
+```
 
-    @Value("${user.auth.url}")
-    private String userAuthorization;
+2. Add the annotation @EnableResourceServer to FxTradingApplication class (and add required import)  
+This enables Oauth2 security to the server API.  
 
+3. Add the following property in application.properties 
 
-    public AuthResponse authorizeUser(String token) {
-        RestTemplate restTemplate = new RestTemplate();
-        return restTemplate.postForObject(userAuthorization, new AuthRequest(token), AuthResponse.class);
-    }
+```
+security.oauth2.resource.jwt.key-value=secret
+```
+
+Explanation:
+This property sets the key that will be used to validate the JWT tokens received in the Authorization header.  
+For simplicity the key used is symmetrical. In this example it has to be the same key used when generating the token in user administration service.
+
+4. Add the following class under *configuration* package:
+
+```
+
+package com.banking.sofware.design.fxtrading.configuration;
+
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
+
+@Configuration
+public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
+
+	@Override
+	public void configure(HttpSecurity http) throws Exception {
+		http.cors().and().authorizeRequests().anyRequest().authenticated();
+	}
 
 }
-```
-
-2 Now we have to create an object for serializing the request to the authorization service and one for deserializing the response.
-
-Under *dto* add:
 
 ```
-package com.banking.sofware.design.fxtrading.dto;
 
-public class AuthRequest {
+Explanation:  
+This class configures the security of the service.  
+It is configured to allow CORS. If we don't allow CORS then the browser won't be able to make server requests to a different domain from the one serving the frontend resources.
 
-    private String token;
-
-    public AuthRequest(String token) {
-        this.token = token;
-    }
-
-    public String getToken() {
-        return token;
-    }
-}
-```
-
-And the response:
-
-```
-package com.banking.sofware.design.fxtrading.dto;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class AuthResponse {
-
-  private String userName;
-  private boolean isValid;
-  
-  //generate getters and setters
-  
-}
-```
-
-3. Under package *fxtrading* we will create a package *filter*  
-We create a security filter in this package. This filter will intercept each HTTP call to fxtrading service.
-
-
-
-If the request contains the header Authorization starting with the string "Bearer " then the authorization service will be invoked to see if the token is valid.  
-If the token is valid then the actual call will be allowed.  
-The filter has to allow the browser's OPTIONS call.  
-
-```
-package com.banking.sofware.design.fxtrading.filter;
-
-import java.io.IOException;
-import java.util.ArrayList;
-
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
-
-import com.banking.sofware.design.fxtrading.dto.AuthResponse;
-import com.banking.sofware.design.fxtrading.service.UserAuthProxyService;
-
-public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
-
-  private static final String HEADER = "Authorization";
-  private  static final String TOKEN_PREFIX = "Bearer ";
-
-  private static final Logger log = LoggerFactory.getLogger(BasicAuthenticationFilter.class);
-
-  public JwtAuthorizationFilter(AuthenticationManager authManager) {
-    super(authManager);
-  }
-
-  @Override
-  protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain)
-          throws IOException, ServletException {
-    String header = req.getHeader(HEADER);
-
-    if(RequestMethod.OPTIONS.name().equals(req.getMethod())) {
-      chain.doFilter(req, res);
-      return;
-    }
-
-    if (header == null || !header.startsWith(TOKEN_PREFIX)) {
-      res.setStatus(401);
-      return;
-    }
-
-    try {
-      UsernamePasswordAuthenticationToken authentication = getAuthentication(req);
-      if (authentication == null) {
-        authorizationFailed(req, res);
-        return;
-      }
-      SecurityContextHolder.getContext().setAuthentication(authentication);
-      chain.doFilter(req, res);
-    } catch (Exception e) {
-      authorizationFailed(req, res);
-      return;
-    }
-  }
-
-  private void authorizationFailed(HttpServletRequest req, HttpServletResponse res) {
-    log.info("Authorization failed on endpoint: {} {} with authorization header: {}", req.getMethod(), req.getRequestURI(), req.getHeader(HEADER));
-    res.setStatus(401);
-  }
-
-  private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
-    String token = request.getHeader(HEADER);
-    if (token != null) {
-      String parsedToken = token.replace(TOKEN_PREFIX, "");
-      try {
-        WebApplicationContext webApplicationContext = WebApplicationContextUtils
-                .getWebApplicationContext(request.getServletContext());
-        UserAuthProxyService authorizationService = webApplicationContext.getBean(UserAuthProxyService.class);
-        AuthResponse response = authorizationService.authorizeUser(parsedToken);
-        if (response.isValid()) {
-          return new UsernamePasswordAuthenticationToken(response.getUserName(), null, new ArrayList<>());
-        }
-      } catch (Exception e) {
-        throw new RuntimeException("Authorization failed");
-      }
-    }
-    return null;
-  }
-}
-```
-
-4. Finally we must add the filter to Spring Security's filter chain. 
-We will change the configuration in CustomWebSecurityConfigurerAdapter class for the below one. And adding missing imports.
-
-```
-   http.csrf().disable().addFilterBefore(new JwtAuthorizationFilter(authenticationManager()), BasicAuthenticationFilter.class);
-```
-
-This line will register the custom filter and each call will be intercepted by it.
 
 After this you can test the API and notice that without the Authorization header the requests will be rejected with 401 status code.
 
@@ -662,53 +547,54 @@ Authorization : Bearer <TOKEN>
 
 ## <a name="exercise-VI">Exercise VI - Unit test </a>
 
-Unit testing is a subject in its own right and would require considerably more time to do it justice.  
-However you can take a look at the below test.  
-You can add it under the test folder(src/**test**/java) in package *com.banking.sofware.design.fxtrading.service*  
+You can add the following test under the test folder(src/**test**/java) in package *com.banking.sofware.design.fxtrading.service*  
 
 ```
+
 package com.banking.sofware.design.fxtrading.service;
 
-import com.banking.sofware.design.fxtrading.entities.Transaction;
-import com.banking.sofware.design.fxtrading.dto.QuoteResponse;
-import com.banking.sofware.design.fxtrading.repo.FxTradingRepository;
-import com.banking.sofware.design.fxtrading.vo.TransactionVo;
-import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
-import org.mockito.internal.util.reflection.FieldSetter;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.verify;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.banking.sofware.design.fxtrading.dto.QuoteResponse;
+import com.banking.sofware.design.fxtrading.entities.Transaction;
+import com.banking.sofware.design.fxtrading.repository.FxTradingRepository;
+import com.banking.sofware.design.fxtrading.vo.TransactionVo;
+
+@ExtendWith(MockitoExtension.class)
 public class FxTradingServiceTest {
+	
+    @Mock 
+    private QuoteProxyService quoteMock;
+	
+    @Mock
+    private FxTradingRepository repositoryMock;
+
+    @InjectMocks
+    private FxTradingService service;
 
     @Test
     public void makeTransaction() throws Exception{
-
+    	
         //setup
-        FxTradingService service = new FxTradingService();
-        QuoteProxyService quoteMock = Mockito.mock(QuoteProxyService.class);
-        FxTradingRepository repositoryMock = Mockito.mock(FxTradingRepository.class);
-
-        FieldSetter.setField(service,
-                service.getClass().getDeclaredField("proxyRatesService"),
-                quoteMock);
-        FieldSetter.setField(service,
-                service.getClass().getDeclaredField("repository"),
-                repositoryMock);
-
         TransactionVo vo = new TransactionVo();
         vo.setAction("BUY");
-        vo.setNotional(BigDecimal.valueOf(10000));
+        vo.setNotional(BigDecimal.valueOf(1000));
         vo.setTenor("SP");
         vo.setPrimaryCcy("EUR");
         vo.setSecondaryCcy("RON");
-        Mockito.when(quoteMock.getRate(vo.getPrimaryCcy(), vo.getSecondaryCcy()))
+        when(quoteMock.getRate(vo.getPrimaryCcy(), vo.getSecondaryCcy()))
                 .thenReturn(new QuoteResponse(BigDecimal.valueOf(1.1234),BigDecimal.valueOf(1.4321)));
-
 
         //method under test
         service.makeTransaction(vo);
@@ -717,6 +603,7 @@ public class FxTradingServiceTest {
         ArgumentCaptor<Transaction> capturedTransaction = ArgumentCaptor.forClass(Transaction.class);
         verify(repositoryMock).save(capturedTransaction.capture());
         assertEquals(BigDecimal.valueOf(11234), capturedTransaction.getValue().getRate());
+        assertEquals(BigDecimal.valueOf(1000), capturedTransaction.getValue().getNotional());
     }
 }
 ```
@@ -725,3 +612,10 @@ Notice there are three parts to the method (They follow a style named <a href="h
 * in the first part the test setup is made: mock objects and test input are prepared (the tested system is brought into a predetermined state)
 * in the second part the tested method is invoked
 * finally in the third part the results are verified by using asserts(the post-conditions are checked)
+
+## <a name="bonus-I"> Bonus - Unit test</a>
+
+Create a test for the converter *Transaction2TransactionVo*
+You can put it in the test folder(src/**test**/java) in a package called *com.banking.sofware.design.fxtrading.converters*
+
+You have to assert that the rate and date fiels have been transformed appropriately.
