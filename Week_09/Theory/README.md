@@ -71,10 +71,9 @@ The @RequestMapping annotation is used here at the class level and the method le
 At the class level in this case it specifies the common base URL for all the methods in this class by adding to the API base URL.
 At the method name we have specified the HTTP method this method is bound to: GET. Also the *produces* parameter indicates the format of the response.  
 This annotations will translate into the following behaviour:  
-The server will listen on the following URL: <BASE_PATH>/transactions for GET methods. And the result of the method execution will be converted to an json file that will be transferred over HTTP to the requestor.  
+The server will listen on the following URL: <BASE_PATH>/transactions for GET HTTP requests. When an HTTP GET request is made the getTransactions method will be invoked. The result of the method execution will be converted to a json file that will be transferred over HTTP to the client.  
 
 Notice the getTransactions method accepts an HttpServletResponse parameter? This is injected by Spring at method execution.  
-In this case it is used to set the status code to 400 in case of an error. 400 error means the error was caused by bad user input.   
-This is just a simple example and not a best practice.
+In this case it is used to set the status code to 400 in case of an error. 400 error means the error was caused by bad user input. This is just a simple example and not a best practice - error codes should be choosen appropriately.
 
-Finally @CrossOrigin is used in this case to allow the method to be called even if the web server that exposes it is on a different domain than the web server that serves the HTTP resources.
+Finally @CrossOrigin is used in this case to allow the method to be called even if the web server that exposes it is on a different domain than the web server that serves the frontend(HTML, CSS, JS) resources.
