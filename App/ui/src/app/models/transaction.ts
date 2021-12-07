@@ -1,4 +1,3 @@
-
 export interface Transaction {
   id?: number;
   username: string;
@@ -6,9 +5,8 @@ export interface Transaction {
   secondaryCcy: string;
   rate: number;
   action: string;
-  notional: number;
+  notional: number | null;
   tenor: string;
   date: number;
   ccyPair?: string
 }
-
