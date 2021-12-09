@@ -2,9 +2,9 @@
 <div class="container-widget">
   <app-widget
     *ngFor="let widget of widgets; let i=index"
-    class="widget" 
+    class="widget"
     [widget]="widget"
-    [index]="i" 
+    [index]="i"
     [currencies]="currencies"
     (deleted)="onDeleteWidget($event)"
   >

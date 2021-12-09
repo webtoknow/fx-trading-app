@@ -22,7 +22,7 @@ Mock server is used to create a fake API to mock the backend data using [JSON Se
 Let's install its packages:
 
 ```bash
-cd fx-trading-app\Week_05\Exercise\Code\mock-server
+cd fx-trading-app\Week_06\Exercise\Code\mock-server
 npm install
 ```
 
@@ -53,6 +53,11 @@ Run *npm install* to download all dependencies:
 
 ```bash
 npm install
+```
+Start dev server:
+
+```bash
+npm run start
 ```
 
 By taking a look at the design mockup, we can see that it can be divided in 2 big sections: **FX Rates View** and **Blotter View**. Also, the first one contains many widgets looking the same, so this can be also splitted into **Widget** components.

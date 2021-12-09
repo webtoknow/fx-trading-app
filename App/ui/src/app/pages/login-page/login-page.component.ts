@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
-import { ToastrService } from 'ngx-toastr';
 import { AuthenticationService } from 'src/app/services/authentication.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-login-page',
@@ -11,10 +11,13 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
   styleUrls: ['./login-page.component.css']
 })
 export class LoginPageComponent implements OnInit {
-  loginForm: FormGroup;
+  loginForm: FormGroup = this.formBuilder.group({
+    username: ['', Validators.required],
+    password: ['', Validators.required]
+  });
   loading = false;
   submitted = false;
-  returnUrl: string;
+  returnUrl: string = '';
 
   constructor(
     private formBuilder: FormBuilder,
@@ -26,10 +29,7 @@ export class LoginPageComponent implements OnInit {
 
   ngOnInit() {
 
-    this.loginForm = this.formBuilder.group({
-      username: ['', Validators.required],
-      password: ['', Validators.required]
-    });
+    this.loginForm 
 
     this.authenticationService.logout();
 
@@ -51,12 +51,12 @@ export class LoginPageComponent implements OnInit {
     }
 
     this.loading = true;
-    this.authenticationService.login(this.f.username.value, this.f.password.value)
+    this.authenticationService.login(this.f['username'].value, this.f['password'].value)
       .pipe(first())
       .subscribe(
         data => {
           this.router.navigate([this.returnUrl]);
-        }, 
+        },
         error => {
           this.toastr.error(error);
           this.loading = false;

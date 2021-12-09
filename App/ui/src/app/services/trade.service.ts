@@ -18,6 +18,10 @@ export class TradeService {
         return this.http.get(backendUrl.fxTradeService.getTransactions) as Observable<Transaction[]>
     }
 
+    saveTransaction(transaction: Transaction) {
+        return this.http.post(backendUrl.fxTradeService.saveTransaction, transaction) as Observable<any>
+    }
+
     getTransactionsPolling() {
         return interval(2000)
             .pipe(
@@ -27,16 +31,12 @@ export class TradeService {
         ) as Observable<Transaction[]>
     }
 
-    saveTransaction(transaction: Transaction) {
-        return this.http.post(backendUrl.fxTradeService.saveTransaction, transaction) as Observable<any>
-    }
-
     getCurrencies() {
         return this.http.get(backendUrl.quoteService.getCurrencies) as Observable<string[]>
     }
 
     getFxRate(primaryCcy: string, secondaryCcy: string) {
-        return this.http.get(backendUrl.quoteService.getFxRate, { params: { primaryCcy, secondaryCcy } }) as Observable<Rate>
+            return this.http.get(backendUrl.quoteService.getFxRate, { params: { primaryCcy, secondaryCcy } }) as Observable<Rate>
     }
 
     getFxRatePolling(primaryCcy: string, secondaryCcy: string) {
@@ -47,6 +47,4 @@ export class TradeService {
             )
         ) as Observable<Rate>
     }
-
-
 }
