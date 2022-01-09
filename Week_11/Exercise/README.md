@@ -21,7 +21,7 @@ The project uses the following structures:
 
 ## Exercises
 
-1.Locating a WebElement;
+- [ ] Locating a WebElement;
 
 WebElements are representations of HTML objects which Selenium and thus the automated browser can interact with.
 
