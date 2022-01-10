@@ -1,0 +1,7 @@
+.idea
+target
+*.iml
+artifacts
+src/main/resources/config.properties
+src/test/executions/
+

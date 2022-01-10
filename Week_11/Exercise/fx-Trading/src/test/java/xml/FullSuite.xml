@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
+
+<suite name="Full Suite" verbose="1">
+    <listeners>
+        <listener class-name="utilities.listeners.SuiteInterceptor"/>
+        <listener class-name="utilities.listeners.TestInterceptor"/>
+    </listeners>
+    <test name="Basic Suite">
+        <classes>
+<!--            <class name="basicTests.createNewUser.Test_CreateNewUser"/>-->
+            <class name="basicTests.login.Test_Login"/>
+            <class name="basicTests.checkRate.Test_CreateNewTransaction"/>
+        </classes>
+    </test>
+</suite>
+
+
+
+
+
