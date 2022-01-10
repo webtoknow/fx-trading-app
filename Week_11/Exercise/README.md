@@ -43,4 +43,5 @@ This kind of locator is preferred since it produces the most reliable locators. 
 - [ ] Make methods to check the validation messages (username required, email required, password matching, password minimum characters message)
 
 More documentation for selenium can be found on [Selenium Official Page](https://selenium.dev/documentation/en/getting_started/)
+
 [ChromeDriver Link](https://chromedriver.chromium.org/downloads)
