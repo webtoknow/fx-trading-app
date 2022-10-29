@@ -1,0 +1,50 @@
+/* You can add global styles to this file, and also import other style files */
+
+html, body{
+    height: 100%;
+    color: #373A3C;
+    font-family: 'Open Sans', sans-serif;
+}
+
+h1,h2,h3,h4,h5,h6 {
+    color: #7C7C7C;
+}
+
+.btn-primary {
+    background-color: #3496F0;
+}
+
+.btn-link {
+    color: #3496F0;
+}
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #F2F2F2;
+}
+
+.flex {
+    display: flex;
+}
+
+.flex-vertical-centered {
+    display: flex;
+    align-items: center;
+}
+
+.title {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    font-weight: bold;
+}
+
+.title-border {
+    border-bottom: 1px solid #DDDDDD;
+}
+
+.screen-full-height {
+    height: 100vh;
+    display: flex;
+}
+
+.is-invalid {
+  border-left: 5px solid #D9534F;
+}

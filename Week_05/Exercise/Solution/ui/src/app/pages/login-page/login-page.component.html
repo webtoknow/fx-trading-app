@@ -1,0 +1,45 @@
+<div class="screen-full-height">
+    <div class="col-md-6 login-logo-container container-center">
+      <img class="fx-grayscale-logo" alt="fx-grayscale-logo" src="./assets/img/logo-grayscale.svg">
+    </div>
+    <div class="col-md-6">
+      <div class="container-center screen-full-height">
+        <div class="content">
+          <h4 class="title title-border">
+            Login to your account
+          </h4>
+          <form id="login" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+            <!-- Username -->
+            <div class="form-group flex mb-3">
+              <i class="fa fa-user icon" aria-hidden="true"></i>
+              <div class="col">
+                <input type="text" class="form-control form-control-sm" formControlName="username"
+                  placeholder="username" autocomplete="username" id="username"
+                  [ngClass]="{ 'is-invalid': submitted && f['username'].errors }" />
+                <span *ngIf="submitted && f['username'].errors" class="invalid-feedback">
+                  <span *ngIf="f['username'].errors['required']">Username is required!</span>
+                </span>
+              </div>
+            </div>
+            <!-- Password -->
+            <div class="form-group flex mb-3">
+              <i class="fa fa-lock icon" aria-hidden="true"></i>
+              <div class="col">
+                <input type="password" class="form-control form-control-sm" formControlName="password"
+                  placeholder="password" autocomplete="current-password" id="password"
+                  [ngClass]="{ 'is-invalid': submitted && f['password'].errors }" />
+                <div *ngIf="submitted && f['password'].errors" class="invalid-feedback">
+                  <div *ngIf="f['password'].errors['required']">Password is required!</div>
+                </div>
+              </div>
+            </div>
+            <button [disabled]="loading" type="submit" class="btn btn-primary btn-block">Login</button>
+            <div class="text-container">
+              <span>You don't have an account?&nbsp;</span>
+              <a [routerLink]="['/register']" class="btn btn-link">Register</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+</div>
