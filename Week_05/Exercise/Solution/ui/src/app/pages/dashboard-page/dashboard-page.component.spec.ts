@@ -11,9 +11,7 @@ describe('DashboardPageComponent', () => {
       declarations: [ DashboardPageComponent ]
     })
     .compileComponents();
-  });
 
-  beforeEach(() => {
     fixture = TestBed.createComponent(DashboardPageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
