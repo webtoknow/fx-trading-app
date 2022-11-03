@@ -64,7 +64,6 @@ Here’s how you would create an object dependency in traditional programming:
 ```Java
 package hello;
 
-
 public class Box {
     private Item item;
   
