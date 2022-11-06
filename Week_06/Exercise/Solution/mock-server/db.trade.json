@@ -155,26 +155,15 @@
       "date": 1536560103000
     },
     {
-      "username": "asd",
+      "username": "testuser",
       "primaryCcy": "EUR",
-      "secondaryCcy": "USD",
+      "secondaryCcy": "RON",
       "rate": 1.2,
       "action": "SELL",
-      "notional": 1,
+      "notional": 1000,
       "tenor": "SP",
-      "date": 1636393741,
+      "date": 1667724292,
       "id": 5235
-    },
-    {
-      "username": "asd",
-      "primaryCcy": "EUR",
-      "secondaryCcy": "USD",
-      "rate": 1.3,
-      "action": "BUY",
-      "notional": 2,
-      "tenor": "SP",
-      "date": 1636393750,
-      "id": 5236
     }
   ]
 }

@@ -1,6 +1,6 @@
-export const authApi = 'http://localhost:8200';
-export const tradeApi = 'http://localhost:8210';
-export const quoteApi = 'http://localhost:8220';
+export const authApi = 'http://localhost:8200'
+export const tradeApi = 'http://localhost:8210'
+export const quoteApi = 'http://localhost:8220'
 
 export const backendUrl = {
   authService: {

@@ -5,11 +5,7 @@
   "projects": {
     "ui": {
       "projectType": "application",
-      "schematics": {
-        "@schematics/angular:application": {
-          "strict": true
-        }
-      },
+      "schematics": {},
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
@@ -103,5 +99,7 @@
       }
     }
   },
-  "defaultProject": "ui"
+  "cli": {
+    "analytics": "cb8cff75-a523-4ec2-b7dc-3e427fb6e6b8"
+  }
 }

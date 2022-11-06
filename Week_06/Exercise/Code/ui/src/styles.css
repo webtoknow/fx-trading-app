@@ -48,7 +48,3 @@ h1,h2,h3,h4,h5,h6 {
 .is-invalid {
   border-left: 5px solid #D9534F;
 }
-
-.btn-block {
-    width: 100%;
-}

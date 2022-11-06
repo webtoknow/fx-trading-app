@@ -1,3 +1,7 @@
+// used for login and logout of the application
+// login -> posts the users credentials to api and checks the response for a JWT token
+// logged in user details are stored in local storage
+
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';

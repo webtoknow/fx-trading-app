@@ -9,7 +9,7 @@
 }
 
 .filter-separator {
-    color: rgb(221,221,221);
+    color: rgb(221, 221, 221);
     margin-left: 10px;
     margin-right: 10px;
 }
@@ -22,7 +22,7 @@
 }
 
 .filter-group {
-   margin-right: 15px;
+    margin-right: 15px;
 }
 
 .calendar-icon {
@@ -34,7 +34,7 @@
     outline: 0;
 }
 
-.calendar-icon > i {
+.calendar-icon>i {
     font-size: 18px;
 }
 
