@@ -138,6 +138,52 @@ export class HighlightDirective {
 }
 ```
 
+### Data Sharing
+
+- a common pattern in Angular is sharing data between a parent component and one or more child components
+- we use **@Input()** and **@Output()** decorators
+- **@Input()** decorates the property index of type number:
+
+```JavaScript
+  // widget.component.ts 
+  @Input() index: number = 0;
+  @Output() deleted = new EventEmitter<number>();
+```
+
+- the value of *index* property for each Widget instance comes from the parent component template
+- the *index* property is binded to the child (*WidgetComponent*) to the *i* property of the parent (*FxRatesViewComponent*).
+
+```Html
+<!-- fx-rates-view.component.html -->
+  <app-widget
+    *ngFor="let i=index"
+    [index]="i"
+  >
+  </app-widget>
+```
+
+- **@Output()** marks a property in a child component as a doorway through which data can travel from the child to the parent
+- the child component uses the **@Output()** property of type *EventEmitter* to raise an event to notify the parent of the change:
+
+```JavaScript
+  // widget.component.ts 
+  @Output() deleted = new EventEmitter<number>();
+  ...
+  this.deleted.emit(this.index);
+```
+
+- the *onDeleteWidget* property from the parent, is binded to the child event (*deleted*)
+
+```Html
+<!-- fx-rates-view.component.html -->
+  <app-widget
+    *ngFor="let i=index"
+    [index]="i"
+    (deleted)="onDeleteWidget($event)"
+  >
+  </app-widget>
+```
+
 ### Routing
 
 - means navigating between pages
