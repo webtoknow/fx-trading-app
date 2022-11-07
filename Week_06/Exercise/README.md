@@ -539,7 +539,9 @@ We need some more methods in *trade.service.ts*:
 ```HTML
 <div class="content-widget">
   <!-- Close -->
-  <span class="fa fa-times close" (click)="onDelete()"></span>
+  <div (click)="onDelete()">
+      <span class="fa fa-times close"></span>
+  </div>
 
   <!-- Select currency step -->
   <div *ngIf="widget.pickCCYState">

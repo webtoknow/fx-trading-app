@@ -57,7 +57,6 @@ export class RegisterPageComponent implements OnInit {
       }
     }
   }
-
   onSubmit() {
     this.submitted = true;
 

@@ -15,7 +15,7 @@ export class WidgetComponent implements OnInit, OnDestroy {
   unsubscribe = new Subject();
   buyRateTrend: string = '';
   sellRateTrend: string = '';
-  
+
   @Input() widget: Widget = new Widget();
   @Input() index: number = 0;
   @Input() currencies: string[] = [];
@@ -36,38 +36,38 @@ export class WidgetComponent implements OnInit, OnDestroy {
   onSell() {
     const { notional, tenor } = this.widget;
     if (notional && tenor) {
-      const username: string  = JSON.parse(localStorage.getItem('currentUser') || '').username || '';
+      const username: string = JSON.parse(localStorage.getItem('currentUser') || '').username || '';
       this.tradeService.saveTransaction({
-      username: username,
-      primaryCcy: this.widget.primaryCcy,
-      secondaryCcy: this.widget.secondaryCcy,
-      rate: this.widget.sellRate,
-      action: 'SELL',
-      notional: this.widget.notional,
-      tenor: this.widget.tenor,
-      date: Math.round(new Date().getTime()/1000)
+        username: username,
+        primaryCcy: this.widget.primaryCcy,
+        secondaryCcy: this.widget.secondaryCcy,
+        rate: this.widget.sellRate,
+        action: 'SELL',
+        notional: this.widget.notional,
+        tenor: this.widget.tenor,
+        date: Math.round(new Date().getTime() / 1000)
       }).subscribe(response => {
         this.toastr.success('Transaction saved!');
       })
     }
     else {
       this.toastr.error('Please fill in both Amount and Tenor!');
-    } 
+    }
   }
-  
+
   onBuy() {
     const { notional, tenor } = this.widget;
     if (notional && tenor) {
-      const username: string  = JSON.parse(localStorage.getItem('currentUser') || '').username || '';
+      const username: string = JSON.parse(localStorage.getItem('currentUser') || '').username || '';
       this.tradeService.saveTransaction({
-      username: username,
-      primaryCcy: this.widget.primaryCcy,
-      secondaryCcy: this.widget.secondaryCcy,
-      rate: this.widget.buyRate,
-      action: 'BUY',
-      notional: this.widget.notional,
-      tenor: this.widget.tenor,
-      date: Math.round(new Date().getTime()/1000)
+        username: username,
+        primaryCcy: this.widget.primaryCcy,
+        secondaryCcy: this.widget.secondaryCcy,
+        rate: this.widget.buyRate,
+        action: 'BUY',
+        notional: this.widget.notional,
+        tenor: this.widget.tenor,
+        date: Math.round(new Date().getTime() / 1000)
       }).subscribe(response => {
         this.toastr.success('Transaction saved!');
       })
@@ -80,11 +80,11 @@ export class WidgetComponent implements OnInit, OnDestroy {
   onCCYChange() {
     this.switchCCY()
   }
-  
+
   switchCCY() {
     const tempCCY = this.widget.primaryCcy;
     this.widget.primaryCcy = this.widget.secondaryCcy;
-    this.widget.secondaryCcy= tempCCY;
+    this.widget.secondaryCcy = tempCCY;
   }
 
   startPooling() {
@@ -118,5 +118,5 @@ export class WidgetComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.unsubscribe.next('');
     this.unsubscribe.complete();
-    }
+  }
 }
