@@ -53,7 +53,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.2</version>
+            <version>1.18.24</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -655,7 +655,7 @@ Update the UserController and add the authorize request
     @PostMapping("/user/authorize")
     @CrossOrigin
     public UserAuthorizeResponseVo authorize(@RequestBody UserRequestVo userRequestVo) throws ParseException {
-        return userService.authorizeV2(userRequestVo);
+        return userService.authorizeV1(userRequestVo);
     }
  ```
  
