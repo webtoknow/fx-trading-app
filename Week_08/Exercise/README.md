@@ -1,214 +1,93 @@
 # Week 8 - Development Create Quote Service Microservice With Spring
 
+<br> The purpose of this lab is to implement the quote-service Microservice, which will return FX Rates for our fx-trading-app.
+
 ## Table of contents
 
 - [Exercise 1 - Create project](#exercise-1---create-project)
-- [Exercise 2 - Currency enum and rateVO](#exercise-2---create-currency-enum-and-ratevo)
+- [Exercise 2 - Currency enum and RateDto](#exercise-2---create-currency-enum-and-ratevo)
 - [Exercise 3 - Create controller](#exercise-3---)
 - [Exercise 4 - Check](#exercise-4--)
 - [Exercise 5 - Add quote logic](#exercise-5---)
 - [Exercise 6 - Tidy up](#exercise-6---)
 
-#Exercise 1
+## Pre-requisites
+- Java 11
+- Maven
+- Postman
+- IntelliJ IDEA
 
- Use your favourite IDE to create a simple maven project.
- Update pom.xml with the following tags:
- 
- Or, use spring initializer:
- add WEB, devtools
- 
-```XML
- 
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+## Exercise 1 - Create project
 
-	<groupId>com.fx.rates</groupId>
-	<artifactId>quote-service</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<packaging>jar</packaging>
+Use spring initializer(https://start.spring.io) to create a new project which has the same parameters as those defined in the following image. Add Spring Web as dependency and generate the project. After the project was generated, open it using IntelliJ IDEA.  
 
-	<name>quote-service</name>
-	<description>Demo project for Spring Boot</description>
+![SpringInitializr](Img/spring initializr.png)
 
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.0.5.RELEASE</version>
-		<relativePath /> <!-- lookup parent from repository -->
-	</parent>
+## Exercise 2 - Currency enum and RateDto
 
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<java.version>11</java.version>
-	</properties>
-
-	<dependencies>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-devtools</artifactId>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-tomcat</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>r05</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
-
-
-</project>
-
-```
+Create an enumeration for currencies (ECurrency). Add a label for each element using the constructor(https://www.baeldung.com/java-enum-values &rarr; 3. Adding a Constructor and a Final Field).
 
 ```JAVA
 package com.fx.rates.quoteservice;
-
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
-
-public class ServletInitializer extends SpringBootServletInitializer {
-
-	@Override
-	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-		return application.sources(QuoteServiceApplication.class);
-	}
-
-}
-```
-
-```JAVA
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-@SpringBootApplication
-public class QuoteServiceApplication {
-
-	public static void main(String[] args) {
-		SpringApplication.run(QuoteServiceApplication.class, args);
-	}
-}
-
-```
-
-#Exercise 2
-
-Create an enumeration for currencies (ECurrency)
-
-```JAVA
-package com.fx.rates.quoteservice;
-
-import java.util.HashMap;
 
 public enum ECurrency {
-	
-    //EUR("EUR"),
-    //todo add eur, ron, gbp, usd
-    //add label property
-    //add constructor with label property as parameter
-	
-	}
+    // TODO Add eur, ron, gbp, usd currencies
+    
+    // TODO Add label property
+    
+    // TODO Add constructor with label property as parameter
+}
 ```
 
 
-Create RateVO.java 
+Create RateDto class
 
 ```JAVA
 package com.fx.rates.quoteservice;
 
-import java.util.Date;
-
-public class RateVO {
+public class RateDto {
+    // TODO Add buyRate, sellRate, timestamp fields
     
-	//todo add buyRate, sellRate, ts
-	
-	
-	public RateVO() {
-		  
-	}
-	
-	//todo add constructor with parameters
+    // TODO Add constructor
 }
-
 ```
 
 
-#Exercise 3
+## Exercise 3 - Create controller
 
-Create FXController
+Create the FXController class. The controller should have 2 endpoints: one for getting the available currencies and one for getting fx-rates for a currency pair (https://howtodoinjava.com/spring5/webmvc/controller-getmapping-postmapping/ &rarr; 2. Spring @GetMapping Example) 
 
-```
+```JAVA
 package com.fx.rates.quoteservice;
-
-
 
 @RestController
 public class FXRateController {
+    // TODO getCurrencies
+    // hint:ENUM.values()
+    // return List<String>
 
-	
-	@CrossOrigin
-	//todo getRates: primaryCcy, secondaryCcy
-	//@RequestMapping (value = "/fx-rate", method = ?), @RequestParam("primaryCcy") String primaryCcy
-	//return RateVO
-	
-
-	@CrossOrigin
-	//todo getCurrencies
-	//@RequestMapping("currencies"), RequestMethod
-	//hint:ENUM.values()
-	//return List<String>
-	
+    // TODO getRates: primaryCcy, secondaryCcy
+    // return RateDto
 }
 ```
 
-#Exercise 4
+## Exercise 4 - Check
 
-add application.properties in resources
-
-spring.application.name=fx-rate-service
+Set the server port in the application.properties file (can be found in the resources directory).
+```
+spring.application.name=quote-service
 server.port=8220
+```
 
+Start the app and then use Postman to test the quote-service:
+- get the available currencies: localhost:8220/currencies 
+- get some fx-rates from the defined REST endpoints: localhost:8220/fx-rate?primaryCcy=USD&secondaryCcy=EUR
 
-Install Postman
-
-check:
-localhost:8220/currencies
-localhost:8220/fx-rate?primaryCcy=USD&secondaryCcy=EUR
-
-
-#Exercise 5
+## Exercise 5 - Add quote logic
 
 Add quote logic in Controller
 
-```
+```JAVA
     private static final float MAX_VALUE_FOR_DELTA = 0.9F;
 	private static final Map<ECurrency, Map<ECurrency, Float>> RATES = new HashMap<ECurrency, Map<ECurrency, Float>>();
 	private static final Map<ECurrency, Float> EUR_RATES = new HashMap<ECurrency, Float>();
@@ -288,7 +167,7 @@ Add quote logic in Controller
 ```
 
 Add missing code to ECurrency
-```
+```JAVA
     private static final HashMap<String, ECurrency> MAP = new HashMap<String, ECurrency>();
 
     static {
@@ -305,7 +184,7 @@ Add missing code to ECurrency
 ```
 
 
-# Exercise 6 
+## Exercise 6 - Tidy up
 
 Tidy up code: add quoteService and move quote logic from controller
 

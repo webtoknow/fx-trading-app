@@ -83,6 +83,7 @@ package hello;
 
 public class Box {
     private Item item;
+    
     public Box(Item item) {
         this.item = item;
     }
@@ -108,12 +109,10 @@ In case of Field-Based DI, we can inject the dependencies by marking them with a
 ```Java
 package hello;
 
-
 public class Box {
     @Autowired
     private Item item; 
 }
-
 ```
 
 
@@ -121,9 +120,7 @@ While constructing the Box object, if there’s no constructor or setter method 
 
 We can also achieve this using XML configuration.
 
--- it has a few drawbacks such as:
-
-This method uses reflection to inject the dependencies, which is costlier than constructor-based or setter-based injection
+However, this method uses reflection to inject the dependencies, which is costlier than constructor-based or setter-based injection.
 It’s really easy to keep adding multiple dependencies using this approach. If you were using constructor injection having multiple arguments would have made us think that the class does more than one thing which can violate the Single Responsibility Principle.
 
 
@@ -134,7 +131,7 @@ There are many benefits to microservices. Because of their isolation and strict 
 
 Complexity comes from low cohesion and high coupling. Microservices provide the structure to keep that at bay.
 
- degree to which the elements inside a module belong together
+ degree to which the elements inside a module belong together  
  degree of interdependence between software modules
  
  Which is which?
