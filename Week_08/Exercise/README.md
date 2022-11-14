@@ -1,4 +1,4 @@
-# Week 8 - Development Create Quote Service Microservice With Spring
+# Week 8 - Create Quote Service Microservice With Spring
 
 <br> The purpose of this lab is to implement the quote-service Microservice, which will return FX Rates for our fx-trading-app.
 
