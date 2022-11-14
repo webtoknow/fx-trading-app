@@ -5,11 +5,11 @@
 ## Table of contents
 
 - [Exercise 1 - Create project](#exercise-1---create-project)
-- [Exercise 2 - Currency enum and RateDto](#exercise-2---create-currency-enum-and-ratevo)
-- [Exercise 3 - Create controller](#exercise-3---)
-- [Exercise 4 - Check](#exercise-4--)
-- [Exercise 5 - Add quote logic](#exercise-5---)
-- [Exercise 6 - Tidy up](#exercise-6---)
+- [Exercise 2 - Currency enum and RateDto](#exercise-2---create-currency-enum-and-ratedto)
+- [Exercise 3 - Create controller](#exercise-3---create-controller)
+- [Exercise 4 - Create service](#exercise-4---create-service)
+- [Exercise 5 - Check](#exercise-5--check)
+- [Exercise 6 - Integration testing](#exercise-6---integration-testing)
 
 ## Pre-requisites
 - Java 11
@@ -31,7 +31,7 @@ Create an enumeration for currencies (ECurrency). Add a label for each element u
 package com.fx.rates.quoteservice;
 
 public enum ECurrency {
-    // TODO Add eur, ron, gbp, usd currencies
+    // TODO Add EUR, RON, GBP, USD currencies
     
     // TODO Add label property
     
@@ -49,29 +49,113 @@ public class RateDto {
     // TODO Add buyRate, sellRate, timestamp fields
     
     // TODO Add constructor
+    
+    // TODO Add getters and setters
 }
 ```
 
 
 ## Exercise 3 - Create controller
 
-Create the FXController class. The controller should have 2 endpoints: one for getting the available currencies and one for getting fx-rates for a currency pair (https://howtodoinjava.com/spring5/webmvc/controller-getmapping-postmapping/ &rarr; 2. Spring @GetMapping Example) 
+Create the FXRateController class. The controller should have 2 endpoints: 
+- one for getting the available currencies: /currencies 
+- one for getting fx-rates for a currency pair: /fx-rate
+
+For the second endpoint you should also include 2 query parameters: primaryCcy and secondaryCcy. Those parameters can be extracted using the @RequestParam annotation.
+Hints: 
+- https://howtodoinjava.com/spring5/webmvc/controller-getmapping-postmapping/ &rarr; 2. Spring @GetMapping Example
+- https://www.baeldung.com/spring-request-param
+
 
 ```JAVA
 package com.fx.rates.quoteservice;
 
 @RestController
-public class FXRateController {
+public class FxRateController {
     // TODO getCurrencies
-    // hint:ENUM.values()
-    // return List<String>
+    // hint: List.of(ENUM.values())
+    // return List<ECurrency>
 
-    // TODO getRates: primaryCcy, secondaryCcy
+    // TODO getRate; primaryCcy, secondaryCcy are the request parameters
     // return RateDto
 }
 ```
 
-## Exercise 4 - Check
+## Exercise 4 - Create service
+
+Add quote logic in a new class - FxRateService. We will define a map with fx rates for each currency. Those maps will be included in a map which contains all rates. Inject this service class in the controller, to be able to use the getRate method.
+
+```JAVA
+@Service
+public class FxRateService {
+    
+    private static final Map<ECurrency, Map<ECurrency, Double>> RATES = new HashMap<>();
+    private static final Map<ECurrency, Double> EUR_RATES = new HashMap<>();
+    private static final Map<ECurrency, Double> USD_RATES = new HashMap<>();
+    private static final Map<ECurrency, Double> GBP_RATES = new HashMap<>();
+    private static final Map<ECurrency, Double> RON_RATES = new HashMap<>();
+
+    // Static blocks are used for initializing the static variables.
+    // This block gets executed when the class is loaded in the memory.
+    // Can we have more than one?
+    static {
+        EUR_RATES.put(ECurrency.GBP, 0.9);
+        EUR_RATES.put(ECurrency.USD, 1.18);
+        EUR_RATES.put(ECurrency.RON, 4.66);
+        EUR_RATES.put(ECurrency.EUR, 1.0);
+        RATES.put(ECurrency.EUR, EUR_RATES);
+
+        // TODO Add some rates for other currencies
+    }
+
+    public RateDto getRate(String fromCcyStr, String toCcyStr) {
+        ECurrency fromCcy = ECurrency.getByLabel(fromCcyStr.toUpperCase());
+        ECurrency toCcy = ECurrency.getByLabel(toCcyStr.toUpperCase());
+
+        // received unknown currencies
+        if (fromCcy == null || toCcy == null) {
+            return null;
+        }
+
+        Map<ECurrency, Double> fromRates = RATES.get(fromCcy);
+        Double baseRate = fromRates.get(toCcy);
+
+        // received unknown currency pair
+        if (baseRate == null) {
+            return null;
+        }
+
+        double buyRate = baseRate != 1 ? baseRate + getRandomizedDelta(0, baseRate) : 1;
+        double sellRate = baseRate != 1 ? baseRate - getRandomizedDelta(0.1, baseRate) : 1;
+
+        return new RateDto(buyRate, sellRate, new Date());
+    }
+
+    private static double getRandomizedDelta(double min, double max) {
+        // TODO Generate a random number between min and max 
+    }
+}
+
+```
+
+<br>Add missing code to ECurrency class 
+```JAVA
+    static {
+        for (ECurrency currency : ECurrency.values()) {
+            MAP.put(currency.getLabel(), currency);
+        }
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public static ECurrency getByLabel(String label) {
+        return MAP.get(label);
+    }
+```
+
+## Exercise 5 - Check
 
 Set the server port in the application.properties file (can be found in the resources directory).
 ```
@@ -83,112 +167,7 @@ Start the app and then use Postman to test the quote-service:
 - get the available currencies: localhost:8220/currencies 
 - get some fx-rates from the defined REST endpoints: localhost:8220/fx-rate?primaryCcy=USD&secondaryCcy=EUR
 
-## Exercise 5 - Add quote logic
+## Exercise 6 (bonus) - Integration testing
 
-Add quote logic in Controller
+Add integration tests for the methods from the FxRateController class (https://www.arhohuttunen.com/spring-boot-webmvctest/).
 
-```JAVA
-    private static final float MAX_VALUE_FOR_DELTA = 0.9F;
-	private static final Map<ECurrency, Map<ECurrency, Float>> RATES = new HashMap<ECurrency, Map<ECurrency, Float>>();
-	private static final Map<ECurrency, Float> EUR_RATES = new HashMap<ECurrency, Float>();
-	private static final Map<ECurrency, Float> USD_RATES = new HashMap<ECurrency, Float>();
-	private static final Map<ECurrency, Float> GBP_RATES = new HashMap<ECurrency, Float>();
-	private static final Map<ECurrency, Float> RON_RATES = new HashMap<ECurrency, Float>();
-
- / Static block is used for initializing the static variables.
- //This block gets executed when the class is loaded in the memory
- //can we have more than one?
-
-	static {
-		EUR_RATES.put(ECurrency.GBP, 0.9F);
-		EUR_RATES.put(ECurrency.USD, 1.18F);
-		EUR_RATES.put(ECurrency.RON, 4.66F);
-		EUR_RATES.put(ECurrency.EUR, 1F);
-		RATES.put(ECurrency.EUR, EUR_RATES);
-
-		USD_RATES.put(ECurrency.GBP, 0.76F);
-		USD_RATES.put(ECurrency.RON, 3.96F);
-		USD_RATES.put(ECurrency.USD, 1F);
-		RATES.put(ECurrency.USD, USD_RATES);
-
-		GBP_RATES.put(ECurrency.GBP, 1F);
-		GBP_RATES.put(ECurrency.RON, 5.18F);
-		RATES.put(ECurrency.GBP, GBP_RATES);
-
-		RON_RATES.put(ECurrency.RON, 1F);
-		RATES.put(ECurrency.RON, RON_RATES);
-	} 
-
-
-	private static final Map  ratesTS = new ConcurrentHashMap<String, RateVO>();  //TODO add rates to map => return same value for multiple requests in a moment
-
-
-
-		public RateVO getRate(String fromS, String toS) {
-    		ECurrency from = ECurrency.getByLabel(fromS.toUpperCase());
-    		ECurrency to = ECurrency.getByLabel(toS.toUpperCase());
-    
-    		//received unknown currency
-    		if (from == null || to == null) {
-    			return null;
-    		}
-    
-    
-    		Map<ECurrency, Float> fromRates = RATES.get(from);
-    		Float baseRate = fromRates.get(to);
-    
-    		//received Unkown Currency Pair
-    		if (baseRate == null && RATES.get(to).get(from) == null) {
-    			return null;
-    		}
-    
-    		if (baseRate == null) {
-    			baseRate = 1.0F/RATES.get(to).get(from);
-    		}
-    	
-    
-    		float buyRate = baseRate != 1 ? baseRate + getRandomizedDelta(0, baseRate) : 1;
-    		float sellRate = baseRate != 1 ? baseRate - getRandomizedDelta(0, baseRate) : 1;
-    		return new RateVO(buyRate, sellRate, new Date());
-    
-    
-    
-    	}
-    
-    	private static float getRandomizedDelta(float min, float max) {
-    
-    		Random rand = new Random();
-    
-    		float result = rand.nextFloat() * (max - min) + min ;
-    
-    		return result;
-    
-    	}
-```
-
-Add missing code to ECurrency
-```JAVA
-    private static final HashMap<String, ECurrency> MAP = new HashMap<String, ECurrency>();
-
-    static {
-		for (ECurrency currency : ECurrency.values()) {
-			MAP.put(currency.getLabel(), currency);
-		}
-	} 
-   
-	
-	public static ECurrency getByLabel(String label) {
-		return MAP.get(label);
-	}
-	
-```
-
-
-## Exercise 6 - Tidy up
-
-Tidy up code: add quoteService and move quote logic from controller
-
-```
-	@Autowired
-	IQuoteService quoteService;
-```
