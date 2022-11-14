@@ -1,6 +1,6 @@
 # Week 8 - Create Quote Service Microservice With Spring
 
-<br> The purpose of this lab is to implement the quote-service Microservice, which will return FX Rates for our fx-trading-app.
+<br> The purpose of this lab is to implement the quote-service Microservice, which will return fx rates for our fx-trading-app.
 
 ## Table of contents
 
@@ -57,7 +57,7 @@ public class RateDto {
 
 ## Exercise 3 - Create controller
 
-Create the FXRateController class. The controller should have 2 endpoints: 
+Create the FxRateController class. The controller should have 2 endpoints: 
 - one for getting the available currencies: /currencies 
 - one for getting fx-rates for a currency pair: /fx-rate
 
@@ -165,7 +165,7 @@ server.port=8220
 
 Start the app and then use Postman to test the quote-service:
 - get the available currencies: localhost:8220/currencies 
-- get some fx-rates from the defined REST endpoints: localhost:8220/fx-rate?primaryCcy=USD&secondaryCcy=EUR
+- get some fx-rates: localhost:8220/fx-rate?primaryCcy=USD&secondaryCcy=EUR
 
 ## Exercise 6 (bonus) - Integration testing
 
