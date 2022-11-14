@@ -5,11 +5,11 @@
 ## Table of contents
 
 - [Exercise 1 - Create project](#exercise-1---create-project)
-- [Exercise 2 - Currency enum and RateDto](#exercise-2---create-currency-enum-and-ratedto)
+- [Exercise 2 - Currency enum and RateDto](#exercise-2---currency-enum-and-ratedto)
 - [Exercise 3 - Create controller](#exercise-3---create-controller)
 - [Exercise 4 - Create service](#exercise-4---create-service)
-- [Exercise 5 - Check](#exercise-5--check)
-- [Exercise 6 - Integration testing](#exercise-6---integration-testing)
+- [Exercise 5 - Check](#exercise-5---check)
+- [Exercise 6 (bonus) - Integration testing](#exercise-6-bonus---integration-testing)
 
 ## Pre-requisites
 - Java 11
@@ -19,13 +19,13 @@
 
 ## Exercise 1 - Create project
 
-Use spring initializer(https://start.spring.io) to create a new project which has the same parameters as those defined in the following image. Add Spring Web as dependency and generate the project. After the project was generated, open it using IntelliJ IDEA.  
+Use spring initializr(https://start.spring.io) to create a new project which has the same parameters as those defined in the following image. Add Spring Web as dependency and generate the project. After the project was generated, open it using IntelliJ IDEA.  
 
-![SpringInitializr](Img/spring initializr.png)
+![SpringInitializr](Img/spring-initializr.png)
 
 ## Exercise 2 - Currency enum and RateDto
 
-Create an enumeration for currencies (ECurrency). Add a label for each element using the constructor(https://www.baeldung.com/java-enum-values &rarr; 3. Adding a Constructor and a Final Field).
+Create an enumeration for currencies (ECurrency). Add a label for each element using the constructor (https://www.baeldung.com/java-enum-values &rarr; 3. Adding a Constructor and a Final Field).
 
 ```JAVA
 package com.fx.rates.quoteservice;
