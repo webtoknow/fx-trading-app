@@ -1,315 +1,173 @@
-# Week 8 - Development Create Quote Service Microservice With Spring
+# Week 8 - Create Quote Service Microservice With Spring
+
+<br> The purpose of this lab is to implement the quote-service Microservice, which will return fx rates for our fx-trading-app.
 
 ## Table of contents
 
 - [Exercise 1 - Create project](#exercise-1---create-project)
-- [Exercise 2 - Currency enum and rateVO](#exercise-2---create-currency-enum-and-ratevo)
-- [Exercise 3 - Create controller](#exercise-3---)
-- [Exercise 4 - Check](#exercise-4--)
-- [Exercise 5 - Add quote logic](#exercise-5---)
-- [Exercise 6 - Tidy up](#exercise-6---)
+- [Exercise 2 - Currency enum and RateDto](#exercise-2---currency-enum-and-ratedto)
+- [Exercise 3 - Create controller](#exercise-3---create-controller)
+- [Exercise 4 - Create service](#exercise-4---create-service)
+- [Exercise 5 - Check](#exercise-5---check)
+- [Exercise 6 (bonus) - Integration testing](#exercise-6-bonus---integration-testing)
 
-#Exercise 1
+## Pre-requisites
+- Java 11
+- Maven
+- Postman
+- IntelliJ IDEA
 
- Use your favourite IDE to create a simple maven project.
- Update pom.xml with the following tags:
- 
- Or, use spring initializer:
- add WEB, devtools
- 
-```XML
- 
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+## Exercise 1 - Create project
 
-	<groupId>com.fx.rates</groupId>
-	<artifactId>quote-service</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<packaging>jar</packaging>
+Use spring initializr(https://start.spring.io) to create a new project which has the same parameters as those defined in the following image. Add Spring Web as dependency and generate the project. After the project was generated, open it using IntelliJ IDEA.  
 
-	<name>quote-service</name>
-	<description>Demo project for Spring Boot</description>
+![SpringInitializr](Img/spring-initializr.png)
 
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.0.5.RELEASE</version>
-		<relativePath /> <!-- lookup parent from repository -->
-	</parent>
+## Exercise 2 - Currency enum and RateDto
 
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<java.version>11</java.version>
-	</properties>
-
-	<dependencies>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-devtools</artifactId>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-tomcat</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>r05</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
-
-
-</project>
-
-```
+Create an enumeration for currencies (ECurrency). Add a label for each element using the constructor (https://www.baeldung.com/java-enum-values &rarr; 3. Adding a Constructor and a Final Field).
 
 ```JAVA
 package com.fx.rates.quoteservice;
-
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
-
-public class ServletInitializer extends SpringBootServletInitializer {
-
-	@Override
-	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-		return application.sources(QuoteServiceApplication.class);
-	}
-
-}
-```
-
-```JAVA
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-@SpringBootApplication
-public class QuoteServiceApplication {
-
-	public static void main(String[] args) {
-		SpringApplication.run(QuoteServiceApplication.class, args);
-	}
-}
-
-```
-
-#Exercise 2
-
-Create an enumeration for currencies (ECurrency)
-
-```JAVA
-package com.fx.rates.quoteservice;
-
-import java.util.HashMap;
 
 public enum ECurrency {
-	
-    //EUR("EUR"),
-    //todo add eur, ron, gbp, usd
-    //add label property
-    //add constructor with label property as parameter
-	
-	}
+    // TODO Add EUR, RON, GBP, USD currencies
+    
+    // TODO Add label property
+    
+    // TODO Add constructor with label property as parameter
+}
 ```
 
 
-Create RateVO.java 
+Create RateDto class
 
 ```JAVA
 package com.fx.rates.quoteservice;
 
-import java.util.Date;
-
-public class RateVO {
+public class RateDto {
+    // TODO Add buyRate, sellRate, timestamp fields
     
-	//todo add buyRate, sellRate, ts
-	
-	
-	public RateVO() {
-		  
-	}
-	
-	//todo add constructor with parameters
+    // TODO Add constructor
+    
+    // TODO Add getters and setters
 }
-
 ```
 
 
-#Exercise 3
+## Exercise 3 - Create controller
 
-Create FXController
+Create the FxRateController class. The controller should have 2 endpoints: 
+- one for getting the available currencies: /currencies 
+- one for getting fx-rates for a currency pair: /fx-rate
 
-```
+For the second endpoint you should also include 2 query parameters: primaryCcy and secondaryCcy. Those parameters can be extracted using the @RequestParam annotation.
+Hints: 
+- https://howtodoinjava.com/spring5/webmvc/controller-getmapping-postmapping/ &rarr; 2. Spring @GetMapping Example
+- https://www.baeldung.com/spring-request-param
+
+
+```JAVA
 package com.fx.rates.quoteservice;
 
-
-
 @RestController
-public class FXRateController {
+public class FxRateController {
+    // TODO getCurrencies
+    // hint: List.of(ENUM.values())
+    // return List<ECurrency>
 
-	
-	@CrossOrigin
-	//todo getRates: primaryCcy, secondaryCcy
-	//@RequestMapping (value = "/fx-rate", method = ?), @RequestParam("primaryCcy") String primaryCcy
-	//return RateVO
-	
-
-	@CrossOrigin
-	//todo getCurrencies
-	//@RequestMapping("currencies"), RequestMethod
-	//hint:ENUM.values()
-	//return List<String>
-	
+    // TODO getRate; primaryCcy, secondaryCcy are the request parameters
+    // return RateDto
 }
 ```
 
-#Exercise 4
+## Exercise 4 - Create service
 
-add application.properties in resources
+Add quote logic in a new class - FxRateService. We will define a map with fx rates for each currency. Those maps will be included in a map which contains all rates. Inject this service class in the controller, to be able to use the getRate method.
 
-spring.application.name=fx-rate-service
-server.port=8220
-
-
-Install Postman
-
-check:
-localhost:8220/currencies
-localhost:8220/fx-rate?primaryCcy=USD&secondaryCcy=EUR
-
-
-#Exercise 5
-
-Add quote logic in Controller
-
-```
-    private static final float MAX_VALUE_FOR_DELTA = 0.9F;
-	private static final Map<ECurrency, Map<ECurrency, Float>> RATES = new HashMap<ECurrency, Map<ECurrency, Float>>();
-	private static final Map<ECurrency, Float> EUR_RATES = new HashMap<ECurrency, Float>();
-	private static final Map<ECurrency, Float> USD_RATES = new HashMap<ECurrency, Float>();
-	private static final Map<ECurrency, Float> GBP_RATES = new HashMap<ECurrency, Float>();
-	private static final Map<ECurrency, Float> RON_RATES = new HashMap<ECurrency, Float>();
-
- / Static block is used for initializing the static variables.
- //This block gets executed when the class is loaded in the memory
- //can we have more than one?
-
-	static {
-		EUR_RATES.put(ECurrency.GBP, 0.9F);
-		EUR_RATES.put(ECurrency.USD, 1.18F);
-		EUR_RATES.put(ECurrency.RON, 4.66F);
-		EUR_RATES.put(ECurrency.EUR, 1F);
-		RATES.put(ECurrency.EUR, EUR_RATES);
-
-		USD_RATES.put(ECurrency.GBP, 0.76F);
-		USD_RATES.put(ECurrency.RON, 3.96F);
-		USD_RATES.put(ECurrency.USD, 1F);
-		RATES.put(ECurrency.USD, USD_RATES);
-
-		GBP_RATES.put(ECurrency.GBP, 1F);
-		GBP_RATES.put(ECurrency.RON, 5.18F);
-		RATES.put(ECurrency.GBP, GBP_RATES);
-
-		RON_RATES.put(ECurrency.RON, 1F);
-		RATES.put(ECurrency.RON, RON_RATES);
-	} 
-
-
-	private static final Map  ratesTS = new ConcurrentHashMap<String, RateVO>();  //TODO add rates to map => return same value for multiple requests in a moment
-
-
-
-		public RateVO getRate(String fromS, String toS) {
-    		ECurrency from = ECurrency.getByLabel(fromS.toUpperCase());
-    		ECurrency to = ECurrency.getByLabel(toS.toUpperCase());
+```JAVA
+@Service
+public class FxRateService {
     
-    		//received unknown currency
-    		if (from == null || to == null) {
-    			return null;
-    		}
-    
-    
-    		Map<ECurrency, Float> fromRates = RATES.get(from);
-    		Float baseRate = fromRates.get(to);
-    
-    		//received Unkown Currency Pair
-    		if (baseRate == null && RATES.get(to).get(from) == null) {
-    			return null;
-    		}
-    
-    		if (baseRate == null) {
-    			baseRate = 1.0F/RATES.get(to).get(from);
-    		}
-    	
-    
-    		float buyRate = baseRate != 1 ? baseRate + getRandomizedDelta(0, baseRate) : 1;
-    		float sellRate = baseRate != 1 ? baseRate - getRandomizedDelta(0, baseRate) : 1;
-    		return new RateVO(buyRate, sellRate, new Date());
-    
-    
-    
-    	}
-    
-    	private static float getRandomizedDelta(float min, float max) {
-    
-    		Random rand = new Random();
-    
-    		float result = rand.nextFloat() * (max - min) + min ;
-    
-    		return result;
-    
-    	}
-```
+    private static final Map<ECurrency, Map<ECurrency, Double>> RATES = new HashMap<>();
+    private static final Map<ECurrency, Double> EUR_RATES = new HashMap<>();
+    private static final Map<ECurrency, Double> USD_RATES = new HashMap<>();
+    private static final Map<ECurrency, Double> GBP_RATES = new HashMap<>();
+    private static final Map<ECurrency, Double> RON_RATES = new HashMap<>();
 
-Add missing code to ECurrency
-```
-    private static final HashMap<String, ECurrency> MAP = new HashMap<String, ECurrency>();
-
+    // Static blocks are used for initializing the static variables.
+    // This block gets executed when the class is loaded in the memory.
+    // Can we have more than one?
     static {
-		for (ECurrency currency : ECurrency.values()) {
-			MAP.put(currency.getLabel(), currency);
-		}
-	} 
-   
-	
-	public static ECurrency getByLabel(String label) {
-		return MAP.get(label);
-	}
-	
+        EUR_RATES.put(ECurrency.GBP, 0.9);
+        EUR_RATES.put(ECurrency.USD, 1.18);
+        EUR_RATES.put(ECurrency.RON, 4.66);
+        EUR_RATES.put(ECurrency.EUR, 1.0);
+        RATES.put(ECurrency.EUR, EUR_RATES);
+
+        // TODO Add some rates for other currencies
+    }
+
+    public RateDto getRate(String fromCcyStr, String toCcyStr) {
+        ECurrency fromCcy = ECurrency.getByLabel(fromCcyStr.toUpperCase());
+        ECurrency toCcy = ECurrency.getByLabel(toCcyStr.toUpperCase());
+
+        // received unknown currencies
+        if (fromCcy == null || toCcy == null) {
+            return null;
+        }
+
+        Map<ECurrency, Double> fromRates = RATES.get(fromCcy);
+        Double baseRate = fromRates.get(toCcy);
+
+        // received unknown currency pair
+        if (baseRate == null) {
+            return null;
+        }
+
+        double buyRate = baseRate != 1 ? baseRate + getRandomizedDelta(0, baseRate) : 1;
+        double sellRate = baseRate != 1 ? baseRate - getRandomizedDelta(0.1, baseRate) : 1;
+
+        return new RateDto(buyRate, sellRate, new Date());
+    }
+
+    private static double getRandomizedDelta(double min, double max) {
+        // TODO Generate a random number between min and max 
+    }
+}
+
 ```
 
+<br>Add missing code to ECurrency class 
+```JAVA
+    static {
+        for (ECurrency currency : ECurrency.values()) {
+            MAP.put(currency.getLabel(), currency);
+        }
+    }
 
-# Exercise 6 
+    public String getLabel() {
+        return label;
+    }
 
-Tidy up code: add quoteService and move quote logic from controller
-
+    public static ECurrency getByLabel(String label) {
+        return MAP.get(label);
+    }
 ```
-	@Autowired
-	IQuoteService quoteService;
+
+## Exercise 5 - Check
+
+Set the server port in the application.properties file (can be found in the resources directory).
 ```
+spring.application.name=quote-service
+server.port=8220
+```
+
+Start the app and then use Postman to test the quote-service:
+- get the available currencies: localhost:8220/currencies 
+- get some fx-rates: localhost:8220/fx-rate?primaryCcy=USD&secondaryCcy=EUR
+
+## Exercise 6 (bonus) - Integration testing
+
+Add integration tests for the methods from the FxRateController class (https://www.arhohuttunen.com/spring-boot-webmvctest/).
+
