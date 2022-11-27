@@ -11,7 +11,6 @@ Before developing the Fxtrading service you can take a look at the application a
 - [Exercise IV - Implement functionality for saving trades](#exercise-IV)
 - [Exercise V - Secure the API](#exercise-V)
 - [Exercise VI - Unit test](#exercise-VI)
-- [Bonus - Unit test](#bonus-I)
 
 
 ## <a name="exercise-I">Exercise I - Importing initial project setup in IDE </a>
@@ -48,18 +47,16 @@ spring.datasource.password=<VALUE>
 
 For this exercise we will need to create(guidance below):
 1. a Hibernate @Entity class that maps to the *transactions* table
-2. a TransactionVo class that will be used to serialize/deserialize data going through the @RestController(which will be created after)
-3. a class that implements Spring's Converter interface. It will convert Transaction @Entity objects to POJO TransactionVo objects.
-4. a @Configuration that defines the @Bean conversionService. 
-The conversionService bean should be configured by registering the required converters(in this case we only have the one specified above).
-5. a @Repository interface extending JpaRepository
-6. a @Service class
-7. a @RestController class
+2. a TransactionResponse class that will be used to serialize/deserialize data going through the @RestController(which will be created after)
+3. a TransactionMapper mapstruct interface that will be used to convert between entities and response objects
+4. a @Repository interface extending JpaRepository
+5. a @Service class
+6. a @RestController class
 
 Indications:
 
-1.  Under package *fxtrading* create package *entities*  
-Create inside the package the class Transaction that maps to transactions table:
+1.  Under package *fxtrading* in package *entities*  
+Create the entity class Transaction that maps to transactions table:
 
 ```
 package com.banking.sofware.design.fxtrading.entities;
@@ -109,23 +106,22 @@ public class Transaction {
 }
 ```
 
-2. Under *fxtrading* create package *vo*.  
-Inside the package create class TransactionVo  
+2. Under *fxtrading* in package *response*.  
+Create class TransactionResponse  
 
 We use this object to serialize/deserialize REST message payloads.  
 It is a practice to use a distinct set of objects(from entities) when communicating through the REST interface.  
 These objects help us as we might want for example to either hide, aggregate or transform information coming from database entities.  
 
-In our case we transform the rate field(for examplification purposes).   
-Also we send/receive the date as a Long object.  
+In our case we transform the rate and date fields as detailed in the below step.
 
 
 ```
-package com.banking.sofware.design.fxtrading.vo;
+package com.banking.sofware.design.fxtrading.response;
 
 import java.math.BigDecimal;
 
-public class TransactionVo {
+public class TransactionResponse {
 
   private BigDecimal id;
 
@@ -156,8 +152,8 @@ This microservice will use only the first four decimal places of fx rates.
 The rates will need to be converted from decimal to integers and vice versa when needed.   
 For conversion we will multiply or divide with a constant of 10000 defined in a constant class  
 
-Create package *util* under *fxtrading*  
-In it add class RateUtil:  
+In package *util* under *fxtrading*  
+Add class RateUtil:  
 
 ```
 package com.banking.sofware.design.fxtrading.util;
@@ -176,82 +172,54 @@ public final class RateUtil {
 ```
 
 3. b
-Under *fxtrading* create package *converters*.
-Add to it a new class named Transaction2TransactionVo  
-You have to add code as indicated by placeholders
+In *fxtrading* in package *mapper*.
+Add to it a new class named TransactionMapper  
+**You have to write the return statements (one line each) as indicated by the TODO comments**  
 
 ```
-package com.banking.sofware.design.fxtrading.converters;
+package com.banking.sofware.design.fxtrading.mapper;
 
-import org.springframework.core.convert.converter.Converter;
-
-import com.banking.sofware.design.fxtrading.entities.Transaction;
+import com.banking.sofware.design.fxtrading.entity.Transaction;
+import com.banking.sofware.design.fxtrading.response.TransactionResponse;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Named;
+import org.mapstruct.factory.Mappers;
 import com.banking.sofware.design.fxtrading.util.RateUtil;
-import com.banking.sofware.design.fxtrading.vo.TransactionVo;
 
-public class Transaction2TransactionVo implements Converter<Transaction, TransactionVo> {
+import java.math.BigDecimal;
+import java.util.Date;
 
-  @Override
-  public TransactionVo convert(Transaction source) {
-    TransactionVo vo = new TransactionVo();
-    vo.setId(source.getId());
-    vo.setUsername(source.getUsername());
-    vo.setPrimaryCcy(source.getPrimaryCcy());
-    vo.setSecondaryCcy(source.getSecondaryCcy());
-    //TODO: set rate by dividing with constant from RateUtil: RATE_MULTIPLIER
-    vo.setRate(<!--REPLACE WITH CODE-->);
-	
-    vo.setAction(source.getAction());
-    vo.setNotional(source.getNotional());
-    vo.setTenor(source.getTenor());
-    //TODO: set date field on VO by obtaining milliseconds since 1970 from Date object
-    /**
-     * Notice: the date object can't be null as it is a mandatory database field.
-     * but if an entity field can be null we need to take care at conversion to
-     * avoid Null Pointer Exception
-     **/
-    vo.setDate(<!--REPLACE WITH CODE-->);
-    return vo;
-  }
+@Mapper(imports = {RateUtil.class, Date.class})
+public interface TransactionMapper {
+    TransactionMapper INSTANCE = Mappers.getMapper( TransactionMapper.class );
+
+    @Mapping(qualifiedByName = "convertRateForTransfer", target = "rate")
+    @Mapping(qualifiedByName = "convertDateToLong", target = "date")
+    TransactionResponse transactionToTransactionResponse(Transaction transaction);
+
+    @Named("convertRateForTransfer")
+    default BigDecimal convertRateForTransfer(BigDecimal rate) {
+        // TODO: get rate from transaction object and divide it by RATE_MULTIPLIER. Hint: Use *divide* method from BigDecimal
+        //return rate.
+    }
+    @Named("convertDateToLong")
+    default Long convertDateToLong(Date date) {
+        //TODO: get date field from transaction and convert it to long using method from Date API
+        /**
+         * Notice: the date object can't be null as it is a mandatory database field.
+         * but if an entity field can be null we need to take care at conversion to
+         * avoid Null Pointer Exception
+         **/
+        //return date.
+    }
+
 
 }
 ```
 
-4.  In *fxtrading* under package *configuration* add the following class:
 
-```
-package com.banking.sofware.design.fxtrading.configuration;
-
-import java.util.HashSet;
-import java.util.Set;
-
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.support.ConversionServiceFactoryBean;
-import org.springframework.core.convert.ConversionService;
-import org.springframework.core.convert.converter.Converter;
-
-import com.banking.sofware.design.fxtrading.converters.Transaction2TransactionVo;
-
-@Configuration
-public class ConversionConfiguration {
-	
-	@Bean(name="conversionService")
-	public ConversionService getConversionService() {
-	    ConversionServiceFactoryBean bean = new ConversionServiceFactoryBean();
-	    
-	    Set<Converter<?, ?>> converters = new HashSet<>();
-	    //TODO: Instantiate and add the converter created previously to the converter list
-	    converters.add(<!--REPLACE WITH CODE-->);
-	    bean.setConverters(converters); //add converters
-	    bean.afterPropertiesSet();
-	    return bean.getObject();
-	}
-}
-```
-
-
-5. Create package *repository* under *fxtrading* and add:
+4. In package *repository* under *fxtrading* add:
 
 ```
 package com.banking.sofware.design.fxtrading.repository;
@@ -261,7 +229,7 @@ import java.math.BigDecimal;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.banking.sofware.design.fxtrading.entities.Transaction;
+import com.banking.sofware.design.fxtrading.entity.Transaction;
 
 @Repository
 public interface FxTradingRepository extends JpaRepository<Transaction, BigDecimal> {
@@ -270,20 +238,19 @@ public interface FxTradingRepository extends JpaRepository<Transaction, BigDecim
 ```
 
 
-6. Under *fxtrading* create package *service* and add:
+5. Under *fxtrading* in package *service*  add:
 
 ```
 package com.banking.sofware.design.fxtrading.service;
 
-import com.banking.sofware.design.fxtrading.entities.Transaction;
+import com.banking.sofware.design.fxtrading.mapper.TransactionMapper;
 import com.banking.sofware.design.fxtrading.repository.FxTradingRepository;
-import com.banking.sofware.design.fxtrading.vo.TransactionVo;
+import com.banking.sofware.design.fxtrading.response.TransactionResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.convert.ConversionService;
-import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class FxTradingService {
@@ -291,45 +258,37 @@ public class FxTradingService {
     @Autowired
     private FxTradingRepository repository;
 
-    @Autowired
-    private ConversionService conversionService;
-
     @SuppressWarnings("unchecked")
-    public List<TransactionVo> getTransactions() {
-        return (List<TransactionVo>) conversionService.convert(repository.findAll(),
-                TypeDescriptor.collection(List.class, TypeDescriptor.valueOf(Transaction.class)),
-                TypeDescriptor.collection(List.class, TypeDescriptor.valueOf(TransactionVo.class)));
+    public List<TransactionResponse> getTransactions() {
+        return repository.findAll().stream().map(TransactionMapper.INSTANCE::transactionToTransactionResponse).collect(Collectors.toList());
     }
 
 }
 ```
 
-7. Create new package *rest* in *fxtrading* and add the REST controller below
+6. In package *rest* under *fxtrading* add the REST controller below
 
 ```
 package com.banking.sofware.design.fxtrading.rest;
 
+import com.banking.sofware.design.fxtrading.response.TransactionResponse;
 import com.banking.sofware.design.fxtrading.service.FxTradingService;
-import com.banking.sofware.design.fxtrading.vo.TransactionVo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @RestController
-@RequestMapping("/transactions")
+@RequestMapping("/transaction")
 public class FxTradingRestController {
 
     @Autowired
     private FxTradingService tradingService;
 
     @CrossOrigin
-    @RequestMapping(method = RequestMethod.GET, produces = "application/json")
-    public List<TransactionVo> getTransactions(HttpServletResponse response) {
+    @GetMapping(produces = "application/json")
+    public List<TransactionResponse> getTransactions(HttpServletResponse response) {
         try {
             return tradingService.getTransactions();
         } catch (Exception e) {
@@ -341,7 +300,7 @@ public class FxTradingRestController {
 }
 ```
 
-After completing steps 1-7 of exercise III you should have a functional REST endpoint for listing all trades.
+After completing steps 1-6 of exercise III you should have a working REST endpoint for listing all trades.
 It can now be tested with a tool like Postman
  
 
@@ -356,7 +315,7 @@ In package *service* add class QuoteProxyService
 ```
 package com.banking.sofware.design.fxtrading.service;
 
-import com.banking.sofware.design.fxtrading.dto.QuoteResponse;
+import com.banking.sofware.design.fxtrading.response.QuoteResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -416,55 +375,69 @@ Notice we added explictly the no-args constructor and also added a constructor w
 The second one is created for convenience for unit testing.  
 If the first one is missing then the deserialization will fail.  
 
-2. In FxTradingService add the following methods 
+2. In FxTradingService add the following methods and fields  
+*Note*: you have to add missing imports (import from Spring framework and Apache Commons Lang3 and org.slf4j)
 
 ```
-  @Transactional
-  public void makeTransaction(TransactionVo vo) {
-    // Important: in a real application validations should be made - here for example
-    String action = vo.getAction();
-    if (StringUtils.isBlank(action) || !List.of("BUY", "SELL").contains(action.toUpperCase())) {
-      throw new IllegalArgumentException("Action not supported!");
+    private Logger logger = LoggerFactory.getLogger(FxTradingService.class);
+    
+    @Autowired
+    private QuoteProxyService proxyRatesService;
+    
+
+    @Transactional
+    public void makeTransaction(TransactionResponse dto) {
+        // Important: in a real application validations should be made - here for example
+        String action = dto.getAction();
+        if (StringUtils.isBlank(action) || !Arrays.asList("BUY", "SELL").contains(action.toUpperCase())) {
+            throw new IllegalArgumentException("Action not supported!");
+        }
+    
+        QuoteResponse ratePair = getCurrentRate(dto.getPrimaryCcy(), dto.getSecondaryCcy());
+        BigDecimal rate = "BUY".equalsIgnoreCase(action) ? ratePair.getBuyRate() : ratePair.getSellRate();
+    
+        Transaction transaction = TransactionMapper.INSTANCE.transactionResponseToTransaction(dto,rate);
+        repository.save(transaction);
     }
-
-    Transaction transaction = new Transaction();
-    transaction.setAction(action.toUpperCase());
-    QuoteResponse ratePair = getCurrentRate(vo.getPrimaryCcy(), vo.getSecondaryCcy());
-    BigDecimal rate = "BUY".equalsIgnoreCase(action) ? ratePair.getBuyRate() : ratePair.getSellRate();
-    transaction.setRate(rate.multiply(RateUtil.RATE_MULTIPLIER).setScale(0, RoundingMode.HALF_UP));
-
-    transaction.setUsername(vo.getUsername());
-    transaction.setPrimaryCcy(vo.getPrimaryCcy());
-    transaction.setSecondaryCcy(vo.getSecondaryCcy());
-    transaction.setNotional(vo.getNotional());
-    transaction.setTenor(vo.getTenor());
-    transaction.setDate(new Date());
-
-    repository.save(transaction);
-  }
-
-   private QuoteResponse getCurrentRate(String primaryCcy, String secondaryCcy) {
-        return proxyRatesService.getRate(primaryCcy, secondaryCcy);
-   }
+    
+    private QuoteResponse getCurrentRate(String primaryCcy, String secondaryCcy) {
+        try {
+            return proxyRatesService.getRate(primaryCcy, secondaryCcy);
+        } catch (Exception e) {
+            logger.error("Could not obtain response from quote service!", e);
+            throw e;
+        }
+    }
 ```
 
-Note:
-* you have to add missing imports (import from Spring framework and Apache Commons Lang3)
-* add a dependency of QuoteProxyService. Hint: use @Autowired.
-  
+In TradingMapper add the following methods:
+
+```
+    @Mapping(qualifiedByName = "convertRateForPersisting", target = "rate", source = "rate")
+    @Mapping(expression = "java(new Date())", target = "date")
+    Transaction transactionResponseToTransaction(TransactionResponse transactionResponse, BigDecimal rate);
+
+
+    @Named("convertRateForPersisting")
+    default BigDecimal convertRateForPersisting(BigDecimal rate) {
+        return rate.multiply(RateUtil.RATE_MULTIPLIER).setScale(0, RoundingMode.HALF_UP);
+    }
+```
+
+
 
 3. In FxTradingRestController add the following method:
 
 ```
-  @CrossOrigin
-  @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
-  public void makeTransaction(@RequestBody TransactionVo transaction, HttpServletResponse response) {
-    try {
-      tradingService.makeTransaction(transaction);
-    } catch (Exception e) {
-      response.setStatus(500);
+    @CrossOrigin
+    @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
+    public void makeTransaction(@RequestBody TransactionResponse transaction, HttpServletResponse response) {
+        try {
+            tradingService.makeTransaction(transaction);
+        } catch (Exception e) {
+            response.setStatus(500);
+        }
     }
-  }
   ```
   
 **Important**: for this functionality to work this microservice has to connect to a live quote service.
@@ -476,23 +449,23 @@ Now the implementation for the creation of trades should be done and you can tes
 1. Add the following dependencies in pom.xml. After adding the dependencies, do a maven clean and install. Reload the dependencies in the IDE if needed.
 
 ```
-<dependency>
-	<groupId>org.springframework.security.oauth.boot</groupId>
-	<artifactId>spring-security-oauth2-autoconfigure</artifactId>
-	<version>2.6.1</version>
-</dependency>
-
-<dependency>
-	<groupId>org.springframework.security.oauth</groupId>
-	<artifactId>spring-security-oauth2</artifactId>
-	<version>2.5.1.RELEASE</version>
-</dependency>
-
-<dependency>
-	<groupId>org.springframework.security</groupId>
-	<artifactId>spring-security-jwt</artifactId>
-	<version>1.1.1.RELEASE</version>
-</dependency>
+    <dependency>
+        <groupId>org.springframework.security.oauth.boot</groupId>
+        <artifactId>spring-security-oauth2-autoconfigure</artifactId>
+        <version>2.6.8</version>
+    </dependency>
+    
+    <dependency>
+        <groupId>org.springframework.security.oauth</groupId>
+        <artifactId>spring-security-oauth2</artifactId>
+        <version>2.5.2.RELEASE</version>
+    </dependency>
+    
+    <dependency>
+        <groupId>org.springframework.security</groupId>
+        <artifactId>spring-security-jwt</artifactId>
+        <version>1.1.1.RELEASE</version>
+    </dependency>
 ```
 
 2. Add the annotation @EnableResourceServer to FxTradingApplication class (and add required import)  
@@ -508,7 +481,7 @@ Explanation:
 This property sets the key that will be used to validate the JWT tokens received in the Authorization header.  
 For simplicity the key used is symmetrical. In this example it has to be the same key used when generating the token in user administration service.
 
-4. Add the following class under *configuration* package:
+4. Add the following class under *config* package:
 
 ```
 
@@ -559,6 +532,9 @@ import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 
+import com.banking.sofware.design.fxtrading.entity.Transaction;
+import com.banking.sofware.design.fxtrading.response.QuoteResponse;
+import com.banking.sofware.design.fxtrading.response.TransactionResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -566,11 +542,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.banking.sofware.design.fxtrading.dto.QuoteResponse;
-import com.banking.sofware.design.fxtrading.entities.Transaction;
 import com.banking.sofware.design.fxtrading.repository.FxTradingRepository;
-import com.banking.sofware.design.fxtrading.vo.TransactionVo;
-
 @ExtendWith(MockitoExtension.class)
 public class FxTradingServiceTest {
 	
@@ -587,7 +559,7 @@ public class FxTradingServiceTest {
     public void makeTransaction() throws Exception{
     	
         //setup
-        TransactionVo vo = new TransactionVo();
+        TransactionResponse vo = new TransactionResponse();
         vo.setAction("BUY");
         vo.setNotional(BigDecimal.valueOf(1000));
         vo.setTenor("SP");
@@ -613,9 +585,3 @@ Notice there are three parts to the method (They follow a style named <a href="h
 * in the second part the tested method is invoked
 * finally in the third part the results are verified by using asserts(the post-conditions are checked)
 
-## <a name="bonus-I"> Bonus - Unit test</a>
-
-Create a test for the converter *Transaction2TransactionVo*
-You can put it in the test folder(src/**test**/java) in a package called *com.banking.sofware.design.fxtrading.converters*
-
-You have to assert that the rate and date fields have been transformed appropriately.
