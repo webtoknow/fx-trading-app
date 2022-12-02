@@ -42,7 +42,10 @@ public class CalendarModal {
 	private static List<WebElement> weekday;
 
 	//Selects all Day elements, irrespective of active or inactive( previous or next month)
-	@FindBy(xpath="//span[@ng-reflect-day='[object Object]' and not(@class='is-other-month')]")
+	@FindBy(xpath="//span[@bsdatepickerdaydecorator and not(contains(@class,'is-other-month'))]")
+	//span[@ng-reflect-day='[object Object]' and not(@class='is-other-month')]
+	//span[@bsdatepickerdaydecorator and not(contains(@class,'is-other-month'))]
+	//span[@bsdatepickerdaydecorator and not(contains(@class,'is-other-month'))]
 	private static List<WebElement> dayNumber;
 
 	//Selects all days from other month

@@ -31,6 +31,10 @@ public class ConfigurationData {
         return getValueFromConfigurationFile("executionEnvironment");
     }
 
+    public static String getUsername() { return getValueFromConfigurationFile("username"); }
+
+    public static String getPassword() { return getValueFromConfigurationFile("password"); }
+
     public static Boolean getForceBrowserClosure() {
         return Boolean.valueOf(getValueFromConfigurationFile("forceBrowserClosure"));
     }

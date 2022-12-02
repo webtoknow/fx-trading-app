@@ -37,7 +37,8 @@ public class LandingPage {
 	@FindBy(xpath="//button[@type='submit']")
 	private static WebElement login;
 
-	@FindBy(xpath="//h4[text()='Login to your account']")
+	@FindBy(xpath="//h4[contains(text(), 'Login to your account')]")
+	//h4[contains(text(), 'Login to your account')] --//h4[text()='Login to your account']
 	private static WebElement loginToYourAccount;
 
 
@@ -143,6 +144,7 @@ public class LandingPage {
 		Tacitus.getInstance().log("Clicking on register link!");
 			do {
 				register.click();
+				break;
 			} while (!registerNewAccount.isDisplayed());
 		}
 

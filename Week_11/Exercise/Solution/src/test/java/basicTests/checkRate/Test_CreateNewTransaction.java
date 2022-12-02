@@ -29,7 +29,7 @@ public class Test_CreateNewTransaction extends BaseClass {
 	// end region test data
 
 
-	@Test(description = "This test checks the currency rate for given transaction id and curreny",
+	@Test(description = "This test checks the currency rate for given transaction id and currency",
 		dependsOnMethods="basicTests.createNewUser.Test_CreateNewUser.createNewUser",
 		retryAnalyzer = RetryAnalyzer.class)
 
@@ -40,7 +40,9 @@ public class Test_CreateNewTransaction extends BaseClass {
 		DashBoard.createTransaction(AMOUNT, TENOR, PRIMARY_CURRENCY, SECONDARY_CURRENCY);
 		String transactionDate = AppUtils.getSystemDate().toString();
 		DashBoard.selectCurrencyPair(CURRENCY_PAIR);
+		Tacitus.getInstance().log("Selected the currency pair");
 		DashBoard.selectDate(DAY);
+		Tacitus.getInstance().log("Selected the date");
 		String lastRowValues = USERNAME+" "+PRIMARY_CURRENCY+"/"+SECONDARY_CURRENCY;
 		String lastRowValues2 = " BUY "+ AMOUNT+" "+TENOR+" "
 			+ transactionDate;
