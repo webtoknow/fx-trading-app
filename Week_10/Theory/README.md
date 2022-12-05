@@ -180,7 +180,7 @@ Best Practises:
 			- With other tests, it should be an incorrect business scenario order
 			- The test case should generate the same results every time no matter who tests it
 
-## Example of a testcase
+## Example of a test case
 	
 	
 |Step action                |Expected result                          |Actual result                         |
