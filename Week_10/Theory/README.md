@@ -31,7 +31,7 @@
 				Branch Coverage – In this type of technique, all branches shall be tested by running them a sequence of tests.
 				Path Coverage – All paths including statements and branches are tested using this technique.
 		
-	2.Black box
+2.Black box
 
 		Black box testing is a type of software testing, which checks for the functionality of a software or an application without knowing the design, internal components, or structure of an application to be tested. It is also referred to as Specifications-based testing.
 
@@ -195,7 +195,8 @@ Best Practises:
 ## Exercises:
 
 **
-
+FX Trading App:
+http://fx-trading-app.go.ro/login
 
 **Exercise 1:**
 		Create 3 testcases for the Login page:
