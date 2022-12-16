@@ -84,3 +84,4 @@ ansible-playbook first_playbook.yml -i hosts
 - Add the details neccesary to your playbook
 - Click Save
 - Run Build job using Build Now button
+
