@@ -1,0 +1,52 @@
+---
+- name: Configure application hosts
+  hosts: webservers
+  become: true
+  vars:
+      - destdir: /apps/java
+  tasks:
+
+      - name : Install OpenJDK
+        apt:
+          name: openjdk-11-jdk
+          state: present
+
+      - name : Install git
+        apt:
+          name: git
+          state: present
+
+      - name: Download the source files from github
+        become: yes
+        git:
+          repo: 'https://github.com/WebToLearn/fx-trading-app.git'
+          dest: "{{ destdir }}"
+
+      - name: Build the jar package
+        shell:
+          "chmod 755 mvnw && ./mvnw package -Pprod -DskipTests"
+        args:
+          chdir: "{{ destdir }}/App/quote-service"
+        register: mvninstlout
+
+      - name: Debug java build command
+        debug: msg='{{mvninstlout.stdout_lines}}'
+
+      - name: Start the App
+        async: 10
+        poll: 0
+        shell:
+          "(java -jar target/quote-service-0.0.1-SNAPSHOT.jar > quote-service.log 2>&1 &)"
+        args:
+          chdir: "{{ destdir }}/App/quote-service"
+        register: appstart
+
+      - name: Validating the port is open
+        tags: javavalidate
+        wait_for:
+          host: "localhost"
+          port: 8220
+          delay: 10
+          timeout: 30
+          state: started
+          msg: "quote-service application started"
