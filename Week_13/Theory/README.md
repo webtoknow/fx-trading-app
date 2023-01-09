@@ -1,9 +1,10 @@
-# Week 12 - Devops
+# Week 13 - Devops Automation
 
 ## Table of contents
 
 - [Infrastructure as code - Terraform](#infrastructure-as-code---terraform)
 - [Overview of Ansible](#overview-of-ansible)
+- [Terraform vs Ansible](#terraform-vs-ansible)
 - [Overview of Jenkins](#overview-of-jenkins)
 
 ## Infrastructure as code - Terraform
@@ -154,9 +155,79 @@ Typically, the only thing a user needs is a terminal to execute Ansible commands
 
 - Tasks: Units of action that combine a module and its arguments along with some other parameters.
 
-- Playbooks: An ordered list of tasks along with its necessary parameters that define a recipe to configure a system.
+- Plays: An ordered list of tasks along with its necessary parameters that define a recipe to configure a system.
 
-- Roles: Redistributable units of organization that allow users to share automation code easier.
+- Playbooks: yaml file containing one ore more plays 
+
+- Roles: Redistributable units of organization that allow users to share automation code easier. Roles enable us to reuse and share our Ansible code efficiently. They provide a well-defined framework and structure for setting your tasks, variables, handlers, metadata, templates, and other files. This way, we can reference and call them in our playbooks with just a few lines of code while we can reuse the same roles over many projects without the need to duplicate our code.
+
+### Ansible Playbooks
+
+Playbooks are the simplest way in Ansible to automate repeating tasks in the form of reusable and consistent configuration files. Playbooks are defined in YAML files and contain any ordered set of steps to be executed on our managed nodes.
+
+As mentioned, tasks in a playbook are executed from top to bottom. At a minimum, a playbook should define the managed nodes to target and some tasks to run against them.
+
+In playbooks, data elements at the same level must share the same indentation while items that are children of other items must be indented more than their parents. 
+
+Let’s look at a simple playbook to get an idea of how that looks in practice. 
+
+```
+---
+  # Play1 - WebServer related tasks
+  - name: Play Web - Create apache directories and username in web servers
+    hosts: webservers
+    become: yes
+    become_user: root
+    tasks:
+      - name: create username apacheadm
+        user:
+          name: apacheadm
+          group: users,admin
+          shell: /bin/bash
+          home: /home/weblogic
+
+      - name: install httpd
+        yum:
+          name: httpd
+          state: installed
+        
+  # Play2 - Application Server related tasks
+  - name: Play app - Create tomcat directories and username in app servers
+    hosts: appservers
+    become: yes
+    become_user: root
+    tasks:
+      - name: Create a username for tomcat
+        user:
+          name: tomcatadm
+          group: users
+          shell: /bin/bash
+          home: /home/tomcat
+
+      - name: create a directory for apache tomcat
+        file:
+          path: /opt/oracle
+          owner: tomcatadm
+          group: users
+          state: present
+          mode: 0755
+```
+
+To run the playbook, using a local hosts inventory, the shell command is:
+```
+ansible-playbook sampleplaybook.yml -i ansible_hosts
+```
+
+### Ansible alternatives
+
+Although Ansible is the most common configuration management tool at the moment, there are two other major alternatives. These two are `Puppet` and `Chef`. 
+
+They are mentioned here just for information purposes. One of the major difference between Ansible and the other two is that the first one is agentless. What this means is that you do not need to install any software on the remote nodes, before attempting to run automation tasks. All that Ansible requires is that the remote host has a correct version of python installed.
+
+<!-- ![ansible-chef-puppet](https://www.veritis.com/wp-content/uploads/Infographics/chef-vs-puppet-vs-ansible-what-are-the-differences-it-infographic.png) -->
+
+![ansible-puppet-chef](https://blog.aspiresys.com/wp-content/uploads/2022/03/Chef-vs-Puppet-vs-Ansible-%E2%80%93-The-Salient-Differences.jpg)
+
 
 ### Orientation to the Lab Environment
 
@@ -164,7 +235,45 @@ Typically, the only thing a user needs is a terminal to execute Ansible commands
 
 
 
+## Terraform vs Ansible
+
+### Configuration Management vs Provisioning
+Chef, Puppet, and Ansible are all configuration management tools, which means they are designed to install and manage software on existing servers. CloudFormation, Heat, Pulumi, and Terraform are provisioning tools, which means they are designed to provision the servers themselves (as well as the rest of your infrastructure, like load balancers, databases, networking configuration, etc), leaving the job of configuring those servers to other tools. Although the distinction is not entirely clear cut, given that configuration management tools can typically do some degree of provisioning (e.g., you can deploy a server with Ansible) and that provisioning tools can typically do some degree of configuration (e.g., you can run configuration scripts on each server you provision with Terraform), you typically want to pick the tool that’s the best fit for your use case.
+
+In particular, we’ve found that if you use Docker, the vast majority of your configuration management needs are already taken care of. With Docker, you can create images (such as containers or virtual machine images) that have all the software your server needs already installed and configured. Once you have such an image, all you need is a server to run it. And if all you need to do is provision a bunch of servers, then a provisioning tool like Terraform is typically going to be a better fit than a configuration management tool (here’s an example of how to use Terraform to deploy Docker on AWS).
+
+That said, if you’re not using server templating tools, a good alternative is to use a configuration management and provisioning tool together. For example, a popular combination is to use Terraform to provision your servers and Ansible to configure each one.
+
+![terraform-ansible](https://www.whizlabs.com/blog/wp-content/uploads/2019/12/Ansible_vs_Terraform.png)
+
+### Mutable Infrastructure vs Immutable Infrastructure
+Configuration management tools such as Chef, Puppet, and Ansible typically default to a mutable infrastructure paradigm. For example, if you instruct Chef to install a new version of OpenSSL, it will run the software update on your existing servers, and the changes will happen in place. Over time, as you apply more and more updates, each server builds up a unique history of changes. As a result, each server becomes slightly different than all the others, leading to subtle configuration bugs that are difficult to diagnose and reproduce (configuration drift). Even with automated tests, these bugs are difficult to catch; a configuration management change might work just fine on a test server, but that same change might behave differently on a production server because the production server has accumulated months of changes that aren’t reflected in the test environment.
+
+If you’re using a provisioning tool such as Terraform to deploy machine images created by Docker or Packer, most “changes” are actually deployments of a completely new server. For example, to deploy a new version of OpenSSL, you would use Packer to create a new image with the new version of OpenSSL, deploy that image across a set of new servers, and then terminate the old servers. Because every deployment uses immutable images on fresh servers, this approach reduces the likelihood of configuration drift bugs, makes it easier to know exactly what software is running on each server, and allows you to easily deploy any previous version of the software (any previous image) at any time. It also makes your automated testing more effective, because an immutable image that passes your tests in the test environment is likely to behave exactly the same way in the production environment.
+
+Of course, it’s possible to force configuration management tools to do immutable deployments, too, but it’s not the idiomatic approach for those tools, whereas it’s a natural way to use provisioning tools. It’s also worth mentioning that the immutable approach has downsides of its own. For example, rebuilding an image from a server template and redeploying all your servers for a trivial change can take a long time. Moreover, immutability lasts only until you actually run the image. After a server is up and running, it will begin making changes on the hard drive and experiencing some degree of configuration drift (although this is mitigated if you deploy frequently).
+
+### Procedural vs Declarative
+Chef and Ansible encourage a procedural style where you write code that specifies, step-by-step, how to to achieve some desired end state. Terraform, CloudFormation, Pulumi, Heat, and Puppet all encourage a more declarative style where you write code that specifies your desired end state, and the IAC tool itself is responsible for figuring out how to achieve that state.
+
 ## Overview of Jenkins
+
+Jenkins is an open source continuous integration/continuous delivery and deployment (CI/CD) automation software DevOps tool written in the Java programming language. It is used to implement CI/CD workflows, called pipelines.
+
+Pipelines automate testing and reporting on isolated changes in a larger code base in real time and facilitates the integration of disparate branches of the code into a main branch. They also rapidly detect defects in a code base, build the software, automate testing of their builds, prepare the code base for deployment (delivery), and ultimately deploy code to containers and virtual machines, as well as bare metal and cloud servers. 
+
+![jenkins-ci-cd](https://cdn.hostadvice.com/2018/03/devopsjenkins.png)
+
+Jenkins runs as a server on a variety of platforms including Windows, MacOS, Unix variants and especially, Linux. It requires a Java 8 VM and above and can be run on the Oracle JRE or OpenJDK. Usually, Jenkins runs as a Java servlet within a Jetty application server. It can be run on other Java application servers such as Apache Tomcat. More recently, Jenkins has been adapted to run in a Docker container. There are read-only Jenkins images available in the Docker Hub online repository.
+
+### Plugins
+A plugin is an enhancement to the Jenkins system. They help extend Jenkins capabilities and integrated Jenkins with other software. Plugins can be downloaded from the online Jenkins Plugin repository and loaded using the Jenkins Web UI or CLI. Currently, the Jenkins community claims over 1500 plugins available for a wide range of uses.
+
+Plugins help to integrate other developer tools into the Jenkins environment, add new user interface elements to the Jenkins Web UI, help with administration of Jenkins, and enhance Jenkins for build and source code management. One of the more common uses of plugins is to provide integration points for CI/CD sources and destinations. These include software version control systems (SVCs) such as Git and Atlassian BitBucket, container runtime systems -- especially Docker, virtual machine hypervisors such as VMware vSphere, public cloud instances including Google Cloud Platform and Amazon AWS, and private cloud systems such as OpenStack. There are also plugins that assist in communicating with operating systems over FTP, CIFS, and SSH.
+
+A plugin is written in Java. Plugins use their own set of Java Annotations and design patterns that define how the plugin is instantiated, extension points, the function of the plugin and the UI representation in the Jenkins Web UI. Plugin development also makes use of Maven deployment to Jenkins.
+
+### Summary 
 
 - Open source automation tool
 - Jenkins is used to integrate all DevOps stages with the help of plugins.
@@ -174,6 +283,8 @@ Typically, the only thing a user needs is a terminal to execute Ansible commands
 - Extensible
 - Pipeline supports building Continuous Delivery (CDel) pipelines through either a Web UI or a scripted Jenkinsfile.
 
+
 ### Jenkins User Interface
 
 ![jenkins_ui](https://github.com/WebToLearn/fx-trading-app/blob/devops_open_source/Week_12/Theory/images/jenkins_ui.PNG)
+

@@ -1,4 +1,4 @@
-# Week 13 - Continous deployment exercises
+# Week 13 - Devops Automation Exercises
 
 ## Table of contents
 
@@ -1086,6 +1086,11 @@ cat quote-service.log
 
 As you might notice, we didn't need to run git commands, as the Job itself is configured to fetch the source repository on it's own.
 
+Check that the web application is now available by running a http request on port 8220, using the ansible-controller (either from localhost, or from one of the other VMs in GCP - using internal IP).
+
+Optionally, update the terraform file to allow http connections from the internet to ansible-controller, on port 8220 and run the request from your local browser. There are at least two ways to implement this in terraform.
+
 ### Cleanup
 
 Make sure you run `terraform destroy` in your Cloud Shell instance, after you are done with the lab.
+
