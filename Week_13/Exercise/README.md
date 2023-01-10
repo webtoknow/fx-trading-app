@@ -1075,7 +1075,7 @@ chmod 755 mvnw
 ./mvnw package -Pprod -DskipTests
 
 # start the application in the background, redirecting the console output to quote-service.log
-java -jar target/quote-service-0.0.1-SNAPSHOT.jar  > quote-service.log 2>&1 &
+BUILD_ID=dontKillMe java -jar target/quote-service-0.0.1-SNAPSHOT.jar  > quote-service.log 2>&1 &
 
 # wait a few seconds for the application to start
 sleep 10
