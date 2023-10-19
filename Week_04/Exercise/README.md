@@ -16,6 +16,10 @@ We can clone the repository using GIT and the command below or we can download i
 git clone https://github.com/WebToLearn/fx-trading-app.git
 ```
 
+## Before Setup
+
+Prior to setting up the Angular and Spring Boot project, it's essential to have the following programs installed on your local machine: [Node.js LTS](https://nodejs.org/en), [Java SE 11](https://www.oracle.com/java/technologies/javase/jdk11-archive-downloads.html), [PostgreSQL](https://www.postgresql.org/), and [PGAdmin](https://www.pgadmin.org/).
+
 ## Setup Angular
 
 Install [Angular CLI](https://cli.angular.io/)
