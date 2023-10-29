@@ -14,17 +14,17 @@
 
 ## About Angular - part I
 
-- is a JavaScript framework that makes web applications to be easy to build
-- comes with features like data-binding, change-detection, forms, router&navigation and http implementation
+- Angular is a powerful JavaScript framework that simplifies web application development.
+- Key features of Angular include data-binding, change-detection, forms, routing and navigation, and HTTP implementation.
 
 ### Components
 
-- is the most basic building block in Angular world
-- basically, components are classes that interact with the *.html* file of the component - which is displayed in the browser
-- a component's application logic is defined inside a class
-- the class interacts with the view through some properties and methods
-- we use **@Component** decorator to identify a class as a component class
-- we need to specify the component's metadata. For example:
+- Component is the fundamental building block in Angular.
+- Components are classes that interact with an associated *HTML* file, which is rendered in the browser.
+- The application logic of a component is defined within its class.
+- Interaction with the view is accomplished through properties and methods.
+- Components are identified using the **@Component** decorator.
+- Component metadata, such as the selector, template URL, and style URLs, must be specified. Example:
 
 ```JavaScript
 @Component({
@@ -34,7 +34,7 @@
 })
 ```
 
-- after declaring the component, it will be specified into the HTML file of its parent in order to be loaded:
+- After declaring a component, it can be used in the HTML of its parent component using its selector:
 
 ```Html
 <app-blotter-view></app-blotter-view>
@@ -42,8 +42,8 @@
 
 ### Data Binding
 
-- data binding is available from AngularJS
-- we use curly braces for data binding - **{{ }}** :
+- Data binding is a powerful feature inherited from AngularJS.
+- Angular supports **interpolation** for data binding using curly braces - **{{ }}** :
 
 ```Html
  <tr *ngFor="let transaction of transactions">
@@ -58,8 +58,7 @@
  </tr>
 ```
 
-- this process is called **interpolation**
-- Angular supports **two-way data binding** - a mechanism for coordinating parts of a template with parts of a component:
+- Angular also supports **two-way data binding** for interactive UI elements:
 
 ```HTML
 <input [(ngModel)]="username">
@@ -67,25 +66,16 @@
 <p>Hello {{username}}!</p>
 ````
 
-```HTML
-<input [value]="username" (input)="username = $event.target.value">
-
-<p>Hello {{username}}!</p>
-```
-
-- plays an important role in communication between:
-  - a template and its component
-  - a parent and its child components
-
 ### Pipes
 
-- let us declare display-value transformations in HTML template, by using the pipe operator ( **|** ):
+- Pipes allow you to transform and format data for display in the HTML template.
+- Angular provides several built-in pipes like **date**, **currency**, and **uppercase**:
 
 ```Html
  <td>{{ transaction.date | date:'dd/MM/yyyy HH:mm' }}</td>
 ```
 
-- we can declare our own pipes: a class with **@Pipe** decorator defines a function that transforms input values to output values for display in a view :
+- You can create custom pipes by defining a class with the **@Pipe** decorator:
 
 ```JavaScript
 import { Pipe, PipeTransform } from '@angular/core';
@@ -109,21 +99,9 @@ export class ExponentialStrengthPipe implements PipeTransform {
 
 ### Directives
 
-- templates are dynamic - when Angular renders them, it transforms the DOM according to the instructions given by directives
-- a directive is a class with a **@Directive** decorator
-- each component is a directive - but components are distinctive
-- there are two kinds of directives besides components: **structural** and **attribute** directives
-
-#### Structural Directives
-
-- manipulate DOM elements
-- have a * sign before the directive
-- *e.g.* : *ngIf, *ngFor
-
-#### Attribute Directives
-
-- change the look and the behavior of the DOM element
-- you can create your own directives:
+- Templates in Angular are dynamic, and directives instruct Angular on how to transform the DOM.
+- To create a custom attribute directive, use the **@Directive** decorator.
+- Directives can be either structural (e.g., *ngIf, *ngFor) or attribute (e.g., custom directives).
 
 ```JavaScript
 import { Directive, ElementRef } from '@angular/core';
@@ -140,9 +118,8 @@ export class HighlightDirective {
 
 ### Data Sharing
 
-- a common pattern in Angular is sharing data between a parent component and one or more child components
-- we use **@Input()** and **@Output()** decorators
-- **@Input()** decorates the property index of type number:
+- Data sharing between parent and child components is a common pattern in Angular.
+- **@Input()** is used to decorate properties in a child component, and it receives data from the parent component.
 
 ```JavaScript
   // widget.component.ts 
@@ -150,8 +127,8 @@ export class HighlightDirective {
   @Output() deleted = new EventEmitter<number>();
 ```
 
-- the value of *index* property for each Widget instance comes from the parent component template
-- the *index* property is binded to the child (*WidgetComponent*) to the *i* property of the parent (*FxRatesViewComponent*).
+- The value of *index* property for each Widget instance comes from the parent component template.
+- The *index* property is binded to the child (*WidgetComponent*) to the *i* property of the parent (*FxRatesViewComponent*).
 
 ```Html
 <!-- fx-rates-view.component.html -->
@@ -162,8 +139,7 @@ export class HighlightDirective {
   </app-widget>
 ```
 
-- **@Output()** marks a property in a child component as a doorway through which data can travel from the child to the parent
-- the child component uses the **@Output()** property of type *EventEmitter* to raise an event to notify the parent of the change:
+- **@Output()** marks a property in a child component as an event emitter, allowing data to flow from the child to the parent:
 
 ```JavaScript
   // widget.component.ts 
@@ -172,7 +148,7 @@ export class HighlightDirective {
   this.deleted.emit(this.index);
 ```
 
-- the *onDeleteWidget* property from the parent, is binded to the child event (*deleted*)
+- The *onDeleteWidget* property from the parent, is binded to the child event (*deleted*).
 
 ```Html
 <!-- fx-rates-view.component.html -->
@@ -186,9 +162,8 @@ export class HighlightDirective {
 
 ### Routing
 
-- means navigating between pages
-- through routing, we can have links that direct us to a new page
-- we are reffering to these pages as components:
+- Angular provides powerful routing capabilities for navigating between different pages (components).
+- Define routes and components in the routing configuration:
 
 ```JavaScript
 import { RouterModule, Routes } from '@angular/router';
@@ -231,12 +206,13 @@ export class AppModule { }
 ```Html
 <router-outlet></router-outlet>
 ```
-
+- Use the **<router-outlet></router-outlet>** element to display routed components.
+- 
 ### Services
 
-- if we are in a situation where we need some code to be used everywhere on the page, we should use services 
-- through services, methods and components can be accessed across other components in the whole project
-- a service should look like this:
+- Services are used to encapsulate functionality that needs to be shared across components.
+- A service typically contains methods and properties that can be accessed by multiple components.
+- Define services using the **@Injectable()** decorator.
 
 ```JavaScript
 @Injectable()
@@ -249,8 +225,8 @@ export class UserService {
 
 #### Http Service
 
-- used for fetching external data, post data etc.
-- for using Http Service, we need to import this module in *app.module.ts*
+- The HttpClientModule is used to perform HTTP operations.
+- For using Http Service, we need to import this module in *app.module.ts*
 
 ```JavaScript
 import { HttpClientModule } from '@angular/common/http';
@@ -264,7 +240,7 @@ import { HttpClientModule } from '@angular/common/http';
 })
 ```
 
-- this is the way we can make a service which use **HttpClient**:
+- Define an HTTP service that makes requests and handles responses from external sources:
 
 ```JavaScript
 import { Injectable } from '@angular/core';
@@ -288,10 +264,8 @@ export class TradeService {
 
 ### Dependency Injection
 
-- is the way to create objects that depend upon other objects
-- a Dependency Injection system supplies the dependent objects (called also **dependencies**) when it creates an instance of an object
-- depencencies are services or objects that a class needs to perform its function
-- in Angular, Dependency Injection provides declared dependencies to a class when that class is instantiated:
+- Angular uses **dependency injection** to provide dependencies to a class when an instance of that class is created.
+- Dependencies can be services or objects required by a class to perform its function.:
 
 ```JavaScript
 import { TradeService } from '../../../services/trade.service';
