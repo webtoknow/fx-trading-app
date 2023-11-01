@@ -115,8 +115,8 @@ We are using [ngx-toastr](https://github.com/scttcper/ngx-toastr) for notificati
 Install *ngx-toastr*:
 
 ```bash
-npm install ngx-toastr --save
-npm install @angular/animations --save
+npm install ngx-toastr@15.2.1
+npm install @angular/animations
 ```
 
 In order to load *toast* style, we should update *angular.json*:
@@ -221,7 +221,7 @@ In order to load Open Sans font, bootstrap and Fontawesome style, we should upda
 and also install ngx-bootstrap:
 
 ```bash
-npm install ngx-bootstrap
+npm install ngx-bootstrap@9.0.0
 ```
 
 Link ngx-bootstrap by updating *app.module.ts*:
