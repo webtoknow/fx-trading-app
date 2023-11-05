@@ -18,18 +18,18 @@
 
 #### About
 
-- provide support for passing messages between **publishers** and **subscribers** in our application
-- offer signifiant benefits over other techinques for event handling, asynchronous programming and handling multiple values
-- are declarative, meaning that we define a function for publishing values, but it is not executed until a consumer subscribes to it
-- the subscribed consumer then receives notifications until the function completes or until they unsubscribe
-- to be able to use observables, we need to do the following steps:
-  - to create an observable, we have to import **rxjs/observable**, so we will be able to create and work with Observable type, needed until this will become part of the language:
+- Observables are a fundamental concept in Angular that provides support for passing messages between publishers and subscribers in an application.
+- They offer significant benefits over other techniques for event handling, asynchronous programming, and handling multiple values.
+- Observables are declarative, meaning that we define a function for publishing values, but it is not executed until a consumer subscribes to it.
+- Subscribed consumers receive notifications until the function completes or until they unsubscribe.
+- To use observables in Angular, follow these steps:
+  - Import the **Observable** type from 'rxjs':
 
   ```JavaScript
   import { Observable } from 'rxjs';
   ```
 
-  - then, we have to subscribe to the Observable in the application which will allow us to listen to the data that is coming along with it:
+  - Subscribe to the observable in your application to listen to the data it emits:
 
   ```JavaScript
    getCurrencies() {
@@ -43,6 +43,8 @@
     })
   ```
 Async pipe:
+- The **async** pipe is a powerful feature in Angular for working with observables.
+- It simplifies the process of binding observable data directly to the template.
 ```
 @Component({
   selector: 'async-observable-pipe',
@@ -57,9 +59,10 @@ export class AsyncObservablePipeComponent {
 
 #### Observables vs Promises
 
-- using **Promises**, we make a request and waiting for a **single response** - it will not be multiple responses on same request
-- attempting to resolve same Promise again with an another value will fail - it is always resolved with the first value and ignore the future ones
-- **Observables** allow to resolve (better saying, **emit**) multiple values
+- **Observables** differ from **Promises** in several ways:
+  - Observables allow for emitting multiple values over time, while Promises handle a single response.
+  - Promises are eager and always return the first value, while Observables are lazy and execute only when someone subscribes.
+  - Observables are cancelable, allowing you to stop them when needed.
 
 ```JavaScript
 const observable = new Observable((observer) => {
@@ -89,25 +92,24 @@ subscription.unsubscribe();
 
 #### Pull vs Push
 
-- two different ways to describe how the **data consumer** communicates with the **data producer**
-- **Pull**:
-  - data consumer is the part that decides when it get's data from the producer - this happen while pulling
+- Pull and push are two ways to describe how data **consumers** communicate with data **producers**.
+- **Pull** is when the consumer decides when to get data from the producer.
   - the time it takes the data to be delivered to the data consumer is unknown even for the data producer
   - *e.g.:*
     - *Data producers: JavaScript Functions*
     - *Data consumers: code that calls the previous functions*
-- **Push**:
+- **Push**, supported by Observables, is when the producer delivers data to registered callbacks.
   - the common way to push in JS are **promises**
   - we can consider the Promise as producer, but this time it delivers a value to registered callbacks
   - **Observables** are the new way to push data in JS
 
 #### Observable lifecycle
 
-- Observables can be:
-  - **Created** by using the **new Observable()** call
-  - **Subscribed** to by an **observer**
-  - **Executed** by calling the **next()**
-  - **Disposed** by calling **unsubscribe()**
+- Observables go through a lifecycle:
+  - **Created** by calling **new Observable()**.
+  - **Subscribed** to by an **observer**.
+  - **Executed** by calling **next()** to send data.
+  - **Disposed** of by calling **unsubscribe()** when no longer needed.
 
   **Creating observable**:
   - just call **new Observable()** and pass one argument (which is the observer here)
@@ -129,22 +131,16 @@ subscription.unsubscribe();
 
 ### Forms and Validations
 
-- an Angular Form needs a class for logic and a template for the user
-- forms have to block invalid data to be sent
-- validations on client side guide the user and avoid useless requests
-- there are 2 ways of creating Angular forms: **Template-driven** and **Reactive (model-driven)**
-- none of these is wrong
-- both are using **FormGroup** and **FormControl** building blocks
+- Angular forms are essential for creating user interfaces, blocking invalid data, guiding users, and avoiding unnecessary requests.
+- There are two ways to create Angular forms: Template-driven and Reactive (model-driven), both using **FormGroup** and **FormControl** building blocks.
+- Reactive forms are recommended for complex applications, as they provide a more robust, scalable, reusable, and testable solution.
 
 ### Reactive forms
 
-- are more robust, scalable, reusable and testable
-- best practice is to be used when forms are a key part of the application
-- the form model provides the value and status of the form element at a given point of time: **model-driven approach**
-- each form element in the view is directly linked to a form model (*FormControl* instance)
-- updates from the view to the model and from the model to the view are synchronous and aren't dependent on the UI rendered
-- validators are not added through attributes in the template
-- validator functions are added directly to the form control model in the component class
+- In reactive forms, the form model provides the value and status of form elements.
+- Each form element in the view is directly linked to a **FormControl** instance in the model.
+- Updates from the view to the model and vice versa are synchronous and independent of UI rendering.
+- Validator functions are added directly to form control models in the component class.
 - *e.g.*:
 
     ```javascript
@@ -187,13 +183,9 @@ subscription.unsubscribe();
 
 ### Template-driven forms
 
-- easy to be added in an app
-- don't scale as well as reactive forms
-- best practice is to be used if form requirements are basic and logic can be managed only in the template
-- the template provides the value and status of the form element at a given point of time:**template-driven approach**
-- each element is linked to a directive that manages the form model internally
-- to add validation, we need to add the same validation attributes and for native HTML form validation
-- every time the value of a form control changes, Angular runs validation and generates a list of validation errors, which results in an *INVALID* status, or null, which results in a *VALID* status
+- Template-driven forms are easier to use but may not scale well for complex requirements.
+- The template manages the form model internally.
+- Validation is added through attributes in the template, and validation is performed as the value of a form control changes.
 - *e.g.*:
 
     ```HTML
