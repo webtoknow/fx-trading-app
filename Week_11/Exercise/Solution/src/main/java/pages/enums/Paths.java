@@ -1,7 +1,7 @@
 package pages.enums;
 
 public enum Paths {
-    basePath("http://fx-trading-app.go.ro"),
+    basePath("http://localhost"),
     auth("/user/authenticate"),
     currencies("/currencies"),
     transactions("/transactions");
