@@ -11,16 +11,40 @@ The agenda has the following content:
 - Week 1 – Introduction
 - Week 2 – Analysis
   - [Introduction](https://drive.google.com/file/d/1ueFpjdAEXlskXxM4ao2qIN9ow5X18fVz/view?usp=sharing)
+
+    Discovering the vital roles of analysts, their interactions with team members, and engaging activities in functional analysis.
+
   - [Exercise](Week_02/Exercise/README.md)
+
+    Practice becoming a business analyst by crafting user stories for various pages on the FX-trading-app.
+
 - Week 3 - Design
   - [Introduction](https://drive.google.com/file/d/1iNmU9-0qMfgE44g3IGIiHWLj63JHG6ep/view?usp=sharing)
+
+    Explore key design principles like Proximity, Hierarchy, and Contrast in an interactive workshop. Enhance your design thinking skills through practical applications.
+
   - [Exercise](Week_03/Exercise/README.md)
+
+    Develop your skills as a UX designer by creating mockups for different pages within the FX-trading-app.
+
 - Week 4 – Architecture and setup
   - [Introduction](Week_04/Theory/README.md)
+
+    Explore essential concepts in web development such as system design architecture, Single Page Applications (SPAs), Angular, ES6, and TypeScript. Dive into tools like Angular CLI, Webpack, Spring, Spring Boot, and PostgreSQL. Understand the rationale behind selecting these technologies for developing the FX trading app.
+
   - [Exercise](Week_04/Exercise/README.md)
+
+    Establish the configuration for the FX trading app using Angular and Spring.
+
 - Week 5 – Create Login and Register pages with Angular
   - [Introduction](Week_05/Theory/README.md)
+
+    Explore Angular and delve into its core functionalities, including components, data binding, pipes, and the basics of directives. Gain insights into declaring components, utilizing data binding, leveraging built-in pipes, and crafting custom pipes through practical examples.
+
   - [Exercise](Week_05/Exercise/README.md)
+
+    The exercises entail configuring a mock server and implementing login and register functionalities using Angular, alongside UI enhancements. They involve setting up a JSON Server, creating application pages, styling, and integrating additional components to improve the user experience.
+
 - Week 6 – Create Dashboard page with Angular
   - [Introduction](Week_06/Theory/README.md)
   - [Exercise](Week_06/Exercise/README.md)
