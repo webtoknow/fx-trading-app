@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "concurrently \"node server.js\" \"json-server db.trade.json --port 8210\" \"json-server db.quote.json --port 8220\""
+    "start": "concurrently \"node server.js\" \"json-server --watch db.trade.json --port 8210\" \"json-server --watch db.quote.json --port 8220\""
   },
   "author": "Bogdan Nicolae",
   "license": "MIT",
