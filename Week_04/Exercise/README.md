@@ -34,13 +34,13 @@ Got to *Week_04\Exercise\Code*
 cd fx-trading-app\Week_04\Exercise\Code
 ```
 
-Let's generate a new Angular project using CLI
+Let's generate a new Angular project containing modules using CLI
 
 ```bash
-ng new ui
+ng new ui --no-standalone
 ```
 
-> When prompting the question: Would you like to add Angular routing?, please answer with Y. Also, we will use CSS as stylesheet format.
+> When you're asked, "Which stylesheet format would you like to use?", make sure to select **CSS**. Additionally, when prompted with "Do you want to enable Server-Side Rendering (SSR) and Static Site Generation (SSG/Prerendering)?", choose N (**No**).
 
 Start the project
 
@@ -48,6 +48,11 @@ Start the project
 cd ui
 ng serve
 ```
+
+Congratulations! You have successfully set up your Angular project. 
+
+After the build process completes in the terminal, you can access the app by opening a browser (such as Chrome) and navigating to `http://localhost:4200/`.
+
 
 ## Setup Spring Boot App and database
 
