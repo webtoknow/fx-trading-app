@@ -1,5 +1,5 @@
 export interface Rate {
-  buyRate: number;
-  sellRate: number;
-  ts: number;
+    buyRate: number;
+    sellRate: number;
+    ts: number;
 }

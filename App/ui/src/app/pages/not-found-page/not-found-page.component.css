@@ -1,9 +1,9 @@
 .fx-not-found-container {
-  background-color: rgb(141,213,170);
-  padding-top: 120px;
+  background-color: rgb(141, 213, 170);
   display: flex;
   align-items: center;
   flex-direction: column;
+  justify-content: center;
 }
 
 .fx-not-found-logo {
@@ -13,6 +13,6 @@
 
 .fx-not-found-text {
   font-size: 16px;
-  color: #7C7C7C;
+  color: #7c7c7c;
   margin-left: 60px;
 }
