@@ -8,7 +8,7 @@ describe('BlotterViewComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ BlotterViewComponent ]
+      declarations: [BlotterViewComponent]
     })
     .compileComponents();
 

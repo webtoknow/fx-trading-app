@@ -8,7 +8,7 @@ describe('FxRatesViewComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ FxRatesViewComponent ]
+      declarations: [FxRatesViewComponent]
     })
     .compileComponents();
 
