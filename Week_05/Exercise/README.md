@@ -297,9 +297,7 @@ To incorporate the Open Sans font, Bootstrap styles, and Font Awesome into your 
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65">
 
-<script defer src="https://use.fontawesome.com/releases/v5.15.4/js/all.js"
-    integrity="sha384-rOA1PnstxnOBLzCLMcre8ybwbTmemjzdNlILg8O7z1lUkLXozs4DHonlDtnE7fpc"
-    crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 ```
 
 Additionally, install `ngx-bootstrap` by running the following command:
@@ -319,6 +317,15 @@ imports: [
     BsDatepickerModule.forRoot()
 ]
 ```
+
+In order to load *DatePicker* style, we should update `angular.json`:
+
+```JSON
+"styles": [
+ "src/styles.css" // already here
+  "node_modules/ngx-toastr/toastr.css", // already here
+   "node_modules/ngx-bootstrap/datepicker/bs-datepicker.css"
+]
 
 ## Exercise 2 - Register page
 
