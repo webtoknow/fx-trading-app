@@ -4,7 +4,7 @@ import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { RegisterPageComponent } from './pages/register-page/register-page.component';
 import { DashboardPageComponent } from './pages/dashboard-page/dashboard-page.component';
 import { NotFoundPageComponent } from './pages/not-found-page/not-found-page.component';
-import { AuthGuard } from 'src/app/guards/auth.guard';
+import { AuthGuard } from './guards/auth.guard';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },

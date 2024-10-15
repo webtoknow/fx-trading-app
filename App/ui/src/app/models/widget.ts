@@ -1,5 +1,4 @@
 export class Widget {
-
   constructor(
     public primaryCcy: string = '',
     public secondaryCcy: string = '',
@@ -7,7 +6,12 @@ export class Widget {
     public sellRate: number = 0,
     public notional: number | null = null,
     public tenor: string = '',
-    public pickCCYState: boolean = true,
-  ) { }
+    public pickCCYState: boolean = true
+  ) {}
+}
 
+export enum RateTrend {
+  UP = 'up',
+  DOWN = 'down',
+  FLAT = 'flat',
 }

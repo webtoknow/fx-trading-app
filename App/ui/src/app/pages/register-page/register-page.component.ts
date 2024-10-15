@@ -9,18 +9,10 @@ import { UserService } from '../../services/user.service';
 @Component({
   selector: 'app-register-page',
   templateUrl: './register-page.component.html',
-  styleUrls: ['./register-page.component.css']
+  styleUrls: ['./register-page.component.css'],
 })
 export class RegisterPageComponent implements OnInit {
-
-  registerForm: FormGroup = this.formBuilder.group({
-    username: ['', Validators.required],
-    email: ['', Validators.required],
-    password: ['', [Validators.required, Validators.minLength(6)]],
-    confirmPassword: ['', Validators.required]
-  }, {
-    validator: this.mustMatch('password', 'confirmPassword')
-  });
+  registerForm!: FormGroup ;
 
   loading = false;
   submitted = false;
@@ -30,13 +22,26 @@ export class RegisterPageComponent implements OnInit {
     private router: Router,
     private userService: UserService,
     private toastr: ToastrService
-  ) { }
+  ) {}
 
   ngOnInit() {
+    this.registerForm = this.formBuilder.group(
+      {
+        username: ['', Validators.required],
+        email: ['', Validators.required],
+        password: ['', [Validators.required, Validators.minLength(6)]],
+        confirmPassword: ['', Validators.required],
+      },
+      {
+        validator: this.mustMatch('password', 'confirmPassword'),
+      }
+    );
   }
 
   // Convenience getter for easy access to form fields
-  get f() { return this.registerForm.controls; }
+  get f() {
+    return this.registerForm.controls;
+  }
 
   // custom validator to check that two fields match
   mustMatch(controlName: string, matchingControlName: string) {
@@ -55,9 +60,8 @@ export class RegisterPageComponent implements OnInit {
       } else {
         matchingControl.setErrors(null);
       }
-    }
+    };
   }
-
   onSubmit() {
     this.submitted = true;
 
@@ -67,7 +71,8 @@ export class RegisterPageComponent implements OnInit {
     }
 
     this.loading = true;
-    this.userService.register(this.registerForm.value)
+    this.userService
+      .register(this.registerForm.value)
       .pipe(first())
       .subscribe(
         (data: any) => {
@@ -79,7 +84,6 @@ export class RegisterPageComponent implements OnInit {
           this.toastr.error(error);
           this.loading = false;
         }
-      )
+      );
   }
-
 }

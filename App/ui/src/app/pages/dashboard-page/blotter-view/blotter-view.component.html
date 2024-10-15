@@ -7,9 +7,20 @@
   <div class="filter-input-container">
     <div class="flex-vertical-centered filter-group">
       <span>Ccy&nbsp;Pair&nbsp;&nbsp;</span>
-      <select name="Ccy" id="Ccy" class="form-control form-control-sm" [(ngModel)]="filter.ccyPair" (ngModelChange)="filterBy()">
+      <select
+        name="Ccy"
+        id="Ccy"
+        class="form-control form-control-sm"
+        [(ngModel)]="filter.ccyPair"
+        (ngModelChange)="filterBy()"
+      >
         <option value="" selected>Please select&nbsp;&nbsp;</option>
-        <option *ngFor="let currencyPair of currenciesPairs" [value]="currencyPair">{{ currencyPair }}</option>
+        <option
+          *ngFor="let currencyPair of currenciesPairs"
+          [value]="currencyPair"
+        >
+          {{ currencyPair }}
+        </option>
       </select>
     </div>
 
@@ -24,10 +35,16 @@
           (ngModelChange)="filterBy()"
           [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }"
           #dp="bsDatepicker"
-          bsDatepicker>
+          bsDatepicker
+        />
         <div class="input-group-append">
-          <button class="input-group-text calendar-icon" id="date-picker-icon" (click)="dp.show()" [attr.aria-expanded]="dp.isOpen">
-            <i class="fa fa-calendar-alt icon" aria-hidden="true"></i>
+          <button
+            class="input-group-text calendar-icon"
+            id="date-picker-icon"
+            (click)="dp.show()"
+            [attr.aria-expanded]="dp.isOpen"
+          >
+            <i class="fa fa-calendar-check-o icon" aria-hidden="true"></i>
           </button>
         </div>
       </div>
@@ -68,7 +85,7 @@
         <td>{{ transaction.action }}</td>
         <td>{{ transaction.notional | number }}</td>
         <td>{{ transaction.tenor }}</td>
-        <td>{{ transaction.date | date:'dd/MM/yyyy HH:mm' }}</td>
+        <td>{{ transaction.date | date : "dd/MM/yyyy HH:mm" }}</td>
       </tr>
     </tbody>
   </table>
