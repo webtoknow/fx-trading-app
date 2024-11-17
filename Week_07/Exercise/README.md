@@ -6,7 +6,7 @@ The purpose of this lab is to implement two microservices which will communicate
 
 Before developing the services, you can take a look at the application architecture.
 
-![alt text](https://github.com/WebToLearn/fx-trading-app/blob/master/Week_07/Exercise/architecture.png)
+![Architecture](architecture.png)
 
 ## Pre-requisites
 - Java 21

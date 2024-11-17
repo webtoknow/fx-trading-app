@@ -9,6 +9,9 @@
 - [Exercise 5 - User Registration](#exercise-5---user-registration)
 - [Exercise 6 - User Authentication](#exercise-6---user-authentication)
 - [Exercise 7 - User Authorization](#exercise-7---user-authorization)
+- [Exercise 8 - Secure the FX Trading API](#exercise-8---secure-the-fx-trading-api)
+- [Exercise 9 (bonus) - Unit test](#exercise-9-(bonus)---unit-test)
+- [Exercise 10 (bonus) - Integration testing](#exercise-9-(bonus)---integration-testing)
 
  ## Pre-requisites
     - Install Java 11
@@ -661,10 +664,7 @@ Update the UserController and add the authorize request
  
  Test it with Postman.
 
-============= 
-TODO: moved from week 07, fix order
-
-## <a name="exercise-10">Exercise 10 - Secure the API</a>
+## Exercise 8 - Secure the FX Trading API
 
 1. Add the following dependencies in pom.xml. After adding the dependencies, do a maven clean and install. Reload the dependencies in the IDE if needed.
 
@@ -738,7 +738,7 @@ To now make succesfull requests to the trading service API you have to:
 Authorization : Bearer <TOKEN>
 ```
 
-## <a name="exercise-VI">Exercise VI - Unit test </a>
+## Exercise 9 (bonus) - Unit test
 
 You can add the following test under the test folder(src/**test**/java) in package *com.banking.sofware.design.fxtrading.service*
 
@@ -805,7 +805,7 @@ Notice there are three parts to the method (They follow a style named <a href="h
 * in the second part the tested method is invoked
 * finally in the third part the results are verified by using asserts(the post-conditions are checked)
 
-## Exercise 6 (bonus) - Integration testing
+## Exercise 10 (bonus) - Integration testing
 
 Add integration tests for the methods from the FxRateController class (https://www.arhohuttunen.com/spring-boot-webmvctest/).
 

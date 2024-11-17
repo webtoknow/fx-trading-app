@@ -1,6 +1,6 @@
 # Week 7 - Development : Server-side programming
 
-![alt text](https://github.com/WebToLearn/fx-trading-app/blob/master/Week_07/Theory/client-server.png)
+![Client-Server](client-server.png)
 
 ## 1. Web servers
 
