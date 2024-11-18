@@ -1,13 +1,14 @@
-package com.project.user.administration;
+package com.banking.sofware.design.fx_trading;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-public class PostgresDemoApplicationTests {
+class FxTradingApplicationTests {
 
 	@Test
-	public void contextLoads() {
+	void contextLoads() {
 	}
 
 }
+

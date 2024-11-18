@@ -24,13 +24,13 @@ The agenda has the following content:
 - Week 6 – Create Dashboard page with Angular
   - [Introduction](Week_06/Theory/README.md)
   - [Exercise](Week_06/Exercise/README.md)
-- Week 7 – User-Administration microservice
+- Week 7 – Quote and FX Trading microservices with Spring
   - [Introduction](Week_07/Theory/README.md)
   - [Exercise](Week_07/Exercise/README.md)
-- Week 8 – Quote microservice
+- Week 8 – User-Administration microservice with Spring
   - [Introduction](Week_08/Theory/README.md)
   - [Exercise](Week_08/Exercise/README.md)
-- Week 9 – Fxtrading microservice
+- Week 9 –  TODO: microservice
   - [Introduction](Week_09/Theory/README.md)
   - [Exercise](Week_09/Exercise/README.md)
 - Week 10 – Testing

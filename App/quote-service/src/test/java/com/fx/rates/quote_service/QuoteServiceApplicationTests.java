@@ -1,13 +1,13 @@
-package com.project.user.administration;
+package com.fx.rates.quote_service;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-public class PostgresDemoApplicationTests {
+class QuoteServiceApplicationTests {
 
 	@Test
-	public void contextLoads() {
+	void contextLoads() {
 	}
 
 }

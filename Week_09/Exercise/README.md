@@ -1,450 +1,670 @@
-# Week 9 - Development of Fxtrading microservice
+# Week 9 - Create User-Administration Microservice With Spring
 
-Before developing the Fxtrading service you can take a look at the application architecture.
+## Table of contents
 
-![alt text](https://github.com/WebToLearn/fx-trading-app/blob/master/Week_09/Exercise/architecture.png)
+- [Exercise 1 - Create project](#exercise-1---create-project)
+- [Exercise 2 - Database Setup](#exercise-2---database-setup)
+- [Exercise 3 - Read data to controller](#exercise-3---read-data-to-controller)
+- [Exercise 4 - Read all users](#exercise-4---read-all-users)
+- [Exercise 5 - User Registration](#exercise-5---user-registration)
+- [Exercise 6 - User Authentication](#exercise-6---user-authentication)
+- [Exercise 7 - User Authorization](#exercise-7---user-authorization)
+- [Exercise 8 - Secure the FX Trading API](#exercise-8---secure-the-fx-trading-api)
+- [Exercise 9 (bonus) - Unit test](#exercise-9-(bonus)---unit-test)
+- [Exercise 10 (bonus) - Integration testing](#exercise-9-(bonus)---integration-testing)
 
+ ## Pre-requisites
+    - Install Java 11
+    - Install maven
+    - Install PostgreSQL
+    - Install Postman
+ 
+ 
+ ## Exercise 1 - Create project
+ 
+ Use your favourite IDE to create a simple maven project.
+ Update pom.xml with the following tags:
+ 
+ ```XML
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-- [Exercise I - Importing initial project setup in IDE](#exercise-I)
-- [Exercise II - Database Setup](#exercise-II)
-- [Exercise III - Implement REST endpoint for displaying list of all trades](#exercise-III)
-- [Exercise IV - Implement functionality for saving trades](#exercise-IV)
-- [Exercise V - Secure the API](#exercise-V)
-- [Exercise VI - Unit test](#exercise-VI)
+    <groupId>com.project</groupId>
+    <artifactId>user-administration</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
 
+    <name>user-administration</name>
+    <description>Spring Boot for user administration</description>
 
-## <a name="exercise-I">Exercise I - Importing initial project setup in IDE </a>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.1.1.RELEASE</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
 
-Import in the IDE the starter project. It should be imported as a Maven project.
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>1.10</java.version>
+    </properties>
 
-Notes:
-1. Under *fxtrading* package there is the main class of the Spring Boot application: FxTradingApplication
-2. The pom.xml file contains the required Maven dependencies: Spring Web, Spring JPA, PostgreSQL, etc
-3. Properties are set in /src/main/resources/application.properties. 
-For example: Tomcat server is defined to run on port 8210 by setting property *server.port*  
-Also database properties are set. The database properties must match the database setup done in the next exercise.
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.24</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.7</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
 
-## <a name="exercise-II">Exercise II - Database Setup </a>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.auth0</groupId>
+            <artifactId>java-jwt</artifactId>
+            <version>3.4.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
-For this exercise do the following below with the help of the commands found in db_setup.sql
-
-1. Create a database named **fxtrading**
-2. Create the **transactions** table on the above database
-3. Create user **fxuser** and grant him rights on fxtrading database and associated tables and sequences
-4. Insert dummy test data in the transactions table
-
-
-Notes:
-1. Database connection properties are already set in /src/main/resources/application.properties. 
-They are used by Spring to connect to the Postgresql database:
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>
 ```
-spring.datasource.url=jdbc:postgresql://<DATABASE_HOST>:<DATABASE_PORT>/<DATABASE_NAME>
-spring.datasource.username=<VALUE>
-spring.datasource.password=<VALUE>
+
+
+Create the following package in src/main/java:
+com.project.user.administration
+
+
+Create under it the main class: UserAdministrationApplication.java
+
+
+ ```Java
+package com.project.user.administration;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class UserAdministrationApplication {
+	public static void main(String[] args) {
+		SpringApplication.run(UserAdministrationApplication.class, args);
+	}
+}
+
+ ```
+ 
+ Create the following property file under the "resources" package: application.properties and add the following lines to it
+ 
+```
+ ## Spring DATASOURCE (DataSourceAutoConfiguration & DataSourceProperties)
+spring.datasource.url=jdbc:postgresql://localhost:5432/users
+spring.datasource.username=new_user
+spring.datasource.password=new_user_password
+
+# The SQL dialect makes Hibernate generate better SQL for the chosen database
+spring.jpa.properties.hibernate.dialect = org.hibernate.dialect.PostgreSQLDialect
+
+# Hibernate ddl auto (create, create-drop, validate, update)
+spring.jpa.hibernate.ddl-auto=update
+
+spring.jpa.properties.hibernate.jdbc.lob.non_contextual_creation=true
+
+server.port=8200
+
 ```
 
-## <a name="exercise-III">Exercise III - Implement REST endpoint for displaying list of all trades </a>
 
-For this exercise we will need to create(guidance below):
-1. a Hibernate @Entity class that maps to the *transactions* table
-2. a TransactionResponse class that will be used to serialize/deserialize data going through the @RestController(which will be created after)
-3. a TransactionMapper mapstruct interface that will be used to convert between entities and response objects
-4. a @Repository interface extending JpaRepository
-5. a @Service class
-6. a @RestController class
+Now run the main class.
 
-Indications:
 
-1.  Under package *fxtrading* in package *entities*  
-Create the entity class Transaction that maps to transactions table:
+ ## Exercise 2 - Database Setup
+ 
+ Create in postgresql the database: "users"
+ Run the following sql commands to create the prerequisites.
+ 
+ 
+ ```Sql
+ CREATE   TABLE user_table (
+    user_id SERIAL PRIMARY KEY,
+    user_name varchar(255),
+    email varchar(255),
+    password varchar(255)
+);
 
+
+CREATE  TABLE user_login (
+    user_login_id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES user_table(user_id),
+    token varchar(255),
+    token_expire_time varchar(255)
+);
+
+
+INSERT INTO user_table (user_name , email , password)
+VALUES ('razvan', 'razvan@gmail.com', 'razvanPassword');
+
+INSERT INTO user_table (user_name , email , password)
+VALUES('mihai', 'mihai@gmail.com', 'mihaiPassword');
+
+
+INSERT INTO user_table (user_name , email , password)
+VALUES('andrei', 'andrei@gmail.com','AndreisPassword');
 ```
-package com.banking.sofware.design.fxtrading.entities;
 
-import java.math.BigDecimal;
-import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+Now use the Grant Wizzard to grant to your db-user access to your db , or just run the following scripts directly:
 
-@Entity(name = "Transactions")
-public class Transaction {
+```SQL 
+CREATE ROLE new_user LOGIN PASSWORD 'new_user_password';
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private BigDecimal id;
+REVOKE CONNECT ON DATABASE users  FROM PUBLIC;
+GRANT CONNECT on DATABASE users  TO new_user;
 
-  @Column
-  private String username;
+GRANT USAGE ON SCHEMA public TO new_user;
 
-  @Column
-  private String primaryCcy;
+GRANT ALL PRIVILEGES ON DATABASE users TO new_user;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO new_user;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO new_user;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO new_user;
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO new_user;
+```
 
-  @Column
-  private String secondaryCcy;
+ ## Exercise 3 - Read data to controller
+ 
+ Create the following packages under: com.project.user.administration
+ 1) controller
+ 2) exception
+ 3) model
+ 4) repository
+ 5) services
+ 6) vo
+ 
+ Create the first entity 
+ 
+ ```Java
+package com.project.user.administration.model;
 
-  @Column
-  private BigDecimal rate;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-  @Column
-  private String action;
+import javax.persistence.*;
 
-  @Column
-  private BigDecimal notional;
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@Table(name = "user_table")
+public class User {
 
-  @Column
-  private String tenor;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id", updatable = false, nullable = false)
+    private Long userId;
 
-  @Column
-  private Date date;
+    @Column(columnDefinition = "user_name")
+    private String userName;
 
-  //TODO: Generate getters and setters
+    @Column(columnDefinition = "password")
+    private String password;
+
+    @Column(columnDefinition = "email")
+    private String email;
 
 }
 ```
+ 
+ 
+Create the repository for the User entity in order for it to be able to read an user.
+ 
+ ```Java
+ 
+package com.project.user.administration.repository;
 
-2. Under *fxtrading* in package *response*.  
-Create class TransactionResponse  
-
-We use this object to serialize/deserialize REST message payloads.  
-It is a practice to use a distinct set of objects(from entities) when communicating through the REST interface.  
-These objects help us as we might want for example to either hide, aggregate or transform information coming from database entities.  
-
-In our case we transform the rate and date fields as detailed in the below step.
-
-
-```
-package com.banking.sofware.design.fxtrading.response;
-
-import java.math.BigDecimal;
-
-public class TransactionResponse {
-
-  private BigDecimal id;
-
-  private String username;
-
-  private String primaryCcy;
-
-  private String secondaryCcy;
-
-  private BigDecimal rate;
-
-  private String action;
-
-  private BigDecimal notional;
-
-  private String tenor;
-
-  private Long date;
-  
-  //TODO: Generate getters and setters
-  
-}
-```
-
-3. a
-As an example of data transformation, in this microservice the rates are stored as integer numbers in the database.  
-This microservice will use only the first four decimal places of fx rates.  
-The rates will need to be converted from decimal to integers and vice versa when needed.   
-For conversion we will multiply or divide with a constant of 10000 defined in a constant class  
-
-In package *util* under *fxtrading*  
-Add class RateUtil:  
-
-```
-package com.banking.sofware.design.fxtrading.util;
-
-import java.math.BigDecimal;
-
-//question: why use final? 
-public final class RateUtil {
-
-  //question: why use private?
-  private RateUtil() { }
-
-  public static final BigDecimal RATE_MULTIPLIER = BigDecimal.valueOf(10000);
-
-}
-```
-
-3. b
-In *fxtrading* in package *mapper*.
-Add to it a new class named TransactionMapper  
-**You have to write the return statements (one line each) as indicated by the TODO comments**  
-
-```
-package com.banking.sofware.design.fxtrading.mapper;
-
-import com.banking.sofware.design.fxtrading.entity.Transaction;
-import com.banking.sofware.design.fxtrading.response.TransactionResponse;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Named;
-import org.mapstruct.factory.Mappers;
-import com.banking.sofware.design.fxtrading.util.RateUtil;
-
-import java.math.BigDecimal;
-import java.util.Date;
-
-@Mapper(imports = {RateUtil.class, Date.class})
-public interface TransactionMapper {
-    TransactionMapper INSTANCE = Mappers.getMapper( TransactionMapper.class );
-
-    @Mapping(qualifiedByName = "convertRateForTransfer", target = "rate")
-    @Mapping(qualifiedByName = "convertDateToLong", target = "date")
-    TransactionResponse transactionToTransactionResponse(Transaction transaction);
-
-    @Named("convertRateForTransfer")
-    default BigDecimal convertRateForTransfer(BigDecimal rate) {
-        // TODO: get rate from transaction object and divide it by RATE_MULTIPLIER. Hint: Use *divide* method from BigDecimal
-        //return rate.
-    }
-    @Named("convertDateToLong")
-    default Long convertDateToLong(Date date) {
-        //TODO: get date field from transaction and convert it to long using method from Date API
-        /**
-         * Notice: the date object can't be null as it is a mandatory database field.
-         * but if an entity field can be null we need to take care at conversion to
-         * avoid Null Pointer Exception
-         **/
-        //return date.
-    }
-
-
-}
-```
-
-
-4. In package *repository* under *fxtrading* add:
-
-```
-package com.banking.sofware.design.fxtrading.repository;
-
-import java.math.BigDecimal;
-
+import com.project.user.administration.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import com.banking.sofware.design.fxtrading.entity.Transaction;
-
 @Repository
-public interface FxTradingRepository extends JpaRepository<Transaction, BigDecimal> {
-  
+public interface UserRepository extends JpaRepository<User, Long> {
+    public User findByUserId(Long userId);
 }
-```
 
+ ```
 
-5. Under *fxtrading* in package *service*  add:
+ Create the user value object to be passed to the front-end.
+ 
+ ```Java
+package com.project.user.administration.vo;
 
-```
-package com.banking.sofware.design.fxtrading.service;
+ import lombok.AllArgsConstructor;
+ import lombok.Builder;
+ import lombok.Data;
+ import lombok.NoArgsConstructor;
 
-import com.banking.sofware.design.fxtrading.mapper.TransactionMapper;
-import com.banking.sofware.design.fxtrading.repository.FxTradingRepository;
-import com.banking.sofware.design.fxtrading.response.TransactionResponse;
+ @Data
+ @Builder
+ @NoArgsConstructor
+ @AllArgsConstructor
+ public class UserRequestVo {
+
+     private String username;
+     private String email;
+     private String password;
+     private String token;
+
+ }
+ ```
+ 
+Create the user service and add method for finding by user id
+ 
+```Java
+ 
+package com.project.user.administration.services;
+
+import com.project.user.administration.model.User;
+import com.project.user.administration.repository.UserRepository;
+import com.project.user.administration.vo.UserRequestVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Service
-public class FxTradingService {
+public class UserService {
 
     @Autowired
-    private FxTradingRepository repository;
+    private UserRepository userRepository;
 
-    @SuppressWarnings("unchecked")
-    public List<TransactionResponse> getTransactions() {
-        return repository.findAll().stream().map(TransactionMapper.INSTANCE::transactionToTransactionResponse).collect(Collectors.toList());
+    public UserRequestVo findByUserId(Long userId) {
+
+        User user = userRepository.findByUserId(userId);
+
+        return UserRequestVo.builder()
+                .username(user.getUserName())
+                .email(user.getEmail())
+                .build();
     }
-
 }
+ 
 ```
+ 
+ Create the user controller.
+ 
+ 
+ ```Java
+ 
+package com.project.user.administration.controller;
 
-6. In package *rest* under *fxtrading* add the REST controller below
-
-```
-package com.banking.sofware.design.fxtrading.rest;
-
-import com.banking.sofware.design.fxtrading.response.TransactionResponse;
-import com.banking.sofware.design.fxtrading.service.FxTradingService;
+import com.project.user.administration.services.UserService;
+import com.project.user.administration.vo.UserRequestVo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 
 @RestController
-@RequestMapping("/transaction")
-public class FxTradingRestController {
+public class UserController {
 
     @Autowired
-    private FxTradingService tradingService;
+    private UserService userService;
 
+    @GetMapping("/user/{userId}")
     @CrossOrigin
-    @GetMapping(produces = "application/json")
-    public List<TransactionResponse> getTransactions(HttpServletResponse response) {
-        try {
-            return tradingService.getTransactions();
-        } catch (Exception e) {
-            response.setStatus(500);
-            return null;
-        }
+    public UserRequestVo getUserById(@PathVariable Long userId) {
+        return userService.findByUserId(userId);
     }
-
 }
-```
-
-After completing steps 1-6 of exercise III you should have a working REST endpoint for listing all trades.
-It can now be tested with a tool like Postman
+ ```
  
+Use Postman to test the endpoint.
 
-## <a name="exercise-IV">Exercise IV - Implement functionality for saving trades </a>
+Example: GET - localhost:8200/user/1  =>  should return the user "razvan"
 
-Since we cannot trust the exchange rate coming from the frontend(can be trivially changed) we will call the quote service to provide us with the rate.
+ ## Exercise 4 - Read all users
+ Do this exercise alone this time :)
 
-1. Let's create a service that obtains the quotation from the quote service
+ ### 4.a. - GET all users
+    Example: GET localhost:8200/user/all  =>  should return all users
+    Hint: Use the map() methods from Java stream to transform the List<User> to List<UserRequestVo>
 
-In package *service* add class QuoteProxyService
+ ### 4.b. [Optional] - GET all users whose username contains a given sequence of letters
+    Example: GET - localhost:8200/user?name=andr  =>  should return the user whose username is "andrei"
+    Hints: - The name should be passed to the request as a @RequestParam
+           - Use the filter() and map() methods from Java stream
 
-```
-package com.banking.sofware.design.fxtrading.service;
+ ## Exercise 5 - User Registration
 
-import com.banking.sofware.design.fxtrading.response.QuoteResponse;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+Add the register method to UserService.
 
-@Service
-public class QuoteProxyService {
+```Java
 
-    @Value("${fxrates.url}")
-    private String fxratesUrl;
+public void registerNewUser(UserRequestVo userRequestVo) {
+    User user = User.builder()
+        .userName(userRequestVo.getUsername())
+        .password(userRequestVo.getPassword())
+        .email(userRequestVo.getEmail())
+        .build();
 
-    public QuoteResponse getRate(String primaryCcy, String secondaryCcy) {
-
-        RestTemplate restTemplate = new RestTemplate();
-
-        StringBuilder sb = new StringBuilder(fxratesUrl);
-        sb = sb.append("?primaryCcy=").append(primaryCcy);
-        sb = sb.append("&secondaryCcy=").append(secondaryCcy);
-
-        return restTemplate.getForObject(sb.toString(), QuoteResponse.class);
-    }
-
+    userRepository.save(user);
 }
 
 ```
 
-We also need to add a simple java object that will contain the deserialized response.  
-Create a package *dto* under *fxtrading* and add class QuoteResponse  
+Add registerNewUser method to the UserController
 
+```Java
+@PostMapping("/user/register")
+@CrossOrigin
+public void registerNewUser(@RequestBody UserRequestVo userRequestVo) {
+    userService.registerNewUser(userRequestVo);
+}
 ```
-package com.banking.sofware.design.fxtrading.dto;
 
-import java.math.BigDecimal;
+Use Postman to test the new endpoint.
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class QuoteResponse {
+ ## Exercise 6 - User Authentication
+ 
+ Create a new class for the token response: UserTokenResponseVo.java
 
-  private BigDecimal buyRate;
-  private BigDecimal sellRate;
+ ```Java
+package com.project.user.administration.vo;
 
-  public QuoteResponse() {
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-  }
-
-  public QuoteResponse(BigDecimal buyRate, BigDecimal sellRate) {
-    this.buyRate = buyRate;
-    this.sellRate = sellRate;
-  }
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class UserTokenResponseVo {
+    private String username;
+    private String token;
+}
+ ```
+ 
+ Update the UserRepository by adding a method for retrieving the user.
+ 
+```Java
   
-  // TODO: add getters and setters
+@Query("SELECT u FROM User u WHERE u.userName = ?1 and u.password = ?2")
+public User findUser(String userName, String password);
+   
+```
+ 
+ 
+ Create the UserLogin entity
+ 
+ ```Java
+package com.project.user.administration.model;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@Table(name = "user_login")
+public class UserLogin {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_login_id", updatable = false, nullable = false)
+    private Long userLoginId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @Column(columnDefinition = "token")
+    private String token;
+
+    @Column(columnDefinition = "token_expire_time")
+    private String tokenExpireTime;
 
 }
 ```
 
-Notice we added explictly the no-args constructor and also added a constructor with parameters. 
-The second one is created for convenience for unit testing.  
-If the first one is missing then the deserialization will fail.  
-
-2. In FxTradingService add the following methods and fields  
-*Note*: you have to add missing imports (import from Spring framework and Apache Commons Lang3 and org.slf4j)
-
+Update the User entity and add a new attribute:
+```Java
+@OneToMany(mappedBy = "user")
+private List<UserLogin> logins = new ArrayList<>();
 ```
-    private Logger logger = LoggerFactory.getLogger(FxTradingService.class);
+
+Create the repository for the UserLogin class
+```Java
+package com.project.user.administration.repository;
+
+import com.project.user.administration.model.UserLogin;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface UserLoginRepository extends JpaRepository<UserLogin, Long> {
+
+    @Query("SELECT u FROM UserLogin u WHERE u.user.userName = ?1  and u.token = ?2")
+    public UserLogin findByUserAndToken(String userName, String token);
+
+}
+ ```
+
+ Inject the UserLoginRepository in the UserService
+ ```Java
+ @Autowired
+ UserLoginRepository userLoginRepository;
+ ```
+
+  
+ Update the UserService class with validation, user-login save and token generation logic.
+ 
+ ```Java
+ 
+  public String getCurrentTimeStamp() {
+        Date newDate = DateUtils.addHours(new Date(), 3);
+        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(newDate);
+  }
     
-    @Autowired
-    private QuoteProxyService proxyRatesService;
+  public static String createJsonWebToken(String username){
+        String jwt = JWT.create()
+                    .withSubject(username)
+                    .withIssuer("auth0")
+                    .withExpiresAt(DateUtils.addHours(new Date(), 3))
+                    .sign(Algorithm.HMAC256("secret"));
+        return jwt;
+  }
     
 
-    @Transactional
-    public void makeTransaction(TransactionResponse dto) {
-        // Important: in a real application validations should be made - here for example
-        String action = dto.getAction();
-        if (StringUtils.isBlank(action) || !Arrays.asList("BUY", "SELL").contains(action.toUpperCase())) {
-            throw new IllegalArgumentException("Action not supported!");
+ public UserTokenResponseVo validateUserCredentialsAndGenerateToken(UserRequestVo userRequestVo) {
+
+        User user = userRepository.findUser(userRequestVo.getUsername(), userRequestVo.getPassword());
+
+        if( user != null) {
+
+            //String token=  RandomStringUtils.random(25, true, true);
+            String token = createJsonWebToken(userRequestVo.getUsername());
+
+             UserLogin userLogin = UserLogin.builder()
+                    .user(user)
+                    .token(token)
+                    .tokenExpireTime(getCurrentTimeStamp())
+                    .build();
+            userLoginRepository.save(userLogin);
+
+            UserTokenResponseVo userTokenResponseVo = new UserTokenResponseVo();
+            userTokenResponseVo.setToken(token);
+            userTokenResponseVo.setUsername(userRequestVo.getUsername());
+
+            return userTokenResponseVo;
+        } else {
+            throw new RuntimeException("User not found");
         }
-    
-        QuoteResponse ratePair = getCurrentRate(dto.getPrimaryCcy(), dto.getSecondaryCcy());
-        BigDecimal rate = "BUY".equalsIgnoreCase(action) ? ratePair.getBuyRate() : ratePair.getSellRate();
-    
-        Transaction transaction = TransactionMapper.INSTANCE.transactionResponseToTransaction(dto,rate);
-        repository.save(transaction);
     }
-    
-    private QuoteResponse getCurrentRate(String primaryCcy, String secondaryCcy) {
-        try {
-            return proxyRatesService.getRate(primaryCcy, secondaryCcy);
-        } catch (Exception e) {
-            logger.error("Could not obtain response from quote service!", e);
-            throw e;
-        }
-    }
-```
-
-In TradingMapper add the following methods:
-
-```
-    @Mapping(qualifiedByName = "convertRateForPersisting", target = "rate", source = "rate")
-    @Mapping(expression = "java(new Date())", target = "date")
-    Transaction transactionResponseToTransaction(TransactionResponse transactionResponse, BigDecimal rate);
-
-
-    @Named("convertRateForPersisting")
-    default BigDecimal convertRateForPersisting(BigDecimal rate) {
-        return rate.multiply(RateUtil.RATE_MULTIPLIER).setScale(0, RoundingMode.HALF_UP);
-    }
-```
-
-
-
-3. In FxTradingRestController add the following method:
-
-```
-    @CrossOrigin
-    @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
-    public void makeTransaction(@RequestBody TransactionResponse transaction, HttpServletResponse response) {
-        try {
-            tradingService.makeTransaction(transaction);
-        } catch (Exception e) {
-            response.setStatus(500);
-        }
-    }
+ 
   ```
   
-**Important**: for this functionality to work this microservice has to connect to a live quote service.
+  Add the authentication method to the UserController.
+  
+ ```Java
+   @PostMapping("/user/authenticate")
+   @CrossOrigin
+    public UserTokenResponseVo login(@RequestBody UserRequestVo userRequestVo) {
+        return userService.validateUserCredentialsAndGenerateToken(userRequestVo);
+    }
+```
 
-Now the implementation for the creation of trades should be done and you can test it with a tool like Postman.  
+Test this endpoint with Postman.
+
+
+## Exercise 7 - User Authorization
+
+Create the UserAuthorizeResponseVo class.
+
+ ```Java
+ package com.project.user.administration.vo;
+
+ import lombok.AllArgsConstructor;
+ import lombok.Builder;
+ import lombok.Data;
+ import lombok.NoArgsConstructor;
+
+ @Data
+ @Builder
+ @NoArgsConstructor
+ @AllArgsConstructor
+ public class UserAuthorizeResponseVo {
+     private String username;
+     private boolean isValid;
+ }
+ ```
  
-## <a name="exercise-V">Exercise V - Secure the API</a>
+ Update UserService class with the authorization logic.
+
+ 
+  ```Java
+  
+  public UserAuthorizeResponseVo authorizeV1(UserRequestVo userRequestVo) throws ParseException {
+        UserLogin userLogin = userLoginRepository.findByUserAndToken(userRequestVo.getUsername(), userRequestVo.getToken());
+	
+	// check user-login in database
+        if(userLogin != null){
+            DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Date date = format.parse(userLogin.getTokenExpireTime());
+
+	    // check if token expired	
+            if(new Date().compareTo(date) <1){
+                return new UserAuthorizeResponseVo(userRequestVo.getUsername(), true);
+            } else {
+                return new UserAuthorizeResponseVo(userRequestVo.getUsername(), false);
+            }
+        }
+        return new UserAuthorizeResponseVo(userRequestVo.getUsername(), false);
+    }
+
+    public UserAuthorizeResponseVo authorizeV2(UserRequestVo userRequestVo) throws ParseException {
+        String userName = extractUserNameFromToken(userRequestVo.getToken());
+        UserLogin userLogin = userLoginRepository.findByUserAndToken(userName, userRequestVo.getToken());
+	
+	// check user-login in database
+        if(userLogin != null){
+            return new UserAuthorizeResponseVo(userRequestVo.getUsername(),  verifyToken(userRequestVo.getUsername(),     userRequestVo.getToken()));
+        }
+        return new UserAuthorizeResponseVo(userRequestVo.getUsername(), false);
+    }
+
+
+    public static String extractUserNameFromToken( String token) throws JWTVerificationException{
+
+            Algorithm algorithm = Algorithm.HMAC256("secret");
+            JWTVerifier verifier =  JWT.require(algorithm)
+                    .withIssuer("auth0")
+                    .build();
+
+            DecodedJWT jwt = verifier.verify(token);
+            return  jwt.getSubject();
+
+    }
+
+    public static boolean verifyToken(String user, String token){
+        try{
+            Algorithm algorithm = Algorithm.HMAC256("secret");
+            JWTVerifier verifier =  JWT.require(algorithm)
+                                        .withIssuer("auth0")
+                                        .build();
+
+            DecodedJWT jwt = verifier.verify(token);
+            String subject = jwt.getSubject();
+
+            Date dateTheTokenWillExpire = jwt.getExpiresAt();
+            if(new Date().compareTo(dateTheTokenWillExpire) <1){
+                return true;
+            } else {
+                return false;
+            }
+
+        } catch(JWTVerificationException exception){
+            return false;
+        }
+
+    }
+
+```
+
+Update the UserController and add the authorize request
+
+ ```Java
+    @PostMapping("/user/authorize")
+    @CrossOrigin
+    public UserAuthorizeResponseVo authorize(@RequestBody UserRequestVo userRequestVo) throws ParseException {
+        return userService.authorizeV1(userRequestVo);
+    }
+ ```
+ 
+ Test it with Postman.
+
+## Exercise 8 - Secure the FX Trading API
 
 1. Add the following dependencies in pom.xml. After adding the dependencies, do a maven clean and install. Reload the dependencies in the IDE if needed.
 
@@ -469,9 +689,9 @@ Now the implementation for the creation of trades should be done and you can tes
 ```
 
 2. Add the annotation @EnableResourceServer to FxTradingApplication class (and add required import)  
-This enables Oauth2 security to the server API.  
+   This enables Oauth2 security to the server API.
 
-3. Add the following property in application.properties 
+3. Add the following property in application.properties
 
 ```
 security.oauth2.resource.jwt.key-value=secret
@@ -510,17 +730,17 @@ It is configured to allow CORS. If we don't allow CORS then the browser won't be
 
 After this you can test the API and notice that without the Authorization header the requests will be rejected with 401 status code.
 
-To now make succesfull requests to the trading service API you have to:  
-* authenticate with username and password through the users service API  
-* take the token obtained at authentication  
-* use the token in the Authorization header like below in the calls to trading service:  
+To now make succesfull requests to the trading service API you have to:
+* authenticate with username and password through the users service API
+* take the token obtained at authentication
+* use the token in the Authorization header like below in the calls to trading service:
 ```
 Authorization : Bearer <TOKEN>
 ```
 
-## <a name="exercise-VI">Exercise VI - Unit test </a>
+## Exercise 9 (bonus) - Unit test
 
-You can add the following test under the test folder(src/**test**/java) in package *com.banking.sofware.design.fxtrading.service*  
+You can add the following test under the test folder(src/**test**/java) in package *com.banking.sofware.design.fxtrading.service*
 
 ```
 
@@ -580,8 +800,12 @@ public class FxTradingServiceTest {
 }
 ```
 
-Notice there are three parts to the method (They follow a style named <a href="https://martinfowler.com/bliki/GivenWhenThen.html">given-when-then</a>  ) 
+Notice there are three parts to the method (They follow a style named <a href="https://martinfowler.com/bliki/GivenWhenThen.html">given-when-then</a>  )
 * in the first part the test setup is made: mock objects and test input are prepared (the tested system is brought into a predetermined state)
 * in the second part the tested method is invoked
 * finally in the third part the results are verified by using asserts(the post-conditions are checked)
+
+## Exercise 10 (bonus) - Integration testing
+
+Add integration tests for the methods from the FxRateController class (https://www.arhohuttunen.com/spring-boot-webmvctest/).
 
