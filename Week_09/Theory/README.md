@@ -2,13 +2,6 @@
 
 ### Table of contents
 
-- [Spring Boot](#spring-boot)
-  	- [About](#about)
-  	- [Spring Data](#springData)
-  	- [Entities](#entities)
-  	- [Repository](#repository)
-  	- [Service](#service)
-  	- [Controller](#controller)
 - [Security in today's context](#security-in-today-context) 
 	- [Digital security](#digital-security)
 	- [Application security](#application-security)
@@ -23,133 +16,6 @@
 	- [Overview](#overview)	
 	- [Creation and usage](#creation-and-usage)
 - [References](#references)
-
-## Spring Boot
-
-### About
-
-Spring Boot is an open-source Java-based framework used to create microservices. It is easy to create a stand-alone and production-ready Spring application.
-
-The Spring Boot Maven plugin provides many convenient features:
-
-1. It collects all the JARs on the classpath and builds a single, runnable JAR, which makes it more convenient to execute and transport your service.
-2. It searches for the `public static void main()` method to flag as a runnable class.
-3. It provides a built-in dependency resolver that sets the version number to match Spring Boot dependencies. You can override any version you wish, but it will default to Boot's chosen set of versions.
-
-### Spring Data
-
-Spring Data JPA is the part of the application that connects our Spring Data Java application to the database. The communication between our Spring/Java application with the database for storing and retrieving data is always done through this layer.
-
-### Entities
-
-Entities are part of Spring Data, and they represent a mapping of the Java classes to the tables in the databases. We can see that every entity class has a corresponding table in the database. Every member of the class is mapped to a column in the database. Usually, the entities can be found in a package named `model` or `entities`. All entities are marked with `@Entity`.
-
-```java
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-@Entity
-@Table(name = "user_login")
-public class UserLogin {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_login_id", updatable = false, nullable = false)
-    private Long userLoginId;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
-
-    @Column(name = "token")
-    private String token;
-
-    @Column(name = "token_expire_time")
-    private String tokenExpireTime;
-}
-```
-
-### Repository
-
-Repositories are part of Spring Data, and they represent a class that contains the actions/interactions performed on the database. Actions can be either adding new data to the database (registering a new user) or retrieving data from the database (finding an existing user). Usually, the repositories can be found in a package named `repository`.
-
-Spring Data provides a base class, `JpaRepository`, that helps us avoid writing the following methods:
-
-- `findAll`
-- `count`, `delete`, `deleteAll`, `deleteById`, `existsById`, `findById`, `save`
-- `exists`, `findOne`
-- `deleteAllInBatch()`
-- `deleteInBatch(Iterable<T> entities)`
-
-The repository interface is used for extending the CRUD interface. This interface adds the layer of a repository in the program. Spring Data JPA provides two major ways of creating queries. These queries are then used in the repository interface to fetch the data from the database. Repositories are usually marked with the `@Repository` annotation.
-
-```java
-@Repository
-public interface UserRepository extends JpaRepository<User, Long> {
-    public User findByUserId(Long userId);
-
-    @Query("SELECT u FROM User u WHERE u.userName = ?1 and u.password = ?2")
-    public User findUserByStatusAndName(String userName, String password);
-}
-```
-
-### Service
-
-The service classes contain only the business-related logic (a certain functionality for an operation). The service classes interact directly with the repository classes to perform an operation. Usually, the service class needs information from the database or changes information in the database. The service classes can be found in the `service` package.
-
-### Controller
-
-The controller classes contain the endpoints (the access points) from which an outside system can interact with our application. Basically, the communication with the outside system is done via the endpoints specified in the controller class. The endpoint receives the data from the outside system and passes it to the service class to execute the business logic of the operation that the outside system demanded.
-
-Outside System ------> [Controller -> Service -> Repository] ------> Database
-
-
-
-```java
-package com.project.user.administration.controller;
-
-import com.project.user.administration.services.UserService;
-import com.project.user.administration.vo.UserAuthorizeResponseVo;
-import com.project.user.administration.vo.UserTokenResponseVo;
-import com.project.user.administration.vo.UserRequestVo;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import java.text.ParseException;
-
-@RestController
-//@CrossOrigin
-public class UserController {
-
-    @Autowired
-    private UserService userService;
-
-    @GetMapping("/user/{userId}")
-    @CrossOrigin
-    public UserRequestVo getAnswersByQuestionId(@PathVariable Long userId) {
-        return userService.findByUserId(userId);
-    }
-
-    @PostMapping("/user/register")
-    @CrossOrigin
-    public void registerNewUser(@RequestBody UserRequestVo userRequestVo) {
-        userService.registerNewUser(userRequestVo);
-    }
-
-    @PostMapping("/user/authenticate")
-    @CrossOrigin
-    public UserTokenResponseVo login(@RequestBody UserRequestVo userRequestVo) {
-        return userService.validateUserCredentialsAndGenerateToken(userRequestVo);
-    }
-
-    @PostMapping("/user/authorize")
-    @CrossOrigin
-    public UserAuthorizeResponseVo authorize(@RequestBody UserRequestVo userRequestVo) throws ParseException {
-        return userService.authorizeV2(userRequestVo);
-    }
-}
-```
 
 ## Security in today's context
 
@@ -301,10 +167,29 @@ protected void configure(HttpSecurity http) throws Exception {
 ```
 
 Using the code above:
-* All URLs under `/resources` and URLs equal to `/signup` and `/about` are free to access.
-* All URLs under `/admin` require the user to have an `ADMIN` role.
-* All URLs under `/db` require the user to have both `ADMIN` and `DBA` roles.
-* All other URLs require user authentication via form login.
+- All URLs under `/resources` and URLs equal to `/signup` and `/about` are free to access.
+- All URLs under `/admin` require the user to have an `ADMIN` role.
+- All URLs under `/db` require the user to have both `ADMIN` and `DBA` roles.
+- All other URLs require user authentication via form login.
+
+>For more granular control, you can secure individual methods using annotations:
+
+```java
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Service;
+
+@Service
+public class AuthorizedService {
+
+    @PreAuthorize("hasRole('ADMIN')")
+    public void performAdminAction() {  
+    }
+
+    @PreAuthorize("#username == authentication.name")
+    public void updateUser(String username) {
+    }
+}
+```
 
 * **Step E:** Deal with custom logout. A few important things happen once the user is logged out. These are default actions built into Spring.
     * Invalidate the HTTP session.
