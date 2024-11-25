@@ -1,0 +1,23 @@
+.dashboard-container {
+  padding: 2rem 3rem;
+}
+
+.navbar {
+  padding: 0.5rem 3rem;
+  border: 1px solid #dddddd;
+}
+
+.fx-main-logo {
+  width: 70px;
+  height: 50px;
+}
+
+.btn-logout {
+  border: 1px solid #dddddd;
+  color: #7c7c7c;
+}
+
+.btn-logout:hover {
+  background-color: #f2f2f2;
+  opacity: 0.8;
+}
