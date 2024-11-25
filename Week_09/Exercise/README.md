@@ -14,7 +14,7 @@
 - [Exercise 10 (bonus) - Integration testing](#exercise-9-(bonus)---integration-testing)
 
  ## Pre-requisites
-    - Install Java 11
+    - Install Java 21
     - Install maven
     - Install PostgreSQL
     - Install Postman
@@ -22,81 +22,97 @@
  
  ## Exercise 1 - Create project
  
- Use your favourite IDE to create a simple maven project.
+ Use your favorite IDE to create a simple maven project.
  Update pom.xml with the following tags:
  
  ```XML
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.project</groupId>
-    <artifactId>user-administration</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <packaging>jar</packaging>
+	<groupId>com.project</groupId>
+	<artifactId>user-administration</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
 
-    <name>user-administration</name>
-    <description>Spring Boot for user administration</description>
+	<name>user-administration</name>
+	<description>Spring Boot for user administration</description>
 
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.1.1.RELEASE</version>
-        <relativePath/> <!-- lookup parent from repository -->
-    </parent>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>3.3.5</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>1.10</java.version>
-    </properties>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<java.version>21</java.version>
+	</properties>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.18.24</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>3.7</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
+	<dependencies>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.18.36</version>
+		</dependency>
 
-        <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.auth0</groupId>
-            <artifactId>java-jwt</artifactId>
-            <version>3.4.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+		</dependency>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+	
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>42.7.4</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.auth0</groupId>
+			<artifactId>java-jwt</artifactId>
+			<version>4.4.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+    		<groupId>org.javassist</groupId>
+    		<artifactId>javassist</artifactId>
+    		<version>3.30.2-GA</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-crypto</artifactId>
+			<version>6.3.4</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
 </project>
 ```
 
@@ -154,7 +170,7 @@ Now run the main class.
  
  
  ```Sql
- CREATE   TABLE user_table (
+ CREATE TABLE user_table (
     user_id SERIAL PRIMARY KEY,
     user_name varchar(255),
     email varchar(255),
@@ -162,7 +178,7 @@ Now run the main class.
 );
 
 
-CREATE  TABLE user_login (
+CREATE TABLE user_login (
     user_login_id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES user_table(user_id),
     token varchar(255),
@@ -171,18 +187,11 @@ CREATE  TABLE user_login (
 
 
 INSERT INTO user_table (user_name , email , password)
-VALUES ('razvan', 'razvan@gmail.com', 'razvanPassword');
-
-INSERT INTO user_table (user_name , email , password)
-VALUES('mihai', 'mihai@gmail.com', 'mihaiPassword');
-
-
-INSERT INTO user_table (user_name , email , password)
-VALUES('andrei', 'andrei@gmail.com','AndreisPassword');
+VALUES ('test', 'test@gmail.com', 'testPassword');
 ```
 
 
-Now use the Grant Wizzard to grant to your db-user access to your db , or just run the following scripts directly:
+Now use the Grant Wizard to grant db access to your db-user, or just run the following scripts directly:
 
 ```SQL 
 CREATE ROLE new_user LOGIN PASSWORD 'new_user_password';
@@ -219,7 +228,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Data
 @Builder
@@ -439,7 +448,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Data
 @Builder
@@ -672,7 +681,7 @@ Update the UserController and add the authorize request
     <dependency>
         <groupId>org.springframework.security.oauth.boot</groupId>
         <artifactId>spring-security-oauth2-autoconfigure</artifactId>
-        <version>2.6.8</version>
+        <version>3.3.5</version>
     </dependency>
     
     <dependency>
@@ -682,10 +691,10 @@ Update the UserController and add the authorize request
     </dependency>
     
     <dependency>
-        <groupId>org.springframework.security</groupId>
-        <artifactId>spring-security-jwt</artifactId>
-        <version>1.1.1.RELEASE</version>
-    </dependency>
+		<groupId>org.springframework.security</groupId>
+		<artifactId>spring-security-crypto</artifactId>
+		<version>6.3.4</version>
+	</dependency>
 ```
 
 2. Add the annotation @EnableResourceServer to FxTradingApplication class (and add required import)  
@@ -805,7 +814,64 @@ Notice there are three parts to the method (They follow a style named <a href="h
 * in the second part the tested method is invoked
 * finally in the third part the results are verified by using asserts(the post-conditions are checked)
 
-## Exercise 10 (bonus) - Integration testing
+## Exercise 10 (bonus) - UI reverse proxy
+ 
+Even though we are explicitly allowing CORS in the security configuration, some browsers might still block cross origin requests.
+In order to bypass this issue, for local development, we can use a proxy server that will be in charge of sending the requests to the trading service API.
 
-Add integration tests for the methods from the FxRateController class (https://www.arhohuttunen.com/spring-boot-webmvctest/).
+1. Create a file called *proxy.conf.json* under the *ui/* folder with the following content:
 
+```
+{
+    "/auth": {
+        "target": "http://localhost:8200",
+        "secure": false,
+        "changeOrigin": true,
+        "logLevel": "debug",
+        "pathRewrite": {
+            "^/auth": ""
+        }
+    },
+    "/trade": {
+        "target": "http://localhost:8210",
+        "secure": false,
+        "changeOrigin": true,
+        "logLevel": "debug",
+        "pathRewrite": {
+            "^/trade": ""
+        }
+    },
+    "/quote": {
+        "target": "http://localhost:8220",
+        "secure": false,
+        "changeOrigin": true,
+        "logLevel": "debug",
+        "pathRewrite": {
+            "^/quote": ""
+        }
+    }
+}
+```
+
+Explanation: 
+this works by intercepting requests made to specific paths like /auth, /trade, and /quote and forwarding them to corresponding backend services running on different ports (e.g., http://localhost:8200). The _pathRewrite_ option ensures the backend receives requests without the initial path prefixes, while _changeOrigin_: true adjusts the request headers for proper routing. 
+
+_Remember, this is primarily for development; production environments require proper CORS configuration on the backend for security._
+
+2. Configure the UI to use the correct paths.
+Change the service urls from the _'ui/src/app/constants.ts'_ file to match the paths from the proxy configuration:
+
+```
+export const authApi = '/auth';
+export const tradeApi = '/trade';
+export const quoteApi = '/quote';
+```
+
+_For simplicity, we are using a simple constants file for the service urls.
+In a production deployment, these URLs would be determined dynamically based on the target environment, resulting in a more specific configuration process (https://v17.angular.io/guide/build)_
+
+3. Change the start script from package.json to use the proxy:
+```
+"start": "ng serve --proxy-config proxy.conf.json"
+```
+4. Start the UI application and test the existing flows. 
