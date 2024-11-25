@@ -1,4 +1,5 @@
 # Week 9 - Development : software security
+
 ### Table of contents
 
 - [Spring Boot](#spring-boot)
@@ -8,52 +9,42 @@
   	- [Repository](#repository)
   	- [Service](#service)
   	- [Controller](#controller)
-- [Security in today context](#security-in-today-context)
-	+ [Digital security](#digital-security)
-	+ [Application security](#application-security)
-	+ [Software security](#software-security)
+- [Security in today's context](#security-in-today-context) 
+	- [Digital security](#digital-security)
+	- [Application security](#application-security)
+	- [Software security](#software-security)
 - [Spring Security](#spring-security)
-	+ [What is it](#what-is-it)
-	+ [Main features](#main-features)
-	+ [Authentication](#authentication)
-	+ [Authorization](#authorization)
-	+ [Building blocks](#building-blocks-for-java)
+	- [What is it?](#what-is-it)
+	- [Main features](#main-features)
+	- [Authentication](#authentication)
+	- [Authorization](#authorization)
+	- [Building blocks for Java](#building-blocks-for-java)
 - [JWT approach](#jwt-approach)
 	- [Overview](#overview)	
 	- [Creation and usage](#creation-and-usage)
 - [References](#references)
 
-## About
+## Spring Boot
 
-Spring Boot is an open source Java-based framework used to create Micro Services.
-It is easy to create a stand-alone and production ready spring application.
+### About
 
-
+Spring Boot is an open-source Java-based framework used to create microservices. It is easy to create a stand-alone and production-ready Spring application.
 
 The Spring Boot Maven plugin provides many convenient features:
 
-1) It collects all the jars on the classpath and builds a single, runnable jar, which makes it more convenient to execute and transport your service.
-2) searches for the public static void main() method to flag as a runnable class.
-3) It provides a built-in dependency resolver that sets the version number to match Spring Boot dependencies. 
-You can override any version you wish, but it will default to Boot’s chosen set of versions.
+1. It collects all the JARs on the classpath and builds a single, runnable JAR, which makes it more convenient to execute and transport your service.
+2. It searches for the `public static void main()` method to flag as a runnable class.
+3. It provides a built-in dependency resolver that sets the version number to match Spring Boot dependencies. You can override any version you wish, but it will default to Boot's chosen set of versions.
 
+### Spring Data
 
-## Spring Data
+Spring Data JPA is the part of the application that connects our Spring Data Java application to the database. The communication between our Spring/Java application with the database for storing and retrieving data is always done through this layer.
 
-Spring Data JPA is the part of the application that connects our Spring data Java application to the database.
+### Entities
 
-The communication between our spring/java application with the database for storing and retrieving data is always done through this layer.
+Entities are part of Spring Data, and they represent a mapping of the Java classes to the tables in the databases. We can see that every entity class has a corresponding table in the database. Every member of the class is mapped to a column in the database. Usually, the entities can be found in a package named `model` or `entities`. All entities are marked with `@Entity`.
 
-
-
-## Entities
-Entities are part of the Spring Data and they represent a mapping of the java Classes to the tables in the databases.
-We can see that every entity class has a corresponding table in the database. Every member of the class is mapped to a column in the database. 
-Usually the entities can be found in a package named 'model' or 'entities'.
-All entities are marked with the @Entity
-
-
-```Java
+```java
 @Data
 @Builder
 @NoArgsConstructor
@@ -76,56 +67,24 @@ public class UserLogin {
 
     @Column(name = "token_expire_time")
     private String tokenExpireTime;
-
 }
 ```
 
-```Java
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-@Entity
-@Table(name = "user_login")
-public class UserLogin {
+### Repository
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_login_id", updatable = false, nullable = false)
-    private Long userLoginId;
+Repositories are part of Spring Data, and they represent a class that contains the actions/interactions performed on the database. Actions can be either adding new data to the database (registering a new user) or retrieving data from the database (finding an existing user). Usually, the repositories can be found in a package named `repository`.
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+Spring Data provides a base class, `JpaRepository`, that helps us avoid writing the following methods:
 
-    @Column(name = "token")
-    private String token;
+- `findAll`
+- `count`, `delete`, `deleteAll`, `deleteById`, `existsById`, `findById`, `save`
+- `exists`, `findOne`
+- `deleteAllInBatch()`
+- `deleteInBatch(Iterable<T> entities)`
 
-    @Column(name = "token_expire_time")
-    private String tokenExpireTime;
+The repository interface is used for extending the CRUD interface. This interface adds the layer of a repository in the program. Spring Data JPA provides two major ways of creating queries. These queries are then used in the repository interface to fetch the data from the database. Repositories are usually marked with the `@Repository` annotation.
 
-}
-```
-
-## Repository
-Repositories are part of Spring Data and they represent a Class that contains the actions/interations that are performed on the database. Actions can be either adding new data in the database(register a new user) or retrieving data from the database(finding and existing user). 
-Usually the repositories can be found in a package named 'repository'.
-
-Spring data provides a base class JpaRepository that helps us from writting the following methods:
-
-- findAll
-- count, delete, deleteAll, deleteAll, deleteById, existsById, findById, save
-- exists, findOne
-- deleteAllInBatch()
-- deleteInBatch(Iterable<T> entities)
-  
-  
-The repository interface is used for extending the CRUD interface. This interface adds the layer of a repository in the program. Spring Data JPA provides two major ways of creating queries. These queries are then used in the repository interface to fetch the data from the database.
-
-Repositories are usually marked with @Repository annotation.
-
-
-```Java
+```java
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     public User findByUserId(Long userId);
@@ -134,18 +93,20 @@ public interface UserRepository extends JpaRepository<User, Long> {
     public User findUserByStatusAndName(String userName, String password);
 }
 ```
-## Service
-The Service Classes contain only the business related logic( a certain functionality for an operation). The service classes interact directly with the repository classes in order to perform an operation, usually the service class needs information from the database or  changes information into the database.
-The service classes can be found in the service package.
 
-## Controller
-The Controller classes contain the endpoints(the access points) from which an outside system can interact with our application. Basically the communication with the outside system is done via the endpoints specified in the Controller class. The endpoint receives the data from the outside system and passes it to the service class in order to execute the business logic of the operation that the outside system demanded.
+### Service
+
+The service classes contain only the business-related logic (a certain functionality for an operation). The service classes interact directly with the repository classes to perform an operation. Usually, the service class needs information from the database or changes information in the database. The service classes can be found in the `service` package.
+
+### Controller
+
+The controller classes contain the endpoints (the access points) from which an outside system can interact with our application. Basically, the communication with the outside system is done via the endpoints specified in the controller class. The endpoint receives the data from the outside system and passes it to the service class to execute the business logic of the operation that the outside system demanded.
 
 Outside System ------> [Controller -> Service -> Repository] ------> Database
 
-## Code Example
 
-```Java
+
+```java
 package com.project.user.administration.controller;
 
 import com.project.user.administration.services.UserService;
@@ -187,118 +148,89 @@ public class UserController {
     public UserAuthorizeResponseVo authorize(@RequestBody UserRequestVo userRequestVo) throws ParseException {
         return userService.authorizeV2(userRequestVo);
     }
-
 }
 ```
 
-## Security in today context
-
-> One interesting thing in today world is that every commercial or non-commercial undertaken is running towards being a software developing entity. Almost every firm is now to some extent a software development company, pretty much all universities are now creating software for everyday activities.
-
-> If you consider that an increasing part of today code is running in human free environment you can start imagine the criticality of small things like your washing machine working against you. What about someone hacking into an electrical power plant and messing it up for a whole city?
-
-> A good thing is that today almost everyone is investing in anti-virus and firewall solutions. The catch is that these two types of software do not really protect applications.
+## Security in today's context
 
 ### Digital security
+Today, virtually every organization develops software, even for non-traditional purposes. This software increasingly operates in critical, human-free environments, raising significant security concerns. Traditional security measures like firewalls and antivirus software are insufficient to protect applications.
 
-> And, what is digital security?
+Effective digital security requires the right tools for detection, protection, and defense. Developers need easy-to-use tools providing immediate feedback on security issues. Automation and integration with existing DevOps tools are crucial. Runtime Application Self-Protection (RASP) enhances security by allowing applications to detect and respond to attacks in real time. Security patterns should be enforced during code development.
 
-> *The right tools.*
-An increasing number of DevOps and developers are familiar with security but still a good percentage needs to operate with tools that they do not know inside-out. So the right tools need to be at hand, easy to use even for unfamiliar users.
+**Application Security Testing:**
 
-> *The right feedback.*
-Earliest feedback is most of the time the best feedback. You need to know as soon as possible if you are doing something wrong. While you are operate systems or develop system add tools that give you the right feedback, the immediate one. Lack of security is like any other error in the application. Is not so much different comparing to a StackOverflow or ArrayOutOfBound exceptions. Use: Slack, HipChat, JIRA, Maven, Jenkins, SIEM, PagerDuty. TODO: filter these samples;
+*   **Static Application Security Testing (SAST):** White-box testing that analyzes source code for vulnerabilities using known patterns.
+*   **Dynamic Application Security Testing (DAST):** Black-box testing that examines running applications for vulnerabilities.
+*   **Interactive Application Security Testing (IAST):** Combines SAST and DAST with advanced techniques, including machine learning, to reduce false positives and improve accuracy.
 
-> *The right detection*
-There are multiple detection approaches these days. Some are good but they lack automation. Some are good and allow automation but are not used. How any of you have heard about SonarQube? How many used it?
+**Software Security:**  Security must be built into software from the design phase throughout its lifecycle. Developers are responsible for:
 
-> *The right protection* 
-If a good protection is to hire some guys to guard your city a better protection is to invest time in learning everyone how to protect and work together with the formers. Same is for applications and is called 'runtime application self-protection' (RASP).  It uses the advantages of having access to application input and logic to block the attacks from inside by terminating user session or even shutdown the application.
+*   Validating user input and using appropriate encoding.
+*   Implementing robust authentication and authorization mechanisms.
+*   Managing user sessions securely.
+*   Employing strong cryptography for data protection.
+*   Validating third-party components.
+*   Identifying and addressing design and architectural flaws.
+*   Establishing and maintaining secure coding guidelines.
+*   Collaborating with DevOps and Release Management to secure deployment processes.
 
-> The right defense
-Scanning the code for the smelling parts is a good step ahead in adding a good level of application security. A more positive approach would be to use tools the enforce security patterns while you are writing it. TODO: add samples of security patterns and tools helping this enforcement.
+**Security Design Patterns:** Implementing security design patterns is essential for building secure software. Examples include:
 
-### Application security
+*   Single access point for login.
+*   Clear separation of authentication and authorization.
+*   Using sessions to isolate user information.
+*   Principle of least privilege.
+*   Multi-layered security approach.
+*   Data sanitization.
+*   Secure failure design.
 
-> But, what is application security? Is anything and anyone that is trying to protect an application **after** it was created. See below a few approaches.
-
-> *Static application security testing.* 
-It is called white-box/white-hat testing. Is about searching for known patterns of vulnerabilities and defects in the source code and log the warnings. For these activities the researcher has *prior" knowledge about the application. Here you can choose tools like [SonarQube](https://hub.docker.com/r/owasp/sonarqube/) from OWASP.
- 
-> *Dynamic application security testing.*
-It is also called black-box/black-hat security testing. It is about searching for vulnerabilities on a running code, on a live application. Any suspicious behavior of the application is logged. Hence for the SAST and DAST there is a pretty high volume of false positives reported. Tools that can be used are [ZAP](https://www.owasp.org/index.php/OWASP_Zed_Attack_Proxy_Project) or [Arachni](http://www.arachni-scanner.com/).
-
-> *Interactive application security testing.* 
-This is a mix of other testing techniques, including SAST and DAST. It uses the advantages of knowing the application data flows and business flows to create advance attack scenarios. The use of recursive dynamic analysis is usually combined with machine learning so the tool will get smarter while testing your application. One of its important aims is to reduce the number of false positive has the wasted time on wrong investigations. It is designed to work in Agile environments with DevOps support.
-
-### Software security
-
-> Software security is about creating software that is secure but itself and continue to stay like this during its entire life from development to production.
-
-> As a software developer you are designing your software to be secure from scratch.
-> As a software developer you always validate your user's input and use the right encoding for the input.
-
-> As a software developer you handle user authentication and authorization.
-
-> As a software developer you handle correctly user sessions.
-
-> As a software developer you use the strongest available cryptography to secure data at rest and in transit.
-
-> As a software developer you ensure that all third party components are validated against your entity/company policies.
-
-> As a software developer you challenge any flaws in software design or architecture.
-
-> As a software developer you have and improve recurrently the 'Secure coding guidelines' for developers. The entire internal development community is participating here.
-
-> As a software developer you help your colleagues in DevOvs and Release Management to secure the configuration procedures and to securely deploy your application.
-
-> One the most unknown field of today software development is security design patterns. Let's add a few here:
-* Single access point for login in.
-* Clear distinction between authentication and authorization, also known as access control.
-* Always use sessions to isolate information in multi-user environment.
-* Limit the view using the principle 'access is allowed per need'. Default user has very limited access, usually at login page, general policy guide, user rights page and alike.
-* Work with multi-layered security. Firewalls, anti-viruses, self-protection, etc.
-* Sanitize your data by removing expired, duplicate or unnecessary data.
-* Design to fail in a secure manner.
+**Key Takeaway:** Software security requires a holistic approach, encompassing proactive development practices, comprehensive testing, and the implementation of security design patterns. Developers play a critical role in building and maintaining secure software throughout its lifecycle.
 
 ## Spring Security
 
-### What it is
-> Spring Security initially started as a continuation of Acegi Security. A good tool with a bit too complicated configuration via XML. Since Sprint 2.0 it was embedded into Spring Framework and continuously improved. Nowadays the security configuration can be done via annotation directly in Java classes.
+### What is it?
+
+Spring Security initially started as a continuation of Acegi Security, a good tool with slightly too complicated configuration via XML. Since Spring 2.0, it has been embedded into the Spring Framework and continuously improved. Nowadays, the security configuration can be done via annotations directly in Java classes.
 
 ### Main features
-> Spring Security helps with the two major areas of access control: authenticationa and authorization.
+
+Spring Security helps with the two major areas of access control: authentication and authorization.
 
 ### Authentication
-> Authentication is about ensuring that the entity/principal called in Spring accessing your protected resources is allowed to access it. First step is to identify the principal. Simplest form of identification is via username and password. Others, more sophisticated ways, are via LDAP (Lightweight Directory Access Protocol) or via CAS (Central Authentication Service) which is a single sign-on protocol.
-> Authentications supported:
-* HTTP Basic;
+
+Authentication ensures that the entity/principal (called in Spring) accessing your protected resources is allowed to access them. The first step is to identify the principal. The simplest form of identification is via username and password. Other, more sophisticated ways are via LDAP (Lightweight Directory Access Protocol) or CAS (Central Authentication Service), which is a single sign-on protocol.
+
+Authentications supported:
+
+* HTTP Basic
 * Form-based authentication
-* LDAP 
-* Java Authentication and Authorization Service
+* LDAP
+* Java Authentication and Authorization Service (JAAS)
 * Kerberos
 
 ### Authorization
-> If the authentication is successful the principal goes to the second step. Now that we know who our user is what are the actions that is allowed to perform? Which are the areas where is allowed to navigate? If you are an admin you are probably allowed to do whatever you want, if you are an user you probably has much more limited access.
 
-> This access control is called user role authorization. Usually this is done via URL control but is not the tightest security in place. Spring introduced method-level security which means that you have to be authorized to execute that Java method. You can hack the URL and try to execute again but method level authorization will block you.
-
-
+If authentication is successful, the principal goes to the second step. Now that we know who our user is, what actions are they allowed to perform? Which areas are they allowed to navigate? If you are an admin, you are probably allowed to do whatever you want. If you are a regular user, you probably have much more limited access. This access control is called user role authorization. Usually, this is done via URL control, but this is not the tightest security in place. Spring introduced method-level security, which means that you have to be authorized to execute that Java method. You can hack the URL and try to execute it again, but method-level authorization will block you.
 
 ### Building blocks for Java
-> Sprint Security is quite developer friendly, to start using it there is little what a developer needs to do.
 
->*Step A* Add the necessary libraries to your project. Using Spring Boot you just need to add **sprint-boot-starter-security** to you Maven configuration. That will take care of the related dependencies.
+Spring Security is quite developer-friendly. To start using it, a developer needs to do very little.
+
+* **Step A:** Add the necessary libraries to your project. Using Spring Boot, you just need to add `spring-boot-starter-security` to your Maven configuration. That will take care of the related dependencies.
+
 ```xml
 <dependencies>
-	<!-- ... other dependency elements ... -->
-	<dependency>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-security</artifactId>
-	</dependency>
+    <!-- ... other dependency elements ... -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-security</artifactId>
+    </dependency>
 </dependencies>
 ```
->*Step B* Add the minimum configuration
+
+* **Step B:** Add the minimum configuration.
+
 ```java
 @EnableWebSecurity
 public class WebSecurityConfig implements WebMvcConfigurer {
@@ -311,13 +243,17 @@ public class WebSecurityConfig implements WebMvcConfigurer {
     }
 }
 ```
->Some important takeaways from the code above:
-* Require authentication for every URL in the application.
+
+Some important takeaways from the code above:
+
+* Requires authentication for every URL in the application.
 * Generates a basic login form.
-* Allow 'user' with 'password' to authenticate via form base authentication.
-* Allow user to logout.
-* Help with other ten plus features (cache control, prevents well know attacks).
->How Spring knows that every URL needs to be authenticated? Or how does it know to support form based authentication? All is based on the default configuration of the *WebSecurityConfigurerAdapter* via *configure* method:
+* Allows the user "user" with the password "password" to authenticate via form-based authentication.
+* Allows users to log out.
+* Helps with other ten-plus features (cache control, prevents well-known attacks).
+
+How does Spring know that every URL needs to be authenticated? Or how does it know to support form-based authentication? It's all based on the default configuration of the `WebSecurityConfigurerAdapter` via the `configure` method:
+
 ```java
 protected void configure(HttpSecurity http) throws Exception {
     http
@@ -329,10 +265,11 @@ protected void configure(HttpSecurity http) throws Exception {
         .httpBasic();
 }
 ```
-> The above basically says that all requests require user to be authenticated, it allows form based login and also allow basic Http authentication. The *and()* method is a helper method that basically close the section above. E.g. *fromLogin* ends with the second *and()*. Is like the closing tag of a XML tag.
 
->*Step C* Configure more detailed Http Security
->What if you want a different login page? It can be configured like this:
+The above basically says that all requests require the user to be authenticated, allows form-based login, and also allows basic HTTP authentication. The `and()` method is a helper method that essentially closes the section above. For example, `.formLogin` ends with the second `and()`. It's like the closing tag of an XML tag.
+
+* **Step C:** Configure more detailed HTTP Security. What if you want a different login page? It can be configured like this:
+
 ```java
 protected void configure(HttpSecurity http) throws Exception {
     http
@@ -340,14 +277,15 @@ protected void configure(HttpSecurity http) throws Exception {
             .anyRequest().authenticated()
             .and()
         .formLogin()
-            .loginPage("/login") 1
-            .permitAll();        2
+            .loginPage("/login") // 1
+            .permitAll();        // 2
 }
-``` 
->All user are authenticated via */login* page, whose access is permitted for all.
+```
 
->*Step D* Configure authorization
->So for we've dealt only with authentication. Only one role was created, USER. But what if some resources are freely accessible and some other should be really kept away. This approach requires multiple roles to be created and configured for different resource types using multiple children of *http.authorizeRequests()*:
+All users are authenticated via the `/login` page, whose access is permitted for all.
+
+* **Step D:** Configure authorization. So far, we've dealt only with authentication. Only one role was created, `USER`. But what if some resources are freely accessible, and others should be kept private? This approach requires multiple roles to be created and configured for different resource types using multiple children of `http.authorizeRequests()`:
+
 ```java
 protected void configure(HttpSecurity http) throws Exception {
     http
@@ -361,123 +299,89 @@ protected void configure(HttpSecurity http) throws Exception {
         .formLogin();
 }
 ```
->Using the code above:
-* All URLs under */resources* and URLs equal with */signup* and equal to */about* are free to access.
-* All URLs under */admin* require the user to have an *ADMIN* role.
 
-* All URLs under */db* require the user to have both *ADMIN* and *DBA* roles.
+Using the code above:
+* All URLs under `/resources` and URLs equal to `/signup` and `/about` are free to access.
+* All URLs under `/admin` require the user to have an `ADMIN` role.
+* All URLs under `/db` require the user to have both `ADMIN` and `DBA` roles.
+* All other URLs require user authentication via form login.
 
-* All others require user to be authenticated via form login.
+* **Step E:** Deal with custom logout. A few important things happen once the user is logged out. These are default actions built into Spring.
+    * Invalidate the HTTP session.
+    * Clear the `SecurityContextHolder`.
+    * Clean up "Remember Me" authentication if it was configured.
+    * Redirect to `/login?logout`.
 
+If custom changes are needed, they can be added in the same method as above, like this:
 
->*Step E* Deal with custom logout
-> A few important things happen once the user is logged out. These are default actions built in Spring.
-* Invalidate the HTTP session.
-* Clear the SecurityContextHolder.
-* Clean up RememberMe authentication is it was configured.
-* Redirect to /login?logout.
-
->If custom changes are needed they can be added, in the same method as above, like this:
 ```java
-    http
-        .logout()
-            .logoutUrl("/my/logout")
-            .logoutSuccessUrl("/my/index")
-            .logoutSuccessHandler(logoutSuccessHandler)
-            .addLogoutHandler(logoutHandler)
-            .deleteCookies(cookieNamesToClear)
-            .and()
-        ...
+http
+    .logout()
+        .logoutUrl("/my/logout")
+        .logoutSuccessUrl("/my/index")
+        .logoutSuccessHandler(logoutSuccessHandler)
+        .addLogoutHandler(logoutHandler)
+        .deleteCookies(cookieNamesToClear)
+        .and()
+    // ...
 }
-```
->These changes add, starting with *logoutUrl* line above: 
-* a custom logout page, 
-* a custom logout redirect page, 
-* a new logout handler on successful logout, 
-* a custom general logout handler,
-* deletes user named cookies. 
 
+```
+
+These changes add, starting with the `logoutUrl` line above:
+
+* A custom logout page
+* A custom logout redirect page
+* A new logout handler on successful logout
+* A custom general logout handler
+* Deletes user-named cookies
 
 ## JWT approach
 
 ### Overview
->A JSON Web Token (JWT) is a JSON object used to exchange information between parties. The exchange is done in a save way and it contains:
-* Header:
-	```json
-	{
-		"typ": "JWT",
-		"alg": "HS256"
-	}
-	```
-* Payload:
-	```json
-	{
-		"userId": "b08f86af-35da-48f2-8fab-cef3904660bd"
-	}
-	```
-* Signature:
-	```json
-	-xN_h82PHVTCMA9vdoHrcZxH-x5mb11y1537t3rGzcM
-	```
+
+A JSON Web Token (JWT) is a JSON object used to exchange information between parties. The exchange is done securely, and it contains:
+
+* **Header:**
+
+```json
+{
+  "typ": "JWT",
+  "alg": "HS256"
+}
+```
+
+* **Payload:**
+
+```json
+{
+  "userId": "b08f86af-35da-48f2-8fab-cef3904660bd"
+}
+```
+
+* **Signature:**
+
+```
+-xN_h82PHVTCMA9vdoHrcZxH-x5mb11y1537t3rGzcM
+```
 
 ### Creation and usage
->*How to create a ready-to-transport header*
->> The header contains information about how JWT signature should be computed. The "alg" key in our example says that HMAC-SHA256 algorithm should be used to create the signature. Before being transported header is Base64Url encoded.
 
->*How to create a ready-to-transport payload*
->> The data included in payload is also known as 'claims' of the JWT. There are a few standard but to mandatory like 'iss', 'sub' and 'exp'. Before being transported the payload is Base64Url encoded.
+* **How to create a ready-to-transport header:** The header contains information about how the JWT signature should be computed. The `"alg"` key in our example says that the HMAC-SHA256 algorithm should be used to create the signature. Before being transported, the header is Base64Url encoded.
 
->*How to create a ready-to-transport signature*
->>To create the signature take the encoded header and the encoded payload and concatenate them via a dot. Then take the secret and sign the former concatenation using the algorithm specified in the header. Encode the result from the algorithm also using Base64Url encoding and here it is your signature.
+* **How to create a ready-to-transport payload:** The data included in the payload is also known as 'claims' of the JWT. There are a few standard but not mandatory claims like `iss` (issuer), `sub` (subject), and `exp` (expiration time). Before being transported, the payload is Base64Url encoded.
 
->*What is sent across?*
->>All above are concatenated in the form of *header.payload.signature*:
-```json
+* **How to create a ready-to-transport signature:** To create the signature, take the encoded header and the encoded payload and concatenate them with a dot. Then, take the secret and sign the former concatenation using the algorithm specified in the header. Encode the result from the algorithm also using Base64Url encoding, and here is your signature.
+
+* **What is sent across?:** All of the above are concatenated in the form of `header.payload.signature`:
+
+```
 eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJiMDhmODZhZi0zNWRhLTQ4ZjItOGZhYi1jZWYzOTA0NjYwYmQifQ.-xN_h82PHVTCMA9vdoHrcZxH-x5mb11y1537t3rGzcM
 ```
->>You may notice that the header and the payload are concatenated to create the signature but are sent as distinct entities.
 
+You may notice that the header and payload are concatenated to create the signature, but they're sent as distinct entities.
 
-## SpringBoot
-
-Spring Boot is an open source Java-based framework used to create Micro Services.
-It is easy to create a stand-alone and production ready spring application.
-
-
-The Spring Boot Maven plugin provides many convenient features:
-
-1) It collects all the jars on the classpath and builds a single, runnable jar, which makes it more convenient to execute and transport your service.
-2) searches for the public static void main() method to flag as a runnable class.
-3) It provides a built-in dependency resolver that sets the version number to match Spring Boot dependencies. 
-You can override any version you wish, but it will default to Boot’s chosen set of versions.
-
-
-## Annotations
-
-
-
-@SpringBootApplication:
-
-1) @Configuration tags the class as a source of bean definitions for the application context.
-
-2) @EnableAutoConfiguration tells Spring Boot to start adding beans based on classpath settings, other beans, and various property settings.
-
-Normally you would add @EnableWebMvc for a Spring MVC app, but Spring Boot adds it automatically when it sees spring-webmvc on the classpath. 
-
-This flags the application as a web application and activates key behaviors such as setting up a DispatcherServlet.(receives requests and maps to the coresponding classes)
-
-
-3) @ComponentScan tells Spring to look for other components, configurations, and services in the hello package, allowing it to find the controllers.
-
-
-The main() method uses Spring Boot’s SpringApplication.run() method to launch an application.
-
-
-
-
-
-
-### References
+## References
 
 * [cgisecurity.com](cgisecurity.com)
 * [contrastsecurity.com](contrastsecurity.com)
@@ -490,3 +394,4 @@ The main() method uses Spring Boot’s SpringApplication.run() method to launch 
 * [stackoverflow.com](https://stackoverflow.com/questions/201479/what-is-base-64-encoding-used-for/201510#201510)
 * [synopsys.com](synopsys.com)
 * [wikipedia.org](wikipedia.org)
+
