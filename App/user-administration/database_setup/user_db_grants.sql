@@ -30,4 +30,4 @@ psql -U new_user -d users
 
 GRANT ALL ON TABLE public.users TO "new_user";
 
- GRANT "postgres" TO "User1";
+GRANT "postgres" TO "User1";

@@ -11,8 +11,8 @@ import utilities.logger.Tacitus;
 public class Test_Login extends BaseClass {
 
 	//region testData
-	public static final String USERNAME = "astronaut";
-	public static final String PASSWORD = "astronauc";
+	public static final String USERNAME = "marius";
+	public static final String PASSWORD = "1234567";
 
 	//end region test data
 

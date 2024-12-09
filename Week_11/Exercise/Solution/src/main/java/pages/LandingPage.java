@@ -37,7 +37,7 @@ public class LandingPage {
 	@FindBy(xpath="//button[@type='submit']")
 	private static WebElement login;
 
-	@FindBy(xpath="//h4[contains(text(), 'Login to your account')]")
+	@FindBy(xpath="//h1[contains(text(), 'Login to your account')]")
 	//h4[contains(text(), 'Login to your account')] --//h4[text()='Login to your account']
 	private static WebElement loginToYourAccount;
 
@@ -45,6 +45,7 @@ public class LandingPage {
 	// Register a new account
 	@FindBy(xpath="//h4[text()='Register a new account']")
 	private static WebElement registerNewAccount;
+	// correct xpath //h1[text()='Register a new account']
 
 	@FindBy(id="inputUsername")
 	private static WebElement createUsername;

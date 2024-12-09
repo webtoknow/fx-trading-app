@@ -2,9 +2,9 @@ package pages.enums;
 
 public enum Paths {
     basePath("http://localhost"),
-    auth("/user/authenticate"),
-    currencies("/currencies"),
-    transactions("/transactions");
+    auth(":8200/user/authenticate"),
+    currencies(":8220/currencies"),
+    transactions(":8210/transactions");
 
     private final String value;
 

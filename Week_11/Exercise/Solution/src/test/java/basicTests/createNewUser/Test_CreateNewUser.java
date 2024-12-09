@@ -4,13 +4,12 @@ import driver.BaseClass;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import pages.LandingPage;
-import utilities.AppUtils;
 
 public class Test_CreateNewUser extends BaseClass {
 
 	//region testData
-	public static final String USERNAME = "Test" +AppUtils.getRandomCharacterString(7);
-	public static final String PASSWORD = "abc123";
+	public static final String USERNAME = "marius" ;
+	public static final String PASSWORD = "1234567";
 	private static final String EMAIL = "abc123@ab.com";
 	//end region test data
 
