@@ -864,7 +864,7 @@ Create the following playbook.yaml file in the same ansible folder:
 
       - name : Install OpenJDK
         apt:
-          name: openjdk-11-jdk
+          name: openjdk-21-jdk
           state: present
 
       - name : Install git
@@ -915,7 +915,7 @@ ansible-playbook -i hosts playbook.yaml
 
 The playbook should be pretty self-explaining, but as a summary it does the following, on `all` app-server hosts:
 - sets up `destdir` variable to a predefined path where we will download and deploy the application from
-- using apt ansible module makes sure openjdk 11 is installed (it will use the OS level apt package manager to installe it if not found)
+- using apt ansible module makes sure openjdk 21 is installed (it will use the OS level apt package manager to installe it if not found)
 - in a similar maner, it installs git on host
 - fetches the java source files from github
 - makes mvn wrapper executable and builds the application, packaging it as a jar file to the default path
@@ -939,7 +939,7 @@ sudo apt update
 #### Step 2. Install Java
 Jenkins is written in Java, and that is why we need the Java installed on our system along with some dependencies:
 ```
-sudo apt install openjdk-11-jre -y
+sudo apt install openjdk-21-jre -y
 ```
 To check whether Java is installed execute the following command:
 ```
@@ -948,9 +948,9 @@ java -version
 You should receive a similar output:
 ```
 root@vps:~# java -version
-openjdk version "11.0.14" 2022-01-18
-OpenJDK Runtime Environment (build 11.0.14+9-post-Debian-1deb11u1)
-OpenJDK 64-Bit Server VM (build 11.0.14+9-post-Debian-1deb11u1, mixed mode, sharing)
+openjdk version "21.0.14" 2024-01-18
+OpenJDK Runtime Environment (build 21.0.14+9-post-Debian-1deb11u1)
+OpenJDK 64-Bit Server VM (build 21.0.14+9-post-Debian-1deb11u1, mixed mode, sharing)
 ```
 
 #### Step 3. Add Jenkins GPG key and PPA
@@ -1046,7 +1046,7 @@ sudo apt install git -y
 ```
 Also a JDK is needed to build the actual application:
 ```
-sudo apt install openjdk-11-jdk -y
+sudo apt install openjdk-21-jdk -y
 ```
 
 Go back to the Jenkins web page and create a new job:
