@@ -4,7 +4,7 @@ During this course, we will learn about the whole process and all concepts invol
 
 Each week will be an opportunity to understand theoretical concepts and apply them in punctual exercises. In the end, we will obtain a functional Forex trading application with capabilities to buy and sell currencies, and view all transactions made by other users.
 
-## The agenda
+## Course Structure
 
 - Introduction
 - Business Analysis
@@ -42,7 +42,7 @@ Each week will be an opportunity to understand theoretical concepts and apply th
   - [Exercise](11_DevOps/Exercise/README.md)
 
 
-## Technical requirements
+## Technical Requirements
 
 | Software/Tools                                                                                                        | Version          | Usage                          | Requirement for session                                            |
 |-----------------------------------------------------------------------------------------------------------------------|------------------|--------------------------------|--------------------------------------------------------------------|
@@ -55,4 +55,4 @@ Each week will be an opportunity to understand theoretical concepts and apply th
 | [Postman](https://www.getpostman.com/apps)                                                                            | 9 or latest      | Backend APIs Testing           | [Backend Development](04_Backend_Development/Exercise/README.md)   |
 | [NodeJS](https://nodejs.org/en/)                                                                                      | 22 or latest     | Frontend Runtime Environment   | [Frontend Development](06_Frontend_Development/Exercise/README.md) |
 | [Angular CLI](https://github.com/angular/angular-cli)                                                                 | 18               | Frontend Develompent           | [Frontend Development](06_Frontend_Development/Exercise/README.md) |
-| [Google cloud Account](https://cloud.google.com/edu/students?hl=ro)                                                   | n/a              | Backend & Frontend Deployment  | [DevOps Introduction](10_DevOps/Exercise/README.md)                |
+| [Google Cloud Account](https://cloud.google.com/edu/students?hl=ro)                                                   | n/a              | Backend & Frontend Deployment  | [DevOps Introduction](10_DevOps/Exercise/README.md)                |
