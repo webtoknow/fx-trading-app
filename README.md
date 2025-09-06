@@ -1,67 +1,58 @@
-# Forex Trading Application workshop
+# Banking Software Design
 
-During this workshop, we will learn about the whole process and all concepts involved in building an enterprise application from scratch. Starting with an idea and some wire frames, together we will analyze, develop, test and publish our app.
+During this course, we will learn about the whole process and all concepts involved in building an enterprise application from scratch. Starting with an idea and some wireframes, together we will analyze, develop, test and publish our application.
 
-Each week will be an opportunity to understand theoretical concepts and apply them in punctual exercises. In the end, we will obtain a functional Forex trading application meant to help us to buy and sell currencies and also to view all transactions made by other users.
+Each week will be an opportunity to understand theoretical concepts and apply them in punctual exercises. In the end, we will obtain a functional Forex trading application with capabilities to buy and sell currencies, and view all transactions made by other users.
 
 ## The agenda
 
-The agenda has the following content:
+- Introduction
+- Business Analysis
+  - [Theory](1_Business_Analysis/Theory/README.md)
+  - [Exercise](1_Business_Analysis/Exercise/README.md)
+- UI/UX Design
+  - [Theory](2_UI_UX_Design/Theory/README.md)
+  - [Exercise](2_UI_UX_Design/Exercise/README.md)
+- Architecture
+  - [Theory](3_Architecture/Theory/README.md)
+  - [Exercise](3_Architecture/Exercise/README.md)
+- Quote and FX Trading Microservices with Spring
+  - [Theory](4_Backend_Development/Theory/README.md)
+  - [Exercise](4_Backend_Development/Exercise/README.md)
+- User-Administration Microservice with Spring
+  - [Theory](5_Backend_Development/Theory/README.md)
+  - [Exercise](5_Backend_Development/Exercise/README.md)
+- Login and Register Pages with Angular
+  - [Theory](6_Frontend_Development/Theory/README.md)
+  - [Exercise](6_Frontend_Development/Exercise/README.md)
+- Dashboard Page with Angular
+  - [Theory](7_Frontend_Development/Theory/README.md)
+  - [Exercise](7_Frontend_Development/Exercise/README.md)
+- Testing Introduction
+  - [Theory](8_Software_Testing/Theory/README.md)
+  - [Exercise](8_Software_Testing/Exercise/README.md)
+- Testing Automation
+  - [Theory](9_Software_Testing/Theory/README.md)
+  - [Exercise](9_Software_Testing/Exercise/README.md)
+- DevOps Introduction
+  - [Theory](10_DevOps/Theory/README.md)
+  - [Exercise](10_DevOps/Exercise/README.md)
+- DevOps Automation
+  - [Theory](11_DevOps/Theory/README.md)
+  - [Exercise](11_DevOps/Exercise/README.md)
 
-- Week 1 – Introduction
-- Week 2 – Analysis
-  - [Introduction](https://drive.google.com/file/d/1ueFpjdAEXlskXxM4ao2qIN9ow5X18fVz/view?usp=sharing)
-  - [Exercise](Week_02/Exercise/README.md)
-- Week 3 - Design
-  - [Introduction](https://drive.google.com/file/d/1iNmU9-0qMfgE44g3IGIiHWLj63JHG6ep/view?usp=sharing)
-  - [Exercise](Week_03/Exercise/README.md)
-- Week 4 – Architecture and setup
-  - [Introduction](Week_04/Theory/README.md)
-  - [Exercise](Week_04/Exercise/README.md)
-- Week 5 – Create Login and Register pages with Angular
-  - [Introduction](Week_05/Theory/README.md)
-  - [Exercise](Week_05/Exercise/README.md)
-- Week 6 – Create Dashboard page with Angular
-  - [Introduction](Week_06/Theory/README.md)
-  - [Exercise](Week_06/Exercise/README.md)
-- Week 7 – Quote and FX Trading microservices with Spring
-  - [Introduction](Week_07/Theory/README.md)
-  - [Exercise](Week_07/Exercise/README.md)
-- Week 8 – User-Administration microservice with Spring
-  - [Introduction](Week_08/Theory/README.md)
-  - [Exercise](Week_08/Exercise/README.md)
-- Week 9 –  TODO: microservice
-  - [Introduction](Week_09/Theory/README.md)
-  - [Exercise](Week_09/Exercise/README.md)
-- Week 10 – Testing
-  - [Introduction](https://docs.google.com/presentation/d/0B4NKACt0AT2MOEZNT0d1VEtRNWZDSHN6WUVnUTJya1BVeGUw/edit?usp=sharing&ouid=112452627469857234057&resourcekey=0-hABd5QFgst8a4iBNecvcuw&rtpof=true&sd=true)
-  - [Exercise](Week_10/Exercise/README.md)
-- Week 11 – Testing
-  - [Introduction](Week_11/Theory/README.md)
-  - [Exercise](Week_11/Exercise/README.md)
-- Week 12 – Devops
-  - [Introduction](Week_12/Theory/README.md)
-  - [Exercise](Week_12/Exercise/README.md)
-- Week 13 – Devops
-  - [Introduction](Week_13/Theory/README.md)
-  - [Exercise](Week_13/Exercise/README.md)
 
 ## Technical requirements
 
-We just need:
-
-- [Modern browser](https://browsehappy.com/)
-- IDE:
-  - [Idea](https://www.jetbrains.com/idea/download/)
-  - [Visual Studio Code](https://code.visualstudio.com/Download)
-  - [Eclipse](https://www.eclipse.org/downloads/packages/)
-- [Git](https://git-scm.com/download/win)
-- [NodeJS](https://nodejs.org/en/)
-- [Angular CLI](https://github.com/angular/angular-cli)
-- [Maven](https://maven.apache.org/install.html)
-- [Postman](https://www.getpostman.com/apps)
-- [Postgresql](https://www.postgresql.org/download/)
-- Java 11:  use either [JDK 11](https://www.oracle.com/java/technologies/javase-jdk11-downloads.html) or [openjdk 11](https://jdk.java.net/java-se-ri/11)
-
-## Summary
-[![How can I develop a web applicaton](https://img.youtube.com/vi/_hJXIVPQhDo/0.jpg)](https://www.youtube.com/watch?v=_hJXIVPQhDo)
+| Software/Tools                                                                                                        | Version          | Usage                          | Requirement for session                                           |
+|-----------------------------------------------------------------------------------------------------------------------|------------------|--------------------------------|-------------------------------------------------------------------|
+| [PostgreSQL](https://www.postgresql.org/download/)                                                                    | 17 or latest     | Relational Database            | [Backend Development](4_Backend_Development/Exercise/README.md)   |
+| [pgAdmin](https://www.pgadmin.org/download/)                                                                                                             | 4 or latest      | Database Administration        | [Backend Development](4_Backend_Development/Exercise/README.md)   |
+| [Git](https://git-scm.com/download/win)                                                                               | 2 or latest      | Version Control System         | [Backend Development](4_Backend_Development/Exercise/README.md)   |
+| [IntelliJ IDEA](https://www.jetbrains.com/idea/download/) or any other IDE (Visual Studio, Eclipse, etc.)             | 2025.2 or latest | Backend & Frontend Development | [Backend Development](4_Backend_Development/Exercise/README.md)   |
+| [Maven](https://maven.apache.org/install.html)                                                                        | 3 or latest      | Backend Dependency Management  | [Backend Development](4_Backend_Development/Exercise/README.md)   |
+| [JDK](https://www.oracle.com/ro/java/technologies/downloads/#java21) or [OpenJDK](https://jdk.java.net/java-se-ri/21) | 21               | Backend Development            | [Backend Development](4_Backend_Development/Exercise/README.md)   |
+| [Postman](https://www.getpostman.com/apps)                                                                            | 9 or latest      | Backend APIs Testing           | [Backend Development](4_Backend_Development/Exercise/README.md)   |
+| [NodeJS](https://nodejs.org/en/)                                                                                      | 22 or latest     | Frontend Runtime Environment   | [Frontend Development](6_Frontend_Development/Exercise/README.md) |
+| [Angular CLI](https://github.com/angular/angular-cli)                                                                 | 18               | Frontend Develompent           | [Frontend Development](6_Frontend_Development/Exercise/README.md) |
+| [Google cloud Account](https://cloud.google.com/edu/students?hl=ro)                                                   | n/a              | Backend & Frontend Deployment  | [DevOps Introduction](10_DevOps/Exercise/README.md)               |
