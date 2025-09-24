@@ -71,6 +71,9 @@ These operations listed above are commonly called CRUD (Create/Read/Update/Delet
 
 # 4.1 Spring / Spring Boot
 
+## Spring layered application
+![Spring layered application](spring-layered-architecture.png)
+
 **Spring** is a framework providing a comprehensive programming and configuration model for modern Java-based enterprise applications - on any kind of deployment platform.
 
 It comes with features like Dependency Injection, and out of the box modules like:
