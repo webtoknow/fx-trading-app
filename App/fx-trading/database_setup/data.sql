@@ -1,5 +1,3 @@
-create database fxtrading;
-
 \connect fxtrading;
 
 create table transactions (
@@ -13,11 +11,6 @@ create table transactions (
   tenor varchar(20) not null,
   date timestamp not null default now()
 );
-
-CREATE USER fxuser WITH ENCRYPTED PASSWORD 'password';
-GRANT ALL PRIVILEGES ON DATABASE fxtrading TO fxuser;
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO fxuser;
-GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO fxuser;
 
 INSERT INTO public.transactions (id, username, primary_ccy, secondary_ccy, rate, action, notional, tenor, date) VALUES (nextval('transactions_id_seq'), 'ana_maria', 'EUR', 'USD', 18459, 'BUY', 10000, 'SP', '2018-11-13 20:56:11.59403');
 INSERT INTO public.transactions (id, username, primary_ccy, secondary_ccy, rate, action, notional, tenor, date) VALUES (nextval('transactions_id_seq'), 'alexandru', 'USD', 'GBP', 11701, 'BUY', 15000, '1M', '2018-11-19 19:32:02.773998');
