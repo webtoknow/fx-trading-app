@@ -1,5 +1,28 @@
-version: "3"
+version: '3.8'
 services:
+  db:
+    image: 'postgres:16.1'
+    container_name: 'fxtrading-postgres-container'
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: fxuser
+      POSTGRES_DB: fxtrading
+    volumes:
+      - ./fx-trading/database_setup/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./fx-trading/database_setup/data.sql:/docker-entrypoint-initdb.d/data.sql
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+    networks:
+      - fxtrading-network
+    # This checks every 5 seconds if the database is ready to accept connections.
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fxuser -d fxtrading"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s # Wait 10s before starting checks
+
   ui:
     build: ./ui
     ports: 
@@ -12,20 +35,23 @@ services:
     build: ./fx-trading
     ports:
       - "8210:8210"
+    depends_on:
+      - db # Ensure the database starts before the Java app
+    environment:
+      # Configure your Java app to connect to the database service by its name
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/fxtrading
+      SPRING_DATASOURCE_USERNAME: fxuser
+      SPRING_DATASOURCE_PASSWORD: password
+    networks:
+      - fxtrading-network
   quote:
     build: ./quote-service
     ports:
       - "8220:8220"
-  db:
-    image: postgres
-    environment:
-        POSTGRES_PASSWORD: "admin"
-    volumes:
-        - postgres-db:/var/lib/postgresql/data
-        - ./fx-trading/database_setup/db_setup.sql:/docker-entrypoint-initdb.d/1.sql
-        - ./user-administration/database_setup/db_setup.sql:/docker-entrypoint-initdb.d/2.sql
 
-    ports:
-      - "54320:5432"
 volumes:
-    postgres-db:
+  postgres-data:
+
+networks:
+  fxtrading-network:
+    driver: bridge
