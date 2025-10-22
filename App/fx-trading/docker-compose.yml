@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   # The database service
-  db:
+  fxtrading-db:
     image: 'postgres:16.1'
     container_name: 'fxtrading-postgres-container'
     environment:
@@ -17,6 +17,12 @@ services:
       - '5432:5432'
     networks:
       - fxtrading-network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U fxuser -d fxtrading" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 20s # Wait 20s before starting checks
 
   # Your Java application service
   app:
@@ -27,10 +33,10 @@ services:
     ports:
       - '8210:8210'
     depends_on:
-      - db # Ensure the database starts before the Java app
+      - fxtrading-db # Ensure the database starts before the Java app
     environment:
       # Configure your Java app to connect to the database service by its name
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/fxtrading
+      SPRING_DATASOURCE_URL: jdbc:postgresql://fxtrading-db:5432/fxtrading
       SPRING_DATASOURCE_USERNAME: fxuser
       SPRING_DATASOURCE_PASSWORD: password
     networks:
