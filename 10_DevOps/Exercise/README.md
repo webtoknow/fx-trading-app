@@ -71,7 +71,7 @@ sudo apt install -y git
 - Fetch the github project to a local workspace
 ```
 mkdir github && cd github
-git clone https://github.com/WebToLearn/fx-trading-app.git
+git clone https://github.com/webtoknow/fx-trading-app.git
 ```
 
 - Build the application and package it as jar file
@@ -161,7 +161,7 @@ sudo apt-get install git
 
 - Clone application repository:
 ```
-git clone https://github.com/WebToLearn/fx-trading-app.git
+git clone https://github.com/webtoknow/fx-trading-app.git
 ```
 
 - Build docker image (adding an appropriate tag):
@@ -219,7 +219,7 @@ Once the shell sessions is started and console is displayed in the bottom half o
 First, let's clone the application sources in a new folder:
 ```
 mkdir github
-cd github/ && git clone https://github.com/WebToLearn/fx-trading-app.git
+cd github/ && git clone https://github.com/webtoknow/fx-trading-app.git
 ```
 Update the application to run on port 8080 (default for Cloud Run healthchecks)
 ```

@@ -185,7 +185,7 @@ Start the app and then use Postman to test the quote-service:
 
 ## <a name="exercise-6">Exercise 6 - Importing initial project setup in IDE </a>
 
-Import in the IDE the [starter project](https://github.com/WebToLearn/fx-trading-app/blob/master/Week_07/Exercise/fx-trading-starter.zip).
+Import in the IDE the [starter project](https://github.com/webtoknow/fx-trading-app/blob/master/04_Backend_Development/Exercise/fx-trading-starter.zip).
 It should be imported as a Maven project.
 
 Notes:

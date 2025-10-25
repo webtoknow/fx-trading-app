@@ -15,7 +15,7 @@ We can also download a draw.io diagram from [here](https://drive.google.com/file
 We can clone the repository using GIT and the command below or we can download it directly from Github.
 
 ```bash
-git clone https://github.com/WebToLearn/fx-trading-app.git
+git clone https://github.com/webtoknow/fx-trading-app.git
 ```
 
 ## Before Setup
@@ -30,10 +30,10 @@ Install [Angular CLI](https://cli.angular.io/)
 npm install -g @angular/cli
 ```
 
-Got to *Week_04\Exercise\Code*
+Got to *03_Architecture\Exercise\Code*
 
 ```bash
-cd fx-trading-app\Week_04\Exercise\Code
+cd fx-trading-app\03_Architecture\Exercise\Code
 ```
 
 Let's generate a new Angular project containing modules using CLI

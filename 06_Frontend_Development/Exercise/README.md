@@ -7,7 +7,7 @@ For this tutorial to work, it's essential to have Node.js, npm, and the Angular 
 If you missed last week's session, you'll also need to install [Git](https://git-scm.com/) and clone the project repository using the command below, or download it directly from GitHub:
 
 ```bash
-git clone https://github.com/WebToLearn/fx-trading-app.git
+git clone https://github.com/webtoknow/fx-trading-app.git
 ```
 
 ## Table of contents
@@ -40,7 +40,7 @@ Mock server is used to create a fake API to mock the backend data using [JSON Se
 Let's install its packages:
 
 ```bash
-cd fx-trading-app\Week_05\Exercise\Code\mock-server
+cd fx-trading-app\06_Frontend_Development\Exercise\Code\mock-server
 npm install
 ```
 
@@ -64,10 +64,10 @@ Now we can access these APIs:
 
 ### Create pages
 
-Go to *Week_05/Exercise/Code/ui* using a new **terminal** windows:
+Go to *06_Frontend_Development/Exercise/Code/ui* using a new **terminal** windows:
 
 ```bash
-cd fx-trading-app\Week_05\Exercise\Code\ui
+cd fx-trading-app\06_Frontend_Development\Exercise\Code\ui
 ```
 
 > In the `public` directory, you'll find several images, such as `favicon.ico`, as well as the following under the `\assets\img\` folder: `error_404.png`, `logo-grayscale.svg`, and `logo-main.svg`.
@@ -128,7 +128,7 @@ Now we need to clean up de project by:
 
 Great job! 👍👍 Now, let's view your first Angular application by starting the development server in a **terminal** window.
 
-Use the previously opened terminal and ensure you're in the *fx-trading-app\Week_05\Exercise\Code\ui* directory. You can navigate to this directory with the following commands:
+Use the previously opened terminal and ensure you're in the *fx-trading-app\06_Frontend_Development\Exercise\Code\ui* directory. You can navigate to this directory with the following commands:
 
 ```bash
 cd ..
@@ -136,7 +136,7 @@ cd ..
 cd ..
 ```
 
-Once you're in the root folder of your Angular application (*Week_05\Exercise\Code\ui*), run:
+Once you're in the root folder of your Angular application (*06_Frontend_Development\Exercise\Code\ui*), run:
 
 ```bash
 npm start
@@ -333,7 +333,7 @@ In order to load *DatePicker* style, we should update `angular.json`:
 
 ### User model
 
-First, let's create a new folder in *Week_05/Exercise/Code/ui/src/app* called **models** to store all the entities we'll need.
+First, let's create a new folder in *06_Frontend_Development/Exercise/Code/ui/src/app* called **models** to store all the entities we'll need.
 
 From the design of the register page, we can identify the necessary fields for the user:
 * id
@@ -362,7 +362,7 @@ On the server side, there will be three microservices:
 - *fxTradeService*, running on port 8210
 - *quoteService*, running on port 8220
 
-In the directory *Week_05/Exercise/Code/ui/src/app*, we will create a new file named `constants.ts`, which will hold all the required API endpoints:
+In the directory *06_Frontend_Development/Exercise/Code/ui/src/app*, we will create a new file named `constants.ts`, which will hold all the required API endpoints:
 
 
 ```JavaScript
@@ -390,7 +390,7 @@ export const backendUrl = {
 
 Now, let's focus on creating the service to send user details via an HTTP request to the server.
 
-Start by creating a new folder in *Week_05/Exercise/Code/ui/src/app* named **services**, which will hold all the services required for different functionalities.
+Start by creating a new folder in *06_Frontend_Development/Exercise/Code/ui/src/app* named **services**, which will hold all the services required for different functionalities.
 
 Our first service will be in a file called `user.service.ts`:
 
@@ -743,7 +743,7 @@ Key points:
 
 The authentication service will manage user login and logout by interacting with the backend and storing user details in `localStorage`.
 
-To implement this, create a new file `authentication.service.ts` in *Week_05/Exercise/Code/ui/src/app/services/*:
+To implement this, create a new file `authentication.service.ts` in *06_Frontend_Development/Exercise/Code/ui/src/app/services/*:
 
 ```JavaScript
 import { Injectable } from '@angular/core';
@@ -790,7 +790,7 @@ Key points:
 
 To protect certain routes from unauthorized access, we'll create a guard.
 
-Create a new file `auth.guard.ts` inside a guards folder in *Week_05/Exercise/Code/ui/src/app/*:
+Create a new file `auth.guard.ts` inside a guards folder in *06_Frontend_Development/Exercise/Code/ui/src/app/*:
 
 ```JavaScript
 import { Injectable } from '@angular/core';
@@ -835,7 +835,7 @@ const appRoutes: Routes = [
 
 ### JWT Interceptor
 
-To attach the JWT token to outgoing HTTP requests, create `jwt.interceptor.ts` inside a **helpers** folder in *Week_05/Exercise/Code/ui/src/app/*:
+To attach the JWT token to outgoing HTTP requests, create `jwt.interceptor.ts` inside a **helpers** folder in *06_Frontend_Development/Exercise/Code/ui/src/app/*:
 
 ```JavaScript
 // intercepts http requests from the application to add a JWT auth token to the Authentication header
