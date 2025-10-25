@@ -233,7 +233,7 @@ They are mentioned here just for information purposes. One of the major differen
 
 ### Orientation to the Lab Environment
 
-![classroom](https://github.com/WebToLearn/fx-trading-app/blob/devops_open_source/Week_12/Theory/images/classroom.PNG)
+![classroom](https://github.com/webtoknow/fx-trading-app/blob/master/10_DevOps/Theory/images/classroom.PNG)
 
 
 
@@ -288,5 +288,5 @@ A plugin is written in Java. Plugins use their own set of Java Annotations and d
 
 ### Jenkins User Interface
 
-![jenkins_ui](https://github.com/WebToLearn/fx-trading-app/blob/devops_open_source/Week_12/Theory/images/jenkins_ui.PNG)
+![jenkins_ui](https://github.com/webtoknow/fx-trading-app/blob/master/10_DevOps/Theory/images/jenkins_ui.PNG)
 

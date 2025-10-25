@@ -19,7 +19,7 @@
       - name: Download the source files from github
         become: yes
         git:
-          repo: 'https://github.com/WebToLearn/fx-trading-app.git'
+          repo: 'https://github.com/webtoknow/fx-trading-app.git'
           dest: "{{ destdir }}"
 
       - name: Build the jar package

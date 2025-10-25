@@ -98,7 +98,7 @@ Analyse the user requirements and based on them try to create user stories for t
 
 **So that** I can conclude on the pattern of trades and make my transactions on the basis of this analysis.
 
-_Please check the [mock-up](../../Week_03/Exercise/README.md) for guidelines on how it could look. This does not have to be the actual implementation, as the design might be different, but the same kind of information must be present in the actual implementation._
+_Please check the [mock-up](../../02_UI_UX_Design/Exercise/README.md) for guidelines on how it could look. This does not have to be the actual implementation, as the design might be different, but the same kind of information must be present in the actual implementation._
 
 **Acceptance Criteria:**
 

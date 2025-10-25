@@ -850,7 +850,7 @@ app-server-3 | SUCCESS => {
 }
 ```
 
-Now that we can confirm everything works correctly, we can go ahead with setting up the automation. This will be similar with the first exercise from `Week_12` - deploying the `quote-service` Spring Boot application to each of the app-server hosts natively (using local Java, not running inside a container).
+Now that we can confirm everything works correctly, we can go ahead with setting up the automation. This will be similar with the first exercise from `10_DevOps` - deploying the `quote-service` Spring Boot application to each of the app-server hosts natively (using local Java, not running inside a container).
 
 The firewall rules were already configured as part of the Terraform setup, so we should be able to access the application using the default port defined in github (8220).
 
@@ -877,7 +877,7 @@ Create the following playbook.yaml file in the same ansible folder:
       - name: Download the source files from github
         become: yes
         git:
-          repo: 'https://github.com/WebToLearn/fx-trading-app.git'
+          repo: 'https://github.com/webtoknow/fx-trading-app.git'
           dest: "{{ destdir }}"
 
       - name: Build the jar package
@@ -1055,7 +1055,7 @@ Go back to the Jenkins web page and create a new job:
 
 - Click on `+ New Item` to create a new job
 - Decide on a Job name and select Freestyle Project
-- Under `Source Code Management`select Git and enter the fx-trading-app github URL: https://github.com/WebToLearn/fx-trading-app.git
+- Under `Source Code Management`select Git and enter the fx-trading-app github URL: https://github.com/webtoknow/fx-trading-app.git
 - There are no credentials needed, as this is a public repository
 - Check the available Build Triggers (questian mark icon next to each one), but don't select any of them - we will trigger the build manually 
 - Under Build Steps select `Execute Shell`
