@@ -197,7 +197,7 @@ Also database properties are set. The database properties must match the databas
 
 ## <a name="exercise-7">Exercise 7 - Database Setup </a>
 
-For this exercise do the following below with the help of the commands found in db_setup.sql
+For this exercise do the following below with the help of the commands found in db_setup.sql, in pgAdmin console:
 
 1. Create a database named **fxtrading**
 2. Create the **transactions** table on the above database
