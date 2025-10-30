@@ -8,12 +8,12 @@
 ## 1. Web servers
 
 - Store software and website components files, such as HTML, JavaScript, CSS files.
-- Contain HTTP server - software component which communicates using URLs and HTTP protocol.  
+- Contain HTTP server - software component serving client requests using URLs and HTTP protocol.  
 - Can be accessed via Internet by other devices.
 - Can serve static or dynamic content.
 
 **Why are they used?**
-- retrieve data from a database to display it in a user interface
+- retrieve multimedia data from a database to display it in a user interface
 - validate user input data and store it in a database
 - log users in and validate user permissions
   
@@ -28,6 +28,8 @@ For example if the server provides cookies to the client it will include a heade
 There is a list of predefined HTTP headers, and you can add custom headers to your HTTP responses.
 
 <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Messages">HTTP Messages</a>
+
+In the body, you can send large JSON files, or XML files for legacy applications.
 
 ## 2.2 HTTP methods
 
@@ -50,11 +52,11 @@ Most common ones:
 
 # 3. REST (Representational State Transfer)  
 
-REST is a set of conventions used separate the concerns of the client and server when creating web services.
+REST is a set of conventions used to separate the concerns of the client and server when creating web services.
 Systems compliant to this paradigm are called RESTful, and they are stateless (client and server do not need to know anything about each other's state).
-REST uses resources to describe any object, document, or thing that you may need to store or send to other services.
+REST uses resources to describe any object, document, or thing that you may need to retrieve, store or send to other services.
 
-REST requires that a client make a request to the server in order to retrieve or modify data on the server.
+REST requires a client to make a request to the server in order to retrieve or modify data on the server.
 A request generally consists of:
 - an HTTP verb, which defines what kind of operation to perform
 - a header, which allows the client to pass along information about the request
@@ -67,43 +69,26 @@ So for example:
 - PUT will be used to update a specific resource (by id)
 - DELETE will be used to remove a specific resource by id
 
-These operations listed above are commonly called CRUD (Create/Read/Update/Delete).  
+These operations listed above are commonly called CRUD (Create/Read/Update/Delete).
 
-# 4.1 Spring / Spring Boot
+A very good dive into learning more about REST is an article from Martin Fowler describing the Richardson Maturity Model:
+<a href="https://martinfowler.com/articles/richardsonMaturityModel.html">Link to Richardson Maturity Model</a>
 
-## Spring layered application
-![Spring layered application](spring-layered-architecture.png)
 
-**Spring** is a framework providing a comprehensive programming and configuration model for modern Java-based enterprise applications - on any kind of deployment platform.
+# 4.1 Inversion of Control and Dependency Injection
 
-It comes with features like Dependency Injection, and out of the box modules like:
-
-- Spring JDBC
-- Spring MVC
-- Spring Security
-- Spring AOP
-- Spring ORM
-- Spring Test
-
-**Spring Boot** is an extension of the Spring framework, which eliminates the boilerplate configurations required for setting up a Spring application.
-
-Spring Boot features:
-- starter dependencies to simplify the build and application configuration
-- embedded server to avoid complexity in application deployment
-- metrics, health check, and externalized configuration
-- automatic configuration for Spring functionality, whenever possible
-
-# 4.2 Inversion of Control and Dependency Injection
-
-**Inversion of Control** is a principle in software engineering which refers to transferring the control over the flow of a program’s execution to a framework or a container, which manages the dependencies and their lifecycles.
+**Inversion of Control** is a principle in software engineering which refers to transferring the control over the flow of a program’s execution to a framework or a container.
+Thus, the container will manage the dependencies and their lifecycles and will provide them whenever they are needed in an IoC application.
 
 Advantages of IoC:
-- task execution is decoupled from task implementation 
-- easy to switch between different implementations
+- task execution is decoupled from task implementation
+- greater abstraction, leading to easy switch between different providers
+  - for instance, when switching an application database from _Postgresql_ to _Oracle_, a programmer only has to change configuration in order to change the database provider, no code change required. Of course, this is possible only because we are still in the SQL world.
 - greater modularity of a program
 - code is easier to test, by mocking dependencies and allowing components to communicate through contracts
 
 IoC can be achieved through various mechanisms, such as: Strategy design pattern, Service Locator pattern, Factory pattern, and Dependency Injection (DI).
+The most common way is through Dependency Injection
 
 **Dependency Injection** is a design pattern used to implements IoC.
 Connecting objects with other objects, or “injecting” objects into other objects, is done by an assembler rather than by the objects themselves.
@@ -130,10 +115,46 @@ public class Store {
 }
 ```
 
-An IoC container is a common characteristic of frameworks that implement IoC.
-In Spring, the container is responsible for instantiating, configuring and assembling objects known as beans, as well as managing their lifecycles.
+Now, using DI, the store object simply declares that it needs an item, via a constructor. You can declare you need an object via DI with constructor, setter or simply via a field that is annotated with a special annotation.
+The IoC container is smart enough to use reflection or whatever means to provide an instance to a specific field. 
 
-To enable component scanning and autoconfiguration of beans in Spring, the main method should be annotated with @SpringBootApplication. 
+Exercise: which way do you think it is the recommended way to declare a dependency?
+
+An IoC container is a common characteristic of frameworks that provide dependency injection.
+
+
+# 4.2 Spring / Spring Boot
+
+
+**Spring** is a framework providing a comprehensive programming and configuration model for modern Java-based enterprise applications - on any kind of deployment platform.
+
+It separates the construction of objects from the logic that uses them. The Spring container doesn't manage only the construction of objects, but also their entire lifecycle, until destruction. 
+It comes with features like Dependency Injection, and out of the box modules like:
+
+- Spring JDBC
+- Spring MVC
+- Spring Security
+- Spring AOP
+- Spring ORM
+- Spring Test
+
+Beans are the objects managed by Spring IoC container. The context is the engine of Spring, where beans reside. It is also responsible for wiring everything together, for instance to create first the 
+dependency tree, and then providing the instances as they are required.
+
+`@Autowired` is an annotation specific to Spring. The Spring IoC container has annotation processors, that are handling specific annotations at runtime. Therefore, when the application starts, it looks 
+for the `@SpringBootApplication` annotation or others (if only using Spring instead of Spring Boot), in order to know where to scan the beans and these annotations, to finally build the dependency graph.
+
+
+**Spring Boot** is an extension of the Spring framework, which eliminates the boilerplate configurations required for setting up a Spring application.
+
+Spring Boot features:
+- starter dependencies to simplify the build and application configuration
+- embedded server to avoid complexity in application deployment
+- metrics, health check, and externalized configuration
+- automatic configuration for Spring functionality, whenever possible
+- simpler annotations, like `@SpringBootApplication`, automatically scanning the current package and auto-configuring using default configurations
+
+To enable component scanning and autoconfiguration of beans in Spring Boot, the main method should be annotated with `@SpringBootApplication`.
 
 ```Java
 @SpringBootApplication
@@ -143,6 +164,21 @@ public class DemoApplication {
     }
 }
 ```
+
+If we dive into the spring boot main annotation above, we see:
+
+```Java
+@Target({ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Inherited
+@SpringBootConfiguration
+@EnableAutoConfiguration
+@ComponentScan(...)
+```
+
+This annotation exists to simplify even further the development effort. However, if default configurations do not serve the programmer's needs, we still have to define our own configurations.
+
 
 # 4.3 Spring MVC
 
@@ -158,8 +194,10 @@ public class WebConfig {
 ```
 
 ## Controller
-Controller classes contain endpoints - the access points from which an outside system can interact with our application. 
-The endpoints receive requests from the other systems, and pass the requests to service classes which execute the business logic. 
+Controller classes contain endpoints - the access points from which an outside system, also called a client, can interact with our application. 
+The endpoints receive requests from the client systems, and pass the requests to service classes which execute the business logic. 
+
+In a way of speaking, we can look at controllers as backend delegators of client requests to the service or business layers of the application.
 
 Outside System ------> [Controller -> Service -> Repository] ------> Database
 
@@ -183,7 +221,9 @@ public class UserController {
 ```
 
 ## Service
-Service classes contain the business related logic - which might include retrieving, modifying or deleting data.
+Service classes contain the business related logic - which might include retrieving, modifying or deleting data. In these service beans we find the transactional boundary of the system. This means 
+we can have a set of related and atomic database operations, or a transaction, defined in a single method of the service bean.
+
 Usually the service class needs information from the database or changes information into the database when performing an operation, so the service classes directly interact with repository classes.
 
 ```Java
@@ -273,4 +313,35 @@ ResponseEntity<Void> response = restClient.post()
         .body(user)
         .retrieve()
         .toBodilessEntity();
+```
+
+## Spring layered application
+![Spring layered application](spring-layered-architecture.png)
+
+
+# 4.5 Cross-cutting concerns
+
+Certain features that are not part of the core business logic become necessary, as the application grows, and are called cross-cutting concerns.
+Examples of cross-cutting concerns are:
+
+- Logging: recording method call or argument or execution time (for performance check)
+- Security: verifying if the current user has a permission to execute a method
+- Caching: storing the result of expensive method calls for fast retrieval
+
+Spring uses Aspect-Oriented-Programming to modularize these cross-cutting concerns.
+
+# 4.6 Spring AOP examples 
+
+## Declarative transaction management
+
+Without Spring. handling transactions would involve `connection.commit` and `connection.rollback` calls.
+With Spring, putting the following annotation is enough:
+
+```Java
+    @Transactional
+    public void transferFunds(long fromId, long toId, BigDecimal amount) {
+        // Core business logic (no manual transaction code needed!)
+        accountRepository.withdraw(fromId, amount);
+        accountRepository.deposit(toId, amount); 
+    }
 ```
