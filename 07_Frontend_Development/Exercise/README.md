@@ -7,7 +7,7 @@ For this tutorial to work, it's essential to have Node.js, npm, and the Angular 
 If you missed last week's session, you'll also need to install [Git](https://git-scm.com/) and clone the project repository using the command below, or download it directly from GitHub:
 
 ```bash
-git clone https://github.com/WebToLearn/fx-trading-app.git
+git clone https://github.com/webtoknow/fx-trading-app.git
 ```
 
 ## Table of contents
@@ -32,7 +32,7 @@ Mock server is used to create a fake API to mock the backend data using [JSON Se
 Let's install its packages:
 
 ```bash
-cd fx-trading-app\Week_06\Exercise\Code\mock-server
+cd fx-trading-app\07_Frontend_Development\Exercise\Code\mock-server
 npm install
 ```
 
@@ -53,10 +53,10 @@ Now we can access these APIs:
 
 ## Exercise 1 - Create blotter-view, fx-rates-view and widget components
 
-Go to *Week_06/Exercise/Code/ui* using a new **terminal** windows: 
+Go to *07_Frontend_Development/Exercise/Code/ui* using a new **terminal** windows: 
 
 ```bash
-cd fx-trading-app/Week_06/Exercise/Code/ui
+cd fx-trading-app/07_Frontend_Development/Exercise/Code/ui
 ```
 
 Run `npm install` to download all dependencies:
@@ -80,10 +80,10 @@ So, *dashboard-page* component will use 3 smaller components:
 
 Let's create them!
 
-First, go to *Week_06/Exercise/Code/ui/src/app/pages/dashboard-page* and use Angular CLI to create these 3 new components, children of *dashboard-page* components:
+First, go to *07_Frontend_Development/Exercise/Code/ui/src/app/pages/dashboard-page* and use Angular CLI to create these 3 new components, children of *dashboard-page* components:
 
 ```bash
-cd fx-trading-app/Week_06/Exercise/Code/ui/src/app/pages/dashboard-page
+cd fx-trading-app/07_Frontend_Development/Exercise/Code/ui/src/app/pages/dashboard-page
 
 ng generate component blotter-view
 ng generate component fx-rates-view
@@ -148,7 +148,7 @@ and in *dashboard-page.component.css*:
 
 ### Transaction model
 
-Into *Week_06/Exercise/Code/ui/src/app/models*, let's make a new file, named `transaction.ts`,representing the *Transaction* model:
+Into *07_Frontend_Development/Exercise/Code/ui/src/app/models*, let's make a new file, named `transaction.ts`,representing the *Transaction* model:
 
 ```JavaScript
 export interface Transaction {
@@ -167,10 +167,10 @@ export interface Transaction {
 
 ### Trade service
 
-In *Week_06/Exercise/Code/ui/src/app/services*, let's create a file, *trade.service.ts*, which will contain all API calls desired to get data from JSON Server.
+In *07_Frontend_Development/Exercise/Code/ui/src/app/services*, let's create a file, *trade.service.ts*, which will contain all API calls desired to get data from JSON Server.
 
 ```bash
-cd Week_06/Exercise/Code/ui/src/app/services
+cd 07_Frontend_Development/Exercise/Code/ui/src/app/services
 ng generate service trade
 ```
 
@@ -501,7 +501,7 @@ Key Features:
 
 ### Rate model
 
-In the folder *Week_06/Exercise/Code/ui/src/app/models*, create a new file named `rate.ts`. This file will define the Rate model:
+In the folder *07_Frontend_Development/Exercise/Code/ui/src/app/models*, create a new file named `rate.ts`. This file will define the Rate model:
 
 ```JavaScript
 export interface Rate {
@@ -513,7 +513,7 @@ export interface Rate {
 
 ### Widget model
 
-In the same folder, *Week_06/Exercise/Code/ui/src/app/models*, add a new file named `widget.ts` to define the **Widget** class and **RateTrend** enum:
+In the same folder, *07_Frontend_Development/Exercise/Code/ui/src/app/models*, add a new file named `widget.ts` to define the **Widget** class and **RateTrend** enum:
 
 ```JavaScript
 export class Widget {

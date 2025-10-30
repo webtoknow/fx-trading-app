@@ -2,4 +2,4 @@
 
 ![You are here](../design.png)
 
-What is [UI/UX Design](https://drive.google.com/file/d/1iNmU9-0qMfgE44g3IGIiHWLj63JHG6ep/view?usp=sharing)?
+What is [UI/UX Design](https://drive.google.com/file/d/1tFa6fUkO7B8n8hiCuyMaKlN72L6BIIco/view)?
