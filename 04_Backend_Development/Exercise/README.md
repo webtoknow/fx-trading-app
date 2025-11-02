@@ -12,6 +12,7 @@ Before developing the services, you can take a look at the application architect
 
 ## Pre-requisites
 - Java 21
+- PostgreSql
 - Maven
 - Postman
 - IntelliJ IDEA
@@ -93,6 +94,11 @@ public class FxRateController {
     // return RateDto
 }
 ```
+
+At this point, the project does not compile anymore, since it is missing a Maven dependency. Add the spring boot web
+starter dependency. Look it up from maven repositories: [https://mvnrepository.com/]. While editing the pom file directly,
+you can also benefit from autocompletion.
+
 
 ## Exercise 4 - Create service
 
@@ -182,6 +188,9 @@ Start the app and then use Postman to test the quote-service:
 - get the available currencies: localhost:8220/currencies
 - get some fx-rates: localhost:8220/fx-rate?primaryCcy=USD&secondaryCcy=EUR
 
+Here is an example of requesting fx-rates for EUR and RON
+
+![Postman example](postman-example.png)
 
 ## <a name="exercise-6">Exercise 6 - Importing initial project setup in IDE </a>
 
@@ -206,13 +215,30 @@ For this exercise do the following below with the help of the commands found in 
 
 
 Notes:
-1. Database connection properties are already set in /src/main/resources/application.properties. 
+1. If you run on Linux or Max OS, you should connect to postgresql prompt from a shell using:
+```commandline
+   sudo -u postgres psql
+```
+   - this assumes however that you have PostgreSql preinstalled in your OS, like it is specified in the prerequisites
+2. Database connection properties are already set in /src/main/resources/application.properties.
 They are used by Spring to connect to the Postgresql database:
 ```
 spring.datasource.url=jdbc:postgresql://<DATABASE_HOST>:<DATABASE_PORT>/<DATABASE_NAME>
 spring.datasource.username=<VALUE>
 spring.datasource.password=<VALUE>
 ```
+
+To check if database setup is correct, if on Windows, simply connect in pgAdmin console with the new user role fxuser
+to the database fxtrading.
+If on Linux or Mac, you should try to connect to the fxtrading tablespace with fxuser from shell by running:
+
+```commandline
+psql -h localhost -U fxuser -p 5432 -d fxtrading
+```
+
+!Please be aware that, even though the recommended and default port of PostgreSql is 5432, it may be that your instance
+of PostgreSql will have a different port, like 5433. In this case, both the properties file, and the command above need to
+be modified accordingly.
 
 ## <a name="exercise-8">Exercise 8 - Implement REST endpoint for displaying list of all trades </a>
 
@@ -283,7 +309,8 @@ public class Transaction {
 Create class TransactionResponse  
 
 We use this object to serialize/deserialize REST message payloads.  
-It is a practice to use a distinct set of objects (from entities) when communicating through the REST interface.  
+It is a practice to use a distinct set of objects (from entities) when communicating through the REST interface. You will come
+across these distinct objects as being DTOs, from _data transfer objects_.
 These objects help us as we might want for example to either hide, aggregate or transform information coming from database entities.  
 
 In our case we transform the rate and date fields as detailed in the below step.
@@ -473,7 +500,10 @@ public class FxTradingRestController {
 ```
 
 After completing steps 1-6 of exercise 8 you should have a working REST endpoint for listing all trades.
-It can now be tested with a tool like Postman
+It can now be tested with a tool like Postman, see screenshot below.
+
+
+![Postman example testing the fx trading application](postman-fx-trading.png)
  
 
 ## <a name="exercise-9">Exercise 9 - Implement functionality for saving trades </a>
@@ -557,17 +587,17 @@ If the first one is missing then the deserialization will fail.
     
 
     @Transactional
-    public void makeTransaction(TransactionResponse dto) {
+    public void makeTransaction(TransactionResponse transactionDto) {
         // Important: in a real application validations should be made - here for example
-        String action = dto.getAction();
+        String action = transactionDto.getAction();
         if (StringUtils.isBlank(action) || !Arrays.asList("BUY", "SELL").contains(action.toUpperCase())) {
             throw new IllegalArgumentException("Action not supported!");
         }
     
-        QuoteResponse ratePair = getCurrentRate(dto.getPrimaryCcy(), dto.getSecondaryCcy());
+        QuoteResponse ratePair = getCurrentRate(transactionDto.getPrimaryCcy(), transactionDto.getSecondaryCcy());
         BigDecimal rate = "BUY".equalsIgnoreCase(action) ? ratePair.getBuyRate() : ratePair.getSellRate();
     
-        Transaction transaction = TransactionMapper.INSTANCE.transactionResponseToTransaction(dto,rate);
+        Transaction transaction = TransactionMapper.INSTANCE.transactionResponseToTransaction(transactionDto,rate);
         repository.save(transaction);
     }
     
@@ -614,3 +644,7 @@ In TransactionMapper add the following methods:
 **Important**: for this functionality to work this microservice has to connect to a live quote service.
 
 Now the implementation for the creation of trades should be done, and you can test it with a tool like Postman.
+You should get a 200 OK like below when making the POST REST operation in Postman.
+Finally, you can test the newly added transaction by running this time the GET REST operation on the same endpoint.
+
+![Response from postman](postman-make-transaction.png)
