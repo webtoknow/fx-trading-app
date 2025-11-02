@@ -50,7 +50,7 @@ Most common ones:
 
 <a href="https://en.wikipedia.org/wiki/List_of_HTTP_status_codes">More information</a>  
 
-# 3. REST (Representational State Transfer)  
+## 3. REST (Representational State Transfer)  
 
 REST is a set of conventions used to separate the concerns of the client and server when creating web services.
 Systems compliant to this paradigm are called RESTful, and they are stateless (client and server do not need to know anything about each other's state).
@@ -75,7 +75,7 @@ A very good dive into learning more about REST is an article from Martin Fowler 
 <a href="https://martinfowler.com/articles/richardsonMaturityModel.html">Link to Richardson Maturity Model</a>
 
 
-# 4.1 Inversion of Control and Dependency Injection
+## 4.1 Inversion of Control and Dependency Injection
 
 **Inversion of Control** is a principle in software engineering which refers to transferring the control over the flow of a program’s execution to a framework or a container.
 Thus, the container will manage the dependencies and their lifecycles and will provide them whenever they are needed in an IoC application.
@@ -123,8 +123,9 @@ Exercise: which way do you think it is the recommended way to declare a dependen
 An IoC container is a common characteristic of frameworks that provide dependency injection.
 
 
-# 4.2 Spring / Spring Boot
+## 4.2 Spring / Spring Boot
 
+![Spring framework](spring-framework.png)
 
 **Spring** is a framework providing a comprehensive programming and configuration model for modern Java-based enterprise applications - on any kind of deployment platform.
 
@@ -180,7 +181,9 @@ If we dive into the spring boot main annotation above, we see:
 This annotation exists to simplify even further the development effort. However, if default configurations do not serve the programmer's needs, we still have to define our own configurations.
 
 
-# 4.3 Spring MVC
+## 4.3 Spring MVC
+
+![Spring layered application](spring-layered-architecture.png)
 
 Spring MVC lets you create special annotated beans to handle incoming HTTP requests.
 To enable Spring MVC support through a Java configuration class, we just add the @EnableWebMvc annotation:
@@ -295,7 +298,7 @@ public class UserLogin {
 }
 ```
 
-# 4.4 REST client
+## 4.4 REST client
 RestClient is a synchronous HTTP client, which sends and receives HTTP requests and responses in a blocking manner, meaning it waits for each request to complete before proceeding to the next one.
 RestClient can be used to communicate service-to-service, using HTTP calls.
 
@@ -315,11 +318,7 @@ ResponseEntity<Void> response = restClient.post()
         .toBodilessEntity();
 ```
 
-## Spring layered application
-![Spring layered application](spring-layered-architecture.png)
-
-
-# 4.5 Cross-cutting concerns
+## 4.5 Cross-cutting concerns
 
 Certain features that are not part of the core business logic become necessary, as the application grows, and are called cross-cutting concerns.
 Examples of cross-cutting concerns are:
@@ -330,9 +329,9 @@ Examples of cross-cutting concerns are:
 
 Spring uses Aspect-Oriented-Programming to modularize these cross-cutting concerns.
 
-# 4.6 Spring AOP examples 
+## 4.6 Spring AOP examples 
 
-## Declarative transaction management
+### Declarative transaction management
 
 Without Spring. handling transactions would involve `connection.commit` and `connection.rollback` calls.
 With Spring, putting the following annotation is enough:
@@ -346,8 +345,6 @@ With Spring, putting the following annotation is enough:
     }
 ```
 
-
-# 5. Maven
 
 ## 5.1 Maven: The Foundation of Enterprise Java
 
@@ -415,4 +412,3 @@ Maven can perform its tasks without you having to configure file paths explicitl
 Maven is the backbone of modern Java development. It transforms a scattered collection of files and dependencies into a 
 fully managed, standardized, and professionally structured project.
 By learning Maven, you're not just learning a tool; you're learning the fundamental structure required for enterprise software engineering.
-
