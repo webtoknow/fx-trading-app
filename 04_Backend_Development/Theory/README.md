@@ -174,7 +174,7 @@ If we dive into the spring boot main annotation above, we see:
 @Inherited
 @SpringBootConfiguration
 @EnableAutoConfiguration
-@ComponentScan(...)
+@ComponentScan
 ```
 
 This annotation exists to simplify even further the development effort. However, if default configurations do not serve the programmer's needs, we still have to define our own configurations.
@@ -345,3 +345,74 @@ With Spring, putting the following annotation is enough:
         accountRepository.deposit(toId, amount); 
     }
 ```
+
+
+# 5. Maven
+
+## 5.1 Maven: The Foundation of Enterprise Java
+
+The Problem: Ending "JAR Hell"
+
+Before Maven, managing external Java libraries (JAR files) was chaotic:
+
+Manual Download: You had to manually find and download every required JAR (e.g., for logging, testing, or database drivers).
+
+Transitive Dependencies: If your logging library (A) needed another library (B) to work, you also had to find, download, and manage library B. This chain reaction was known as "JAR Hell."
+
+Inconsistent Builds: Every project used different custom scripts (like Ant) for building, compiling, and testing, making it hard for new developers to jump in.
+
+Maven’s solution is to centralize project knowledge and automate the logistics. It defines a process so repeatable that you can build a massive application with a single command.
+
+## 5.2 Pillar 1: Dependency Management via the POM
+
+The most powerful feature of Maven is its dependency management system, centered around the Project Object Model (POM).
+
+### The pom.xml File
+
+The pom.xml is an XML file that sits at the root of your project and is the single source of truth for all project configurations, properties, and, most importantly, dependencies.
+
+You Declare: You simply declare the project name, group ID, artifact ID, and the version of the libraries you need.
+
+Maven Handles: Maven automatically connects to the Maven Central Repository (a massive public server of artifacts) and downloads the required JARs and all their sub-dependencies.
+
+By adding just these few lines, Maven handles finding and integrating the entire Spring Boot ecosystem:
+
+```xml
+<dependencies>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-web</artifactId>
+        <version>3.2.0</version>
+    </dependency>
+</dependencies>
+
+```
+
+## 5.3 Pillar 2: The Standard Build Lifecycle
+
+Maven enforces a predictable and standardized sequence of steps called the Build Lifecycle. 
+When you tell Maven to execute a phase, it executes all preceding phases automatically.
+
+- mvn validate
+- mvn compile
+- mvn test
+- mvn package
+- mvn install
+- mvn deploy
+
+## 5.4 Pillar 3: Convention Over Configuration (CoC)
+
+CoC means Maven assumes your project follows the Standard Directory Layout. By imposing this consistent structure, 
+Maven can perform its tasks without you having to configure file paths explicitly.
+
+- src/main/java
+- src/main/resources
+- src/test/java
+- src/test/resources
+
+## 5.5 Conclusion
+
+Maven is the backbone of modern Java development. It transforms a scattered collection of files and dependencies into a 
+fully managed, standardized, and professionally structured project.
+By learning Maven, you're not just learning a tool; you're learning the fundamental structure required for enterprise software engineering.
+
