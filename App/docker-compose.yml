@@ -1,31 +1,95 @@
-version: "3"
+version: '3.8'
 services:
+  fxtrading-db:
+    image: 'postgres:16.1'
+    container_name: 'fxtrading-postgres-container'
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: fxuser
+      POSTGRES_DB: fxtrading
+    volumes:
+      # FX Trading Module Initialization Scripts
+      - ./fx-trading/database_setup/init.sql:/docker-entrypoint-initdb.d/01_fx_init.sql
+      - ./fx-trading/database_setup/data.sql:/docker-entrypoint-initdb.d/02_fx_data.sql
+      - fxtrading-postgres-data:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+    networks:
+      - fxtrading-network
+    # This checks every 5 seconds if the database is ready to accept connections.
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fxuser -d fxtrading"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 20s # Wait 20s before starting checks
+  users-db:
+    image: 'postgres:16.1'
+    container_name: 'users-postgres-container'
+    environment:
+      POSTGRES_PASSWORD: new_user_password
+      POSTGRES_USER: new_user
+      POSTGRES_DB: users
+    volumes:
+      # User Administration Module Initialization Scripts
+      - ./user-administration/database_setup/init.sql:/docker-entrypoint-initdb.d/01_users_init.sql
+      - ./user-administration/database_setup/data.sql:/docker-entrypoint-initdb.d/02_users_data.sql
+      - users-postgres-data:/var/lib/postgresql/data
+    ports:
+      - '5434:5432'
+    networks:
+      - fxtrading-network
+    # This checks every 5 seconds if the database is ready to accept connections.
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U new_user -d users"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 20s # Wait 20s before starting checks
+
   ui:
     build: ./ui
     ports: 
       -  "80:80"
   users:
     build: ./user-administration
+    container_name: user-admin
     ports: 
       -  "8200:8200"
+    depends_on:
+      users-db:
+        condition: service_healthy
+    environment:
+      # Configure your Java app to connect to the database service by its name
+      SPRING_DATASOURCE_URL: jdbc:postgresql://users-db:5432/users
+      SPRING_DATASOURCE_USERNAME: new_user
+      SPRING_DATASOURCE_PASSWORD: new_user_password
+    networks:
+      - fxtrading-network
   trading: 
     build: ./fx-trading
+    container_name: 'trading-service'
     ports:
       - "8210:8210"
+    depends_on:
+      fxtrading-db:
+        condition: service_healthy
+    environment:
+      # Configure your Java app to connect to the database service by its name
+      SPRING_DATASOURCE_URL: jdbc:postgresql://fxtrading-db:5432/fxtrading
+      SPRING_DATASOURCE_USERNAME: fxuser
+      SPRING_DATASOURCE_PASSWORD: password
+    networks:
+      - fxtrading-network
   quote:
     build: ./quote-service
     ports:
       - "8220:8220"
-  db:
-    image: postgres
-    environment:
-        POSTGRES_PASSWORD: "admin"
-    volumes:
-        - postgres-db:/var/lib/postgresql/data
-        - ./fx-trading/database_setup/db_setup.sql:/docker-entrypoint-initdb.d/1.sql
-        - ./user-administration/database_setup/db_setup.sql:/docker-entrypoint-initdb.d/2.sql
 
-    ports:
-      - "54320:5432"
 volumes:
-    postgres-db:
+  fxtrading-postgres-data:
+  users-postgres-data:
+
+networks:
+  fxtrading-network:
+    driver: bridge
