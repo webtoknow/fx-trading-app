@@ -4,6 +4,18 @@
 
 For this tutorial to work, it's essential to have Node.js, npm, and the Angular CLI installed on your machine. Node.js enables server-side JavaScript execution, while npm helps manage project dependencies. The Angular CLI is a command-line tool that simplifies the development of Angular applications. If you haven't installed these yet, you can download Node.js and npm from the official  [Node.js](https://nodejs.org/) website and install the [Angular CLI](https://angular.dev/installation#install-angular-cli) using npm.
 
+**IMPORTANT**: Make sure you have Angular CLI version 18 installed globally to avoid compatibility issues with the commands used in this tutorial. You can install it using:
+
+```bash
+npm install -g @angular/cli@18
+```
+
+To verify your Angular CLI version, run:
+
+```bash
+ng version
+```
+
 If you missed last week's session, you'll also need to install [Git](https://git-scm.com/) and clone the project repository using the command below, or download it directly from GitHub:
 
 ```bash
@@ -29,6 +41,8 @@ git clone https://github.com/webtoknow/fx-trading-app.git
 
 Mock server is used to create a fake API to mock the backend data using [JSON Server](https://github.com/typicode/json-server).
 
+**Note**: The Mock Server serves as a **backup solution** for local development when the backend services are not available. If you completed the previous Frontend session and configured the reverse proxy (Exercise 0.1), you should already be integrated with the real backend services. Use the Mock Server only if you need to work independently without the backend.
+
 Let's install its packages:
 
 ```bash
@@ -49,6 +63,8 @@ Now we can access these APIs:
 - `http://localhost:8210/transactions` - get all transactions
 - `http://localhost:8220/currencies` - get all currencies
 - `http://localhost:8220/fx-rate` - get fx rates for specific currencies
+
+**Remember**: For production-like development, ensure your **ui/src/app/constants.ts** file uses the proxy paths configured in the previous session (`/auth`, `/trade`, `/quote`) and that your **package.json** start script includes `--proxy-config proxy.conf.json`.
 
 
 ## Exercise 1 - Create blotter-view, fx-rates-view and widget components

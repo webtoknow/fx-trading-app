@@ -4,6 +4,18 @@
 
 For this tutorial to work, it's essential to have Node.js, npm, and the Angular CLI installed on your machine. Node.js enables server-side JavaScript execution, while npm helps manage project dependencies. The Angular CLI is a command-line tool that simplifies the development of Angular applications. If you haven't installed these yet, you can download Node.js and npm from the official  [Node.js](https://nodejs.org/) website and install the [Angular CLI](https://angular.dev/installation#install-angular-cli) using npm.
 
+**IMPORTANT**: Make sure you have Angular CLI version 18 installed globally to avoid compatibility issues with the commands used in this tutorial. You can install it using:
+
+```bash
+npm install -g @angular/cli@18
+```
+
+To verify your Angular CLI version, run:
+
+```bash
+ng version
+```
+
 If you missed last week's session, you'll also need to install [Git](https://git-scm.com/) and clone the project repository using the command below, or download it directly from GitHub:
 
 ```bash
@@ -12,6 +24,7 @@ git clone https://github.com/webtoknow/fx-trading-app.git
 
 ## Table of contents
 - [Exercise 0 - Configure and start Mock Server](#exercise-0---configure-and-start-mock-server)
+- [Exercise 0.1 - Configure UI Reverse Proxy](#exercise-01---configure-ui-reverse-proxy)
 - [Exercise 1 - Pages, Routing and Navigation](#exercise-1---pages-routing-and-navigation)
   - [Create pages](#create-pages)
   - [Add routes](#add-routes)
@@ -44,10 +57,34 @@ cd fx-trading-app\06_Frontend_Development\Exercise\Code\mock-server
 npm install
 ```
 
-Start all microservices in a single terminal:
+### Option 1: Start mock server from mock-server directory
+
+Navigate to the mock-server folder and start all microservices:
 
 ```bash
+cd fx-trading-app\06_Frontend_Development\Exercise\Code\mock-server
 npm start
+```
+
+### Option 2: Add npm script to start mock server from UI folder
+
+For convenience, you can add an npm script to your **ui/package.json** that allows you to start the mock server from the UI folder:
+
+```json
+"scripts": {
+  "ng": "ng",
+  "start": "ng serve",
+  "start:mock": "cd ../../mock-server && npm start",
+  "build": "ng build",
+  ...
+}
+```
+
+Then you can start the mock server from the **ui/** folder:
+
+```bash
+cd fx-trading-app\06_Frontend_Development\Exercise\Code\ui
+npm run start:mock
 ```
 
 Now we can access these APIs:
@@ -58,7 +95,95 @@ Now we can access these APIs:
 - `http://localhost:8220/currencies` - get all currencies
 - `http://localhost:8220/fx-rate` - get fx rates for specific currencies
 
+**Note**: The Mock Server serves as a backup solution for local development when the backend services are not available. For integration with the real backend services, proceed to Exercise 0.1 below.
 
+## Exercise 0.1 - Configure UI Reverse Proxy
+
+When integrating the frontend with the real backend services (from the Backend Development sessions), we need to configure a reverse proxy to avoid CORS issues during local development. This is the **primary integration method** when working with the actual backend microservices (from a different domain).
+
+Even though CORS is explicitly allowed in the backend security configuration, some browsers might still block cross-origin requests. The proxy server intercepts frontend requests and forwards them to the backend services, bypassing these restrictions.
+
+### Step 1: Create proxy configuration file
+
+Create a file called **proxy.conf.json** under the **ui/** folder with the following content:
+
+```json
+{
+    "/auth": {
+        "target": "http://localhost:8200",
+        "secure": false,
+        "changeOrigin": true,
+        "logLevel": "debug",
+        "pathRewrite": {
+            "^/auth": ""
+        }
+    },
+    "/trade": {
+        "target": "http://localhost:8210",
+        "secure": false,
+        "changeOrigin": true,
+        "logLevel": "debug",
+        "pathRewrite": {
+            "^/trade": ""
+        }
+    },
+    "/quote": {
+        "target": "http://localhost:8220",
+        "secure": false,
+        "changeOrigin": true,
+        "logLevel": "debug",
+        "pathRewrite": {
+            "^/quote": ""
+        }
+    }
+}
+```
+
+**Explanation**:
+This configuration intercepts requests made to specific paths like `/auth`, `/trade`, and `/quote` and forwards them to the corresponding backend services running on different ports:
+- `/auth` → http://localhost:8200 (User Administration Service)
+- `/trade` → http://localhost:8210 (FX Trading Service)
+- `/quote` → http://localhost:8220 (Quote Service)
+
+The **pathRewrite** option ensures the backend receives requests without the initial path prefixes, while **changeOrigin: true** adjusts the request headers for proper routing.
+
+_Remember, this is primarily for development; production environments require proper CORS configuration on the backend for security._
+
+### Step 2: Configure the UI to use proxy paths
+
+Update the service URLs in the **ui/src/app/constants.ts** file to match the paths from the proxy configuration:
+
+```typescript
+export const authApi = '/auth';
+export const tradeApi = '/trade';
+export const quoteApi = '/quote';
+```
+
+_For simplicity, we are using a constants file for the service URLs. In a production deployment, these URLs would be determined dynamically based on the target environment, resulting in a more specific configuration process (https://v17.angular.io/guide/build)_
+
+### Step 3: Update the start script
+
+Change the start script in **package.json** to use the proxy configuration:
+
+```json
+"start": "ng serve --proxy-config proxy.conf.json"
+```
+
+### Step 4: Test the integration
+
+1. Ensure all backend services are running (from Backend Development sessions):
+   - User Administration Service on port 8200
+   - FX Trading Service on port 8210
+   - Quote Service on port 8220
+
+2. Start the UI application:
+   ```bash
+   npm start
+   ```
+
+3. Test the existing flows (login, register) to verify the integration works correctly.
+
+**Alternative**: If the backend services are not available, you can use the Mock Server from Exercise 0 as a fallback by updating the constants.ts file to point directly to the mock server URLs (e.g., `http://localhost:8200`).
 
 ## Exercise 1 - Pages, Routing and Navigation
 
@@ -440,7 +565,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 ```JavaScript
 import { provideHttpClient } from '@angular/common/http';
 
-import { UserService } from 'src/app/services/user.service';
+import { UserService } from './services/user.service';
 ...
 providers: [provideHttpClient(), UserService],
 ...
@@ -822,7 +947,7 @@ This guard checks whether a user is logged in by inspecting `localStorage`. If n
 Next, add the guard to private routes by updating `app-routing.module.ts`:
 
 ```JavaScript
-import { AuthGuard } from 'src/app/guards/auth.guard';
+import { AuthGuard } from './guards/auth.guard';
 
 const appRoutes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -906,7 +1031,7 @@ Finally, update `app.module.ts` to include the new services and interceptors:
 - Add the `AuthenticationService`:
 
 ```JavaScript
-import { AuthenticationService } from 'src/app/services/authentication.service';
+import { AuthenticationService } from './services/authentication.service';
 
 providers: [
     ...
@@ -917,7 +1042,7 @@ providers: [
 - Add the *Authorization Guard*:
 
 ```JavaScript
-import { AuthGuard } from 'src/app/guards/auth.guard';
+import { AuthGuard } from './guards/auth.guard';
 
 providers: [
     AuthGuard,
@@ -928,8 +1053,8 @@ providers: [
 
 ```JavaScript
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { JwtInterceptor } from 'src/app/helpers/jwt.interceptor';
-import { ErrorInterceptor } from 'src/app/helpers/error.interceptor';
+import { JwtInterceptor } from './helpers/jwt.interceptor';
+import { ErrorInterceptor } from './helpers/error.interceptor';
 
  providers: [
     ...

@@ -11,5 +11,5 @@ export class UserService {
   register(user: User) {
     return this.http.post(backendUrl.authService.register, user) as any;
   }
-  
+
 }

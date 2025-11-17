@@ -227,15 +227,18 @@ export class UserService {
 
 #### Http Service
 
-- The HttpClientModule is used to perform HTTP operations.
-- For using Http Service, we need to import this module in *app.module.ts*
+- The HttpClient is used to perform HTTP operations.
+- For using Http Service, we need to provide it in *app.module.ts*
 
 ```JavaScript
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient } from '@angular/common/http';
 
 @NgModule({
      imports: [
-        HttpClientModule,
+        ...
+     ],
+     providers: [
+        provideHttpClient(),
         ...
      ],
      ...
