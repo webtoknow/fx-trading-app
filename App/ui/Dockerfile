@@ -1,5 +1,5 @@
 # Stage 1: Build the Angular application
-FROM node:alpine AS build
+FROM node:20-alpine AS build
 
 # Setup the working directory
 WORKDIR /usr/src/app
@@ -14,13 +14,13 @@ RUN npm install
 COPY . .
 
 # Build Angular application in PROD mode
-RUN npm run build --prod
+RUN npm run build -- --configuration production
 
 # Stage 2: Serve the application using Nginx
-FROM nginx:alpine
+FROM nginx:1.27-alpine
 
-# Copy built Angular app files to Nginx HTML folder
-COPY --from=build /usr/src/app/dist/ui /usr/share/nginx/html
+# Copy the browser build output directly into the Nginx web root
+COPY --from=build /usr/src/app/dist/ui/browser /usr/share/nginx/html
 
 # Expose port 80
 EXPOSE 80

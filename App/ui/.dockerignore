@@ -1,0 +1,9 @@
+node_modules
+dist
+.angular
+.vscode
+Dockerfile
+README.md
+*.log
+coverage
+tmp
