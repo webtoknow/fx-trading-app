@@ -16,6 +16,7 @@ import { ToastrService } from 'ngx-toastr';
   selector: 'app-widget',
   templateUrl: './widget.component.html',
   styleUrls: ['./widget.component.css'],
+  standalone: false
 })
 export class WidgetComponent implements OnInit, OnDestroy {
   tenors = ['SP', '1M', '3M'];

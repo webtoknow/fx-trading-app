@@ -7,6 +7,7 @@ import { TradeService } from '../../../services/trade.service';
   selector: 'app-blotter-view',
   templateUrl: './blotter-view.component.html',
   styleUrl: './blotter-view.component.css',
+  standalone: false
 })
 export class BlotterViewComponent {
   filter = {

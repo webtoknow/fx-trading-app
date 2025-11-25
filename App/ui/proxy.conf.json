@@ -1,0 +1,29 @@
+{
+    "/auth": {
+        "target": "http://localhost:8200",
+        "secure": false,
+        "changeOrigin": true,
+        "logLevel": "debug",
+        "pathRewrite": {
+            "^/auth": ""
+        }
+    },
+    "/trade": {
+        "target": "http://localhost:8210",
+        "secure": false,
+        "changeOrigin": true,
+        "logLevel": "debug",
+        "pathRewrite": {
+            "^/trade": ""
+        }
+    },
+    "/quote": {
+        "target": "http://localhost:8220",
+        "secure": false,
+        "changeOrigin": true,
+        "logLevel": "debug",
+        "pathRewrite": {
+            "^/quote": ""
+        }
+    }
+}

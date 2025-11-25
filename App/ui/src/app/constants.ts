@@ -1,6 +1,6 @@
-export const authApi = '';
-export const tradeApi = '';
-export const quoteApi = '';
+export const authApi = '/auth'
+export const tradeApi = '/trade'
+export const quoteApi = '/quote'
 
 export const backendUrl = {
   authService: {

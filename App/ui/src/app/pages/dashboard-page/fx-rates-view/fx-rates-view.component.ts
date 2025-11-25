@@ -6,6 +6,7 @@ import { TradeService } from '../../../services/trade.service';
   selector: 'app-fx-rates-view',
   templateUrl: './fx-rates-view.component.html',
   styleUrls: ['./fx-rates-view.component.css'],
+  standalone: false
 })
 export class FxRatesViewComponent implements OnInit {
   widgets: Widget[] = [];
