@@ -570,7 +570,7 @@ We will add a few more methods to `trade.service.ts`:
 - Two new methods for selecting currencies and getting FX rates:
 
 ```JavaScript
-import { Rate } from 'src/app/models/rate';
+import { Rate } from '../models/rate';
 
   getCurrencies() {
     return this.http.get(backendUrl.quoteService.getCurrencies) as Observable<

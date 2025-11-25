@@ -68,11 +68,11 @@ export class AsyncObservablePipeComponent {
 
 ```JavaScript
 const observable = new Observable((observer) => {
-    let i=0;
-    setInterval(() => {
+    let i = 0;
+    return setInterval(() => {
         observer.next(i++);
-    },1000);
-}
+    }, 1000);
+});
 
 observable.subscribe(value => console.log(value));
 
