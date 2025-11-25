@@ -49,8 +49,15 @@ services:
 
   ui:
     build: ./ui
-    ports: 
+    ports:
       -  "80:80"
+    depends_on:
+      users-db:
+        condition: service_healthy
+      fxtrading-db:
+        condition: service_healthy
+    networks:
+      - fxtrading-network
   users:
     build: ./user-administration
     container_name: user-admin
@@ -85,6 +92,8 @@ services:
     build: ./quote-service
     ports:
       - "8220:8220"
+    networks:
+      - fxtrading-network
 
 volumes:
   fxtrading-postgres-data:

@@ -10,6 +10,7 @@ import { UserService } from '../../services/user.service';
   selector: 'app-register-page',
   templateUrl: './register-page.component.html',
   styleUrls: ['./register-page.component.css'],
+  standalone: false
 })
 export class RegisterPageComponent implements OnInit {
   registerForm!: FormGroup ;

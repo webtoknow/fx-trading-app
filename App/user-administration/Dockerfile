@@ -6,4 +6,4 @@ RUN mvn package -Pprod -DskipTests
 
 FROM eclipse-temurin:21-jre-jammy
 COPY --from=maven_tool_chain /tmp/target/user-administration-0.0.1-SNAPSHOT.jar /user-admin.jar
-CMD ["java", "-Dapplication-secret=secret", "-jar", "/user-admin.jar"]
+CMD ["java", "-Daplication-secret=secret", "-jar", "/user-admin.jar"]

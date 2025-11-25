@@ -563,13 +563,15 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 - provide *Http Client* and `UserService`:
 
 ```JavaScript
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 import { UserService } from './services/user.service';
 ...
-providers: [provideHttpClient(), UserService],
+providers: [provideHttpClient(withInterceptorsFromDi()), UserService],
 ...
 ```
+
+**Note:** We use `withInterceptorsFromDi()` to enable HTTP interceptors that are registered via dependency injection tokens (like `HTTP_INTERCEPTORS`). This is required when using the new `provideHttpClient()` API in Angular 15+.
 
 ### Register component
 
@@ -1051,18 +1053,23 @@ providers: [
 
 - Register the *JWT* and *Error Interceptors*:
 
+First, update the import to include `HTTP_INTERCEPTORS`:
+
 ```JavaScript
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { JwtInterceptor } from './helpers/jwt.interceptor';
 import { ErrorInterceptor } from './helpers/error.interceptor';
 
  providers: [
+    provideHttpClient(withInterceptorsFromDi()),
     ...
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }
   ],
 
 ```
+
+**Important:** The `withInterceptorsFromDi()` parameter is essential for the interceptors to work properly. Without it, the `JwtInterceptor` won't add the Authorization header to requests.
 
 ### Login component
 

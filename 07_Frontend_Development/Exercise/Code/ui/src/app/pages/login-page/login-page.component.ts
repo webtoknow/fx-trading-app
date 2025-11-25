@@ -9,6 +9,7 @@ import { AuthenticationService } from '../../services/authentication.service';
   selector: 'app-login-page',
   templateUrl: './login-page.component.html',
   styleUrls: ['./login-page.component.css'],
+  standalone: false
 })
 export class LoginPageComponent implements OnInit {
   loginForm!: FormGroup;
