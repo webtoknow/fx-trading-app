@@ -67,11 +67,12 @@ export class AsyncObservablePipeComponent {
   - Observables are cancelable, allowing you to stop them when needed.
 
 ```JavaScript
-const observable = new Observable((observer) => {
+const observable = new Observable<number>((observer) => {
     let i = 0;
-    return setInterval(() => {
+    const timer = setInterval(() => {
         observer.next(i++);
     }, 1000);
+    return () => clearInterval(timer);
 });
 
 observable.subscribe(value => console.log(value));
@@ -130,6 +131,51 @@ subscription.unsubscribe();
   **Disposing observables**:
   - because the time it takes to execute can be infinite amount of time, we need a way to stop it when we want to
   - we will need to unsubscribe from the observable to do cleanup and release resources as it will be a waste of memory and computing power
+
+### RxJS operators
+
+- Operators let you transform, filter, combine, and control the timing of observable streams without mutating the source.
+- Commonly used categories:
+  - **Creation**: `of`, `from`, `interval`, `timer`, `throwError`.
+  - **Transformation**: `map`, `mergeMap`, `switchMap`, `concatMap`, `exhaustMap`, `scan`.
+  - **Filtering**: `filter`, `take`, `takeUntil`, `debounceTime`, `distinctUntilChanged`.
+  - **Combination**: `forkJoin`, `combineLatest`, `withLatestFrom`, `merge`, `concat`, `zip`.
+  - **Error handling**: `catchError`, `retry`, `retryWhen`.
+  - **Multicasting/Sharing**: `shareReplay`, `share`, `publish`, `refCount`.
+- Visual aid: http://rxmarbles.com/ is an excellent way to see how many core operators behave over time.
+
+Examples:
+
+```ts
+import { of, interval, takeUntil, map, switchMap, filter, take } from 'rxjs';
+
+// of: emit fixed values and complete
+of(1, 2, 3).subscribe(v => console.log('of', v));
+// logs instantly: of 1, of 2, of 3
+
+// filter + take: only even values, stop after first 3 even numbers
+interval(500).pipe(
+  filter(n => n % 2 === 0),
+  take(3)
+).subscribe(v => console.log('even', v));
+// timing: every 500ms
+// logs: even 0, even 2, even 4, then completes
+
+// takeUntil: stop when a notifier emits
+const stop$ = interval(2000).pipe(take(1));
+interval(300).pipe(
+  takeUntil(stop$)
+).subscribe(v => console.log('until stop', v));
+// timing: every 300ms, stops at ~2000ms when stop$ emits its first value
+// logs: until stop 0, 1, 2, 3, 4, 5 (then completes)
+
+// map + switchMap: map a value, then switch to inner observable
+of('USD').pipe(
+  map(ccy => ccy + '/EUR'),
+  switchMap(pair => interval(1000).pipe(take(2), map(i => `${pair}-${i}`)))
+).subscribe(v => console.log('pair', v));
+// logs over time: pair USD/EUR-0, pair USD/EUR-1 (then completes)
+```
 
 ### Forms and Validations
 
@@ -193,8 +239,8 @@ subscription.unsubscribe();
     ```HTML
     <input id="name" name="name" class="form-control" required minlength="4" [(ngModel="book.name")]>
     <div *ngIf="name.invalid && (name.dirty || name.touched)" class="alert alert-danger">
-        <div *ngIf="name.errors.required">Name is required.</div>
-        <div *ngIf="name.errors.minlength">Name must be at least 4 characters long.</div>
+        <div *ngIf="name.errors?.required">Name is required.</div>
+        <div *ngIf="name.errors?.minlength">Name must be at least 4 characters long.</div>
     </div>
     ```
 
