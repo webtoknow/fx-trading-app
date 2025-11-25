@@ -55,7 +55,7 @@ export class WidgetComponent implements OnInit, OnDestroy {
           action: 'SELL',
           notional: this.widget.notional,
           tenor: this.widget.tenor,
-          date: Math.round(new Date().getTime() / 1000),
+          date: Date.now(),
         })
         .subscribe((response) => {
           this.toastr.success('Transaction saved!');
@@ -79,7 +79,7 @@ export class WidgetComponent implements OnInit, OnDestroy {
           action: 'BUY',
           notional: this.widget.notional,
           tenor: this.widget.tenor,
-          date: Math.round(new Date().getTime() / 1000),
+          date: Date.now(),
         })
         .subscribe((response) => {
           this.toastr.success('Transaction saved!');
