@@ -1,0 +1,5 @@
+application:
+  url: https://fx.banuhome.ro
+  browser: chrome
+  timeout: 30000
+  failed-reattempts: 3

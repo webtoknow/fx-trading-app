@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="CustomSuite">
+    <test name="FXTests">
+        <classes>
+            <class name="com.fx.qa.automation.tests.createNewUser.TestCreateNewUser"/>
+            <class name="com.fx.qa.automation.tests.login.TestLogin"/>
+            <class name="com.fx.qa.automation.tests.checkRate.TestCreateNewTransaction"/>
+        </classes>
+    </test>
+</suite>
+
+
+
+
+
