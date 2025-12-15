@@ -60,7 +60,7 @@ sudo apt update
 
 - Install openjdk, with a version matching what is defined in the pom.xml
 ```
-sudo apt install -y openjdk-17-jdk
+sudo apt install -y openjdk-11-jdk
 ```
 
 - Install git, required to fetch the application sources from github
