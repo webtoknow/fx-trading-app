@@ -36,7 +36,7 @@ Do not select 'Enable display device'
 Boot disk
 Type: New balanced persistent disk
 Size: 10 GB
-Image: Debian GNU/Linux 11 (bullseye)
+Image: Ubuntu 25.10 Minimal
 
 Enable both:
     Allow HTTP traffic
@@ -60,7 +60,7 @@ sudo apt update
 
 - Install openjdk, with a version matching what is defined in the pom.xml
 ```
-sudo apt install -y openjdk-11-jdk
+sudo apt install -y openjdk-21-jdk
 ```
 
 - Install git, required to fetch the application sources from github
@@ -97,9 +97,9 @@ Change the spring boot default port to 80, rebuild the application and restart i
 
 <br/>
 
-## Exercise 3 - Install and configure Docker on a Debian 11 host 
+## Exercise 3 - Install and configure Docker on a Buntu host 
 
-Official documentation used: https://docs.docker.com/engine/install/debian/
+Official documentation used: https://docs.docker.com/engine/install/ubuntu/
 
 Connect to the VM running in Google Cloud using the 'SSH' button. This will open a new broser window to it's console. Run the following commands:
 
@@ -125,13 +125,13 @@ sudo apt-get install \
 - Add docker gpg key
 ```
 sudo mkdir -p /etc/apt/keyrings
-curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 ```
 
 - Add the official docker apt repository on local machine
 ```
 echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
   $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 ```
 
