@@ -215,11 +215,20 @@ For this exercise do the following below with the help of the commands found in 
 
 
 Notes:
-1. If you run on Linux or Max OS, you should connect to postgresql prompt from a shell using:
+1. If you run on Linux or Max OS, and prefer not to work with pgAdmin, you should connect to postgresql prompt from a shell using:
 ```commandline
    sudo -u postgres psql
+   sudo psql  postgres -p 5432 -d postgres
 ```
    - this assumes however that you have PostgreSql preinstalled in your OS, like it is specified in the prerequisites
+   - then, just follow these simple configuration commands when connected with the default postgres role, in a Shell terminal
+```commandline
+   CREATE USER fxuser WITH PASSWORD 'password';
+   CREATE DATABASE fxtrading;
+   GRANT ALL PRIVILEGES ON DATABASE fxtrading TO fxuser;  
+```
+- finally, just run in order the init.sql and data.sql scripts, to setup the newly created database.
+
 2. Database connection properties are already set in /src/main/resources/application.properties.
 They are used by Spring to connect to the Postgresql database:
 ```
