@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { backendUrl } from '../constants';
 import { HttpClient } from '@angular/common/http';
-import { interval, Observable, startWith, switchMap } from 'rxjs';
+import { catchError, EMPTY, interval, Observable, of, retry, startWith, switchMap } from 'rxjs';
 import { Transaction } from '../models/transaction';
 import { Rate } from '../models/rate';
 
@@ -11,17 +11,13 @@ import { Rate } from '../models/rate';
 export class TradeService {
   constructor(private http: HttpClient) {}
 
-  getTransactions() {
-    return this.http.get(
-      backendUrl.fxTradeService.getTransactions
-    ) as Observable<Transaction[]>;
-  }
-
   getTransactionsPolling() {
     return interval(2000).pipe(
       startWith(0),
-      switchMap(() => this.http.get(backendUrl.fxTradeService.getTransactions))
-    ) as Observable<Transaction[]>;
+      switchMap(() => this.http.get<Transaction[]>(backendUrl.fxTradeService.getTransactions).pipe(
+        catchError(() => EMPTY)
+      ))
+    );
   }
 
   saveTransaction(transaction: Transaction) {
@@ -32,25 +28,21 @@ export class TradeService {
   }
 
   getCurrencies() {
-    return this.http.get(backendUrl.quoteService.getCurrencies) as Observable<
-      string[]
-    >;
-  }
-
-  getFxRate(primaryCcy: string, secondaryCcy: string) {
-    return this.http.get(backendUrl.quoteService.getFxRate, {
-      params: { primaryCcy, secondaryCcy },
-    }) as Observable<Rate>;
+    return this.http.get<string[]>(backendUrl.quoteService.getCurrencies).pipe(
+      retry({ delay: 2000 })
+    );
   }
 
   getFxRatePolling(primaryCcy: string, secondaryCcy: string) {
     return interval(2000).pipe(
       startWith(0),
       switchMap(() =>
-        this.http.get(backendUrl.quoteService.getFxRate, {
+        this.http.get<Rate>(backendUrl.quoteService.getFxRate, {
           params: { primaryCcy, secondaryCcy },
-        })
+        }).pipe(
+          catchError(() => of(null))
+        )
       )
-    ) as Observable<Rate>;
+    );
   }
 }

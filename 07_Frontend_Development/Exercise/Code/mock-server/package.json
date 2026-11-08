@@ -4,8 +4,7 @@
   "description": "Mock server",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "concurrently \"node server.js\" \"json-server --watch db.trade.json --port 8210\" \"json-server --watch db.quote.json --port 8220\""
+    "start": "concurrently --kill-others-on-fail \"node server.js\" \"json-server --watch db.trade.json --port 8210\" \"json-server --watch db.quote.json --port 8220\""
   },
   "author": "Bogdan Nicolae",
   "license": "MIT",
@@ -13,6 +12,6 @@
     "body-parser": "1.20.3",
     "concurrently": "9.0.1",
     "json-server": "0.17.4",
-    "jsonwebtoken": "9.0.2"
+    "jsonwebtoken": "9.0.3"
   }
 }

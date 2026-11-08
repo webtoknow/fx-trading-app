@@ -4,7 +4,7 @@
       class="fx-grayscale-logo"
       alt="fx-grayscale-logo"
       src="./assets/img/logo-grayscale.svg"
-    />
+      />
   </aside>
   <main class="col-md-6 container-center screen-full-height">
     <article class="content">
@@ -21,16 +21,19 @@
               placeholder="username"
               autocomplete="username"
               id="username"
-              [ngClass]="{ 'is-invalid': submitted && f['username'].errors }"
-            />
-            <span
-              *ngIf="submitted && f['username'].errors"
-              class="invalid-feedback"
-            >
-              <span *ngIf="f['username'].errors['required']">
-                Username is required!
+              [ngClass]="{ 'is-invalid': submitted() && f['username'].errors }"
+              />
+            @if (submitted() && f['username'].errors) {
+              <span
+                class="invalid-feedback"
+                >
+                @if (f['username'].errors['required']) {
+                  <span>
+                    Username is required!
+                  </span>
+                }
               </span>
-            </span>
+            }
           </span>
         </p>
         <!-- Password -->
@@ -44,24 +47,27 @@
               placeholder="password"
               autocomplete="current-password"
               id="password"
-              [ngClass]="{ 'is-invalid': submitted && f['password'].errors }"
-            />
-            <span
-              *ngIf="submitted && f['password'].errors"
-              class="invalid-feedback"
-            >
-              <span *ngIf="f['password'].errors['required']">
-                Password is required!
+              [ngClass]="{ 'is-invalid': submitted() && f['password'].errors }"
+              />
+            @if (submitted() && f['password'].errors) {
+              <span
+                class="invalid-feedback"
+                >
+                @if (f['password'].errors['required']) {
+                  <span>
+                    Password is required!
+                  </span>
+                }
               </span>
-            </span>
+            }
           </span>
         </p>
         <!-- Login button -->
         <button
-          [disabled]="loading"
+          [disabled]="loading()"
           type="submit"
           class="btn btn-primary btn-block"
-        >
+          >
           Login
         </button>
         <!-- Register link -->

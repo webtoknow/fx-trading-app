@@ -1,3 +1,12 @@
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { provideRouter } from '@angular/router';
+import { ToastrModule } from 'ngx-toastr';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { UserService } from '../../services/user.service';
+import { AuthenticationService } from '../../services/authentication.service';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { RegisterPageComponent } from './register-page.component';
@@ -8,7 +17,9 @@ describe('RegisterPageComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [RegisterPageComponent]
+      imports: [RegisterPageComponent, FormsModule, ReactiveFormsModule, ToastrModule.forRoot(), BsDatepickerModule],
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([]), UserService, AuthenticationService],
+      schemas: [NO_ERRORS_SCHEMA]
     })
     .compileComponents();
 

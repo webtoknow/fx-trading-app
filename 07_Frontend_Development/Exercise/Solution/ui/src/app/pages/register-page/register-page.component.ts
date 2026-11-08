@@ -1,22 +1,24 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit, signal } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Router, RouterLink } from '@angular/router';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 
 import { UserService } from '../../services/user.service';
+import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-register-page',
+  imports: [ReactiveFormsModule, NgClass, RouterLink],
   templateUrl: './register-page.component.html',
-  styleUrls: ['./register-page.component.css'],
-  standalone: false
+  styleUrls: ['./register-page.component.css']
 })
 export class RegisterPageComponent implements OnInit {
   registerForm!: FormGroup ;
 
-  loading = false;
-  submitted = false;
+  loading = signal(false);
+  submitted = signal(false);
 
   constructor(
     private formBuilder: FormBuilder,
@@ -64,27 +66,27 @@ export class RegisterPageComponent implements OnInit {
     };
   }
   onSubmit() {
-    this.submitted = true;
+    this.submitted.set(true);
 
     // Exit function if form is invalid
     if (this.registerForm.invalid) {
       return;
     }
 
-    this.loading = true;
+    this.loading.set(true);
     this.userService
       .register(this.registerForm.value)
       .pipe(first())
-      .subscribe(
-        (data: any) => {
+      .subscribe({
+        next: () => {
           this.toastr.success('Registration successful!');
-          this.loading = false;
+          this.loading.set(false);
           this.router.navigate(['/login']);
         },
-        (error: string) => {
-          this.toastr.error(error);
-          this.loading = false;
-        }
-      );
+        error: (error: HttpErrorResponse) => {
+          this.toastr.error(error.error?.message || error.statusText || 'Registration failed');
+          this.loading.set(false);
+        },
+      });
   }
 }

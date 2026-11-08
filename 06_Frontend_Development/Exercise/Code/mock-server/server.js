@@ -4,7 +4,6 @@ const jsonServer = require('json-server')
 const jwt = require('jsonwebtoken')
 
 const server = jsonServer.create()
-const router = jsonServer.router('db.trade.json')
 const userdb = JSON.parse(fs.readFileSync('db.users.json', 'UTF-8'))
 
 server.use(bodyParser.urlencoded({ extended: true }))
@@ -19,11 +18,6 @@ function createToken(payload) {
   return jwt.sign(payload, SECRET_KEY, { expiresIn })
 }
 
-// Verify the token 
-function verifyToken(token) {
-  return jwt.verify(token, SECRET_KEY, (err, decode) => decode !== undefined ? decode : err)
-}
-
 // Check if the user exists in database
 function isAuthenticated({ username, password }) {
   return userdb.users.findIndex(user => user.username === username && user.password === password) !== -1
@@ -36,7 +30,7 @@ server.use(function (req, res, next) {
   res.header("Access-Control-Allow-Credentials", "true");
   res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
   if (req.method === "OPTIONS") {
-    res.send();
+    return res.sendStatus(204);
   }
   next();
 });
@@ -50,7 +44,7 @@ server.post('/user/authenticate', (req, res) => {
     res.status(status).json({ status, message });
     return
   }
-  const token = createToken({ username, password });
+  const token = createToken({ username });
   res.json({ username, token });
 })
 
@@ -61,11 +55,9 @@ server.post('/user/register', (req, res) => {
   fs.writeFile('db.users.json', JSON.stringify(userdb), (err) => {
     if (err) throw err;
     console.log('The user has been saved!');
-    res.status(200).json({ username, email });
+    res.status(200).end();
   })
 })
-
-server.use(router)
 
 server.listen(8200, () => {
   console.log('Run Auth API Server');

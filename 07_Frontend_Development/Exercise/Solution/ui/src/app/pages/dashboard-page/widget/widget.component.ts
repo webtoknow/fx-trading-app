@@ -1,91 +1,147 @@
 import {
+  ChangeDetectionStrategy,
   Component,
-  OnInit,
-  Input,
-  Output,
-  EventEmitter,
-  OnDestroy,
+  computed,
+  inject,
+  input,
+  linkedSignal,
+  output,
 } from '@angular/core';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { EMPTY, of } from 'rxjs';
+import { catchError, startWith, switchMap } from 'rxjs/operators';
+import { ToastrService } from 'ngx-toastr';
 import { TradeService } from '../../../services/trade.service';
 import { RateTrend, Widget } from '../../../models/widget';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-import { ToastrService } from 'ngx-toastr';
+import { Rate } from '../../../models/rate';
+import { DecimalPipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+
+function trendOf(previous?: number, current?: number): RateTrend {
+  if (previous === undefined || current === undefined) {
+    return RateTrend.FLAT;
+  }
+  return current > previous
+    ? RateTrend.UP
+    : current < previous
+    ? RateTrend.DOWN
+    : RateTrend.FLAT;
+}
 
 @Component({
   selector: 'app-widget',
+  imports: [FormsModule, DecimalPipe],
   templateUrl: './widget.component.html',
   styleUrls: ['./widget.component.css'],
-  standalone: false
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class WidgetComponent implements OnInit, OnDestroy {
+export class WidgetComponent {
+  private tradeService = inject(TradeService);
+  private toastr = inject(ToastrService);
+
   tenors = ['SP', '1M', '3M'];
-  unsubscribe = new Subject();
-  buyRateTrend: RateTrend = RateTrend.FLAT;
-  sellRateTrend: RateTrend = RateTrend.FLAT;
-  public RateTrend = RateTrend;
+  RateTrend = RateTrend;
 
-  @Input() widget: Widget = new Widget();
-  @Input() index: number = 0;
-  @Input() currencies: string[] = [];
-  @Output() deleted = new EventEmitter<number>();
+  // Inputs and output
+  widget = input.required<Widget>();
+  index = input.required<number>();
+  currencies = input<string[]>([]);
+  deleted = output<number>();
 
-  constructor(
-    private tradeService: TradeService,
-    private toastr: ToastrService
-  ) {}
+  pickCCYState = linkedSignal(() => this.widget().pickCCYState);
+  primaryCcy = linkedSignal(() => this.widget().primaryCcy);
+  secondaryCcy = linkedSignal(() => this.widget().secondaryCcy);
+  notional = linkedSignal(() => this.widget().notional);
+  tenor = linkedSignal(() => this.widget().tenor);
 
-  ngOnInit() {}
+  pair = computed(() => {
+    const primary = this.primaryCcy();
+    const secondary = this.secondaryCcy();
+    if (this.pickCCYState() || !primary || !secondary || primary === secondary) {
+      return null;
+    }
+    return { primary, secondary };
+  });
+
+  rates = toSignal(
+    toObservable(this.pair).pipe(
+      switchMap((pair) =>
+        pair
+          ? this.tradeService
+              .getFxRatePolling(pair.primary, pair.secondary)
+              .pipe(
+                startWith(null),
+                catchError(() => {
+                  this.toastr.error('Could not load the rates!');
+                  return EMPTY;
+                })
+              )
+          : of(null)
+      )
+    )
+  );
+
+  buyTrend = linkedSignal<Rate | null | undefined, RateTrend>({
+    source: this.rates,
+    computation: (rate, previous) =>
+      trendOf(previous?.source?.buyRate, rate?.buyRate),
+  });
+  sellTrend = linkedSignal<Rate | null | undefined, RateTrend>({
+    source: this.rates,
+    computation: (rate, previous) =>
+      trendOf(previous?.source?.sellRate, rate?.sellRate),
+  });
+
+  canTrade = computed(() => {
+    const amount = this.notional();
+    return amount !== null && Number.isFinite(amount) && amount > 0 && this.tenors.includes(this.tenor());
+  });
 
   onDelete() {
-    this.deleted.emit(this.index);
+    this.deleted.emit(this.index());
   }
 
   onSell() {
-    const { notional, tenor } = this.widget;
-    if (notional && tenor) {
-      const username: string =
-        JSON.parse(localStorage.getItem('currentUser') || '').username || '';
-      this.tradeService
-        .saveTransaction({
-          username: username,
-          primaryCcy: this.widget.primaryCcy,
-          secondaryCcy: this.widget.secondaryCcy,
-          rate: this.widget.sellRate,
-          action: 'SELL',
-          notional: this.widget.notional,
-          tenor: this.widget.tenor,
-          date: Date.now(),
-        })
-        .subscribe((response) => {
-          this.toastr.success('Transaction saved!');
-        });
-    } else {
-      this.toastr.error('Please fill in both Amount and Tenor!');
-    }
+    this.trade('SELL', (rate) => rate.sellRate);
   }
 
   onBuy() {
-    const { notional, tenor } = this.widget;
-    if (notional && tenor) {
-      const username: string =
-        JSON.parse(localStorage.getItem('currentUser') || '').username || '';
-      this.tradeService
-        .saveTransaction({
-          username: username,
-          primaryCcy: this.widget.primaryCcy,
-          secondaryCcy: this.widget.secondaryCcy,
-          rate: this.widget.buyRate,
-          action: 'BUY',
-          notional: this.widget.notional,
-          tenor: this.widget.tenor,
-          date: Date.now(),
-        })
-        .subscribe((response) => {
-          this.toastr.success('Transaction saved!');
-        });
-    } else {
-      this.toastr.error('Please fill in both Amount and Tenor!');
+    this.trade('BUY', (rate) => rate.buyRate);
+  }
+
+  private trade(action: 'BUY' | 'SELL', pick: (rate: Rate) => number) {
+    const pair = this.pair();
+    const rate = this.rates();
+    if (!this.canTrade()) {
+      this.toastr.error('Please enter a positive Amount and select a Tenor!');
+      return;
+    }
+    if (!pair || !rate) {
+      this.toastr.error('No rate available yet!');
+      return;
+    }
+    this.tradeService
+      .saveTransaction({
+        username: this.currentUsername(),
+        primaryCcy: pair.primary,
+        secondaryCcy: pair.secondary,
+        rate: pick(rate),
+        action,
+        notional: this.notional(),
+        tenor: this.tenor(),
+        date: Date.now(),
+      })
+      .subscribe({
+        next: () => this.toastr.success('Transaction saved!'),
+        error: () => this.toastr.error('Transaction could not be saved!'),
+      });
+  }
+
+  private currentUsername(): string {
+    try {
+      return JSON.parse(localStorage.getItem('currentUser') ?? 'null')?.username ?? '';
+    } catch {
+      return '';
     }
   }
 
@@ -94,56 +150,22 @@ export class WidgetComponent implements OnInit, OnDestroy {
   }
 
   switchCCY() {
-    const tempCCY = this.widget.primaryCcy;
-    this.widget.primaryCcy = this.widget.secondaryCcy;
-    this.widget.secondaryCcy = tempCCY;
-  }
-
-  startPooling() {
-    const { primaryCcy, secondaryCcy } = this.widget;
-    this.tradeService
-      .getFxRatePolling(primaryCcy, secondaryCcy)
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe((response) => {
-        this.widget.buyRate = response.buyRate;
-        this.widget.sellRate = response.sellRate;
-
-        if (this.widget.buyRate === 0 || this.widget.sellRate === 0) {
-          return;
-        }
-
-        this.buyRateTrend =
-          this.widget.buyRate > response.buyRate
-            ? RateTrend.DOWN
-            : this.widget.buyRate < response.buyRate
-            ? RateTrend.UP
-            : RateTrend.FLAT;
-
-        this.sellRateTrend =
-          this.widget.sellRate > response.sellRate
-            ? RateTrend.DOWN
-            : this.widget.sellRate < response.sellRate
-            ? RateTrend.UP
-            : RateTrend.FLAT;
-      });
+    const previousPrimary = this.primaryCcy();
+    this.primaryCcy.set(this.secondaryCcy());
+    this.secondaryCcy.set(previousPrimary);
   }
 
   onPickCurrency() {
-    const { primaryCcy, secondaryCcy } = this.widget;
-    if (primaryCcy && secondaryCcy && primaryCcy !== secondaryCcy) {
-      this.widget.pickCCYState = false;
-      this.startPooling();
-    } else if (!primaryCcy || !secondaryCcy) {
+    const primary = this.primaryCcy();
+    const secondary = this.secondaryCcy();
+    if (primary && secondary && primary !== secondary) {
+      this.pickCCYState.set(false);
+    } else if (!primary || !secondary) {
       this.toastr.error('Please select both Primary and Secondary Currencies!');
     } else {
       this.toastr.error(
         'Please select different Primary and Secondary Currencies!'
       );
     }
-  }
-
-  ngOnDestroy() {
-    this.unsubscribe.next('');
-    this.unsubscribe.complete();
   }
 }

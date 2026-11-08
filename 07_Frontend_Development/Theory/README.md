@@ -1,260 +1,167 @@
-# Frontend Development: Observables and Forms
+# Frontend Development: Signals, Observables and Forms
 
 ![You are here](../frontend.png)
 
 ## Table of contents
 
+- [Signals and streams: the idea](#signals-and-streams-the-idea)
 - [Observables](#observables)
-  - [About](#about)
-  - [Observables vs Promises](#observables-vs-promises)
-  - [Pull vs Push](#pull-vs-push)
-  - [Observable lifecycle](#observable-lifecycle)
+- [RxJS operators](#rxjs-operators)
+- [From Observable to signal: toSignal](#from-observable-to-signal-tosignal)
+- [From signal to Observable: toObservable](#from-signal-to-observable-toobservable)
+- [Inputs and outputs as functions](#inputs-and-outputs-as-functions)
+- [linkedSignal](#linkedsignal)
+- [OnPush](#onpush)
 - [Forms and Validations](#forms-and-validations)
-  - [Reactive Forms](#reactive-forms)
-  - [Template-driven Forms](#template-driven-forms)
-  - [Key differences between Reactive and Template-driven forms](#key-differences-between-reactive-and-template-driven-forms)
+
+The basics of signals (`signal`, `computed`) and reactive forms are in the [Theory of the previous laboratory](../../06_Frontend_Development/Theory/README.md#signals-the-basics).
 
 ## About Angular - part II
 
+### Signals and streams: the idea
+
+- The dashboard shows data that keeps changing: rates every two seconds, new transactions, the filters the user picks.
+- **Signals** hold the state the screen shows: the filters, the rows, the rate of each widget. Everything the template reads is a signal.
+- **Observables** bring the data in from the server. `HttpClient` returns them, and polling every two seconds is an Observable too.
+- Two functions connect the two: `toSignal` turns a stream into state for the template, and `toObservable` turns state into a stream when a change must start new work.
+
+```
+ server --HTTP/polling--> Observable --toSignal--> signal --> template
+```
+
 ### Observables
 
-#### About
+- An Observable is a source of values that arrive over time: one HTTP answer, or a new value every two seconds.
+- It is **lazy**: nothing happens until somebody subscribes. And it can be **cancelled**: unsubscribing stops the work.
 
-- Observables are a fundamental concept in Angular that provides support for passing messages between publishers and subscribers in an application.
-- They offer significant benefits over other techniques for event handling, asynchronous programming, and handling multiple values.
-- Observables are declarative, meaning that we define a function for publishing values, but it is not executed until a consumer subscribes to it.
-- Subscribed consumers receive notifications until the function completes or until they unsubscribe.
-- To use observables in Angular, follow these steps:
-  - Import the **Observable** type from 'rxjs':
-
-  ```JavaScript
-  import { Observable } from 'rxjs';
-  ```
-
-  - Subscribe to the observable in your application to listen to the data it emits:
-
-  ```JavaScript
-   getCurrencies() {
-        return this.http.get(backendUrl.quoteService.getCurrencies) as Observable<string[]>
-    }
-  ```
-
-  ```JavaScript
-  this.tradeService.getCurrencies().subscribe((response) => {
-      this.currencies = response;
-    })
-  ```
-Async pipe:
-- The **async** pipe is a powerful feature in Angular for working with observables.
-- It simplifies the process of binding observable data directly to the template.
-```
-@Component({
-  selector: 'async-observable-pipe',
-  template: '<div><code>observable|async</code>: Time: {{ time | async }}</div>'
-})
-export class AsyncObservablePipeComponent {
-  time = new Observable<string>((observer: Observer<string>) => {
-    setInterval(() => observer.next(new Date().toString()), 1000);
-  });
-}
+```TypeScript
+const ticks$ = interval(1000);                         // 0, 1, 2, ... every second
+const subscription = ticks$.subscribe(n => console.log(n));
+subscription.unsubscribe();                            // stop
 ```
 
-#### Observables vs Promises
-
-- **Observables** differ from **Promises** in several ways:
-  - Observables allow for emitting multiple values over time, while Promises handle a single response.
-  - Promises are eager and always return the first value, while Observables are lazy and execute only when someone subscribes.
-  - Observables are cancelable, allowing you to stop them when needed.
-
-```JavaScript
-const observable = new Observable<number>((observer) => {
-    let i = 0;
-    const timer = setInterval(() => {
-        observer.next(i++);
-    }, 1000);
-    return () => clearInterval(timer);
-});
-
-observable.subscribe(value => console.log(value));
-
-// logs:
-// 0
-// 1
-// 2
-// and so on, every second
-```
-
-- **Promises are eager**, **Observables are lazy** : function passed to Observable constructor gets called only when someone actually subscribes to an Observable - not wasting resources
-- Promises are **not cancellable**, **Observables are cancelable**, so we can stop whatever happens inside it
-
-```JavaScript
-const subscription = observable.subscribe(value => console.log(value));
-
-subscription.unsubscribe();
-```
-
-#### Pull vs Push
-
-- Pull and push are two ways to describe how data **consumers** communicate with data **producers**.
-- **Pull** is when the consumer decides when to get data from the producer.
-  - the time it takes the data to be delivered to the data consumer is unknown even for the data producer
-  - *e.g.:*
-    - *Data producers: JavaScript Functions*
-    - *Data consumers: code that calls the previous functions*
-- **Push**, supported by Observables, is when the producer delivers data to registered callbacks.
-  - the common way to push in JS are **promises**
-  - we can consider the Promise as producer, but this time it delivers a value to registered callbacks
-  - **Observables** are the new way to push data in JS
-
-#### Observable lifecycle
-
-- Observables go through a lifecycle:
-  - **Created** by calling **new Observable()**.
-  - **Subscribed** to by an **observer**.
-  - **Executed** by calling **next()** to send data.
-  - **Disposed** of by calling **unsubscribe()** when no longer needed.
-
-  **Creating observable**:
-  - just call **new Observable()** and pass one argument (which is the observer here)
-
-  **Subscribing to observables**:
-  - if you don't subscribe to observables, nothing will happen, because they are a lazy collection of data or multiple values over time
-
-  **Executing observables**:
-  - the execution of the observables is the code inside it
-  - there are 3 functions used to send data to observables:
-    - **next**: it sends any value such as Arrays, objects or Numbers to it's subscribers
-    - **complete**: it doesn't send any value
-    - **error**: it sends a JS exception or error
-  - the **next** calls are the most common because they deliver the data to subscribers
-
-  **Disposing observables**:
-  - because the time it takes to execute can be infinite amount of time, we need a way to stop it when we want to
-  - we will need to unsubscribe from the observable to do cleanup and release resources as it will be a waste of memory and computing power
+- An Observable can send three things: a value (`next`), an error (`error`), or "I am done" (`complete`). An HTTP call sends one value and completes; `interval` never completes.
+- The `$` at the end of a name is a convention meaning "this is an Observable".
+- In the dashboard you almost never call `subscribe` yourself: `toSignal` does it for you and also unsubscribes.
 
 ### RxJS operators
 
-- Operators let you transform, filter, combine, and control the timing of observable streams without mutating the source.
-- Commonly used categories:
-  - **Creation**: `of`, `from`, `interval`, `timer`, `throwError`.
-  - **Transformation**: `map`, `mergeMap`, `switchMap`, `concatMap`, `exhaustMap`, `scan`.
-  - **Filtering**: `filter`, `take`, `takeUntil`, `debounceTime`, `distinctUntilChanged`.
-  - **Combination**: `forkJoin`, `combineLatest`, `withLatestFrom`, `merge`, `concat`, `zip`.
-  - **Error handling**: `catchError`, `retry`, `retryWhen`.
-  - **Multicasting/Sharing**: `shareReplay`, `share`, `publish`, `refCount`.
-- Visual aid: http://rxmarbles.com/ is an excellent way to see how many core operators behave over time.
+Operators change a stream without touching its source. They go inside `.pipe(...)`. The dashboard uses these:
 
-Examples:
+| Operator | What it does |
+| ------------- | ------------- |
+| `interval(2000)` | emits 0, 1, 2, ... every two seconds |
+| `startWith(0)` | emits one value immediately, before the others |
+| `switchMap(...)` | for each value, starts a new inner stream and cancels the previous one |
+| `map(...)` | changes each value |
+| `catchError(...)` | handles an error, so it does not reach the subscriber |
 
-```ts
-import { of, interval, takeUntil, map, switchMap, filter, take } from 'rxjs';
+The polling in `TradeService` combines three of them:
 
-// of: emit fixed values and complete
-of(1, 2, 3).subscribe(v => console.log('of', v));
-// logs instantly: of 1, of 2, of 3
-
-// filter + take: only even values, stop after first 3 even numbers
-interval(500).pipe(
-  filter(n => n % 2 === 0),
-  take(3)
-).subscribe(v => console.log('even', v));
-// timing: every 500ms
-// logs: even 0, even 2, even 4, then completes
-
-// takeUntil: stop when a notifier emits
-const stop$ = interval(2000).pipe(take(1));
-interval(300).pipe(
-  takeUntil(stop$)
-).subscribe(v => console.log('until stop', v));
-// timing: every 300ms, stops at ~2000ms when stop$ emits its first value
-// logs: until stop 0, 1, 2, 3, 4, 5 (then completes)
-
-// map + switchMap: map a value, then switch to inner observable
-of('USD').pipe(
-  map(ccy => ccy + '/EUR'),
-  switchMap(pair => interval(1000).pipe(take(2), map(i => `${pair}-${i}`)))
-).subscribe(v => console.log('pair', v));
-// logs over time: pair USD/EUR-0, pair USD/EUR-1 (then completes)
+```TypeScript
+getTransactionsPolling() {
+  return interval(2000).pipe(
+    startWith(0),                                         // ask now, do not wait two seconds
+    switchMap(() => this.http.get(backendUrl.fxTradeService.getTransactions))  // a new request every tick
+  );
+}
 ```
+
+- `switchMap` is the one to remember: if a new tick comes while the last request is still running, the old request is cancelled.
+- To see how operators behave over time, try https://rxmarbles.com/.
+
+### From Observable to signal: toSignal
+
+`toSignal` subscribes to an Observable and gives you a signal that always holds the latest value:
+
+```TypeScript
+currencies = toSignal(this.tradeService.getCurrencies(), { initialValue: [] as string[] });
+transactions = toSignal(this.tradeService.getTransactionsPolling(), { initialValue: [] as Transaction[] });
+```
+
+- The template reads `transactions()` like any signal, and the rows update every two seconds.
+- `initialValue` is what the signal holds before the first answer arrives.
+- `toSignal` **unsubscribes when the component is destroyed**: no `ngOnDestroy`, no leaked polling.
+- If the Observable fails, reading the signal throws. Catch errors inside the `pipe` with `catchError`.
+
+### From signal to Observable: toObservable
+
+When a change of state must start new work over time, turn the signal into a stream with `toObservable`. In the widget, picking a new currency pair must stop polling the old pair and start polling the new one:
+
+```TypeScript
+rates = toSignal(
+  toObservable(this.pair).pipe(                  // a stream of the chosen pair
+    switchMap((pair) =>
+      pair
+        ? this.tradeService.getFxRatePolling(pair.primary, pair.secondary).pipe(
+            startWith(null),                     // clear the old pair's rate at once
+            catchError(() => {                   // a failed poll shows a message
+              this.toastr.error('Could not load the rates!');
+              return EMPTY;                      // and ends only this pair's poll
+            })
+          )
+        : of(null)
+    )
+  )
+);
+```
+
+```
+ pair (signal) --toObservable--> switchMap: poll THIS pair --toSignal--> rates (signal) --> template
+```
+
+### Inputs and outputs as functions
+
+- A child component receives data with `input()` and sends events with `output()`. An input is a signal, so you read it with `()`.
+
+```TypeScript
+export class WidgetComponent {
+  widget = input.required<Widget>();    // the parent must pass it
+  index = input.required<number>();
+  currencies = input<string[]>([]);     // optional, with a default
+  deleted = output<number>();           // an event going up
+
+  onDelete() {
+    this.deleted.emit(this.index());
+  }
+}
+```
+
+```HTML
+<app-widget [widget]="widget" [index]="i" [currencies]="currencies()" (deleted)="onDeleteWidget($event)"></app-widget>
+```
+
+- A required input is checked when the app is built: forget `[widget]` and the build fails.
+- An input is read-only inside the child. If the child needs to change the value, it keeps its own copy with `linkedSignal`.
+- Older code uses `@Input()` and `@Output()` with `EventEmitter` for the same thing.
+
+### linkedSignal
+
+- A `linkedSignal` is a signal that starts from another value, can be changed with `set`, and starts over when the value it follows changes.
+- The widget uses it to keep its own copy of the parent's data, so the user can change the currency without touching the parent's object:
+
+```TypeScript
+widget = input.required<Widget>();
+primaryCcy = linkedSignal(() => this.widget().primaryCcy);
+
+this.primaryCcy.set('EUR');   // allowed: it is the widget's own state
+```
+
+- It can also see its previous value. The widget uses that to show whether the rate went up or down since the last tick (`buyTrend`, `sellTrend`).
+
+### OnPush
+
+- With `changeDetection: ChangeDetectionStrategy.OnPush`, Angular redraws a component only when one of its inputs changes, one of its events runs, or **a signal its template reads changes**.
+- When everything the template shows is a signal, the component updates exactly when it should and Angular does less work. The dashboard components use `OnPush`.
 
 ### Forms and Validations
 
-- Angular forms are essential for creating user interfaces, blocking invalid data, guiding users, and avoiding unnecessary requests.
-- There are two ways to create Angular forms: Template-driven and Reactive (model-driven), both using **FormGroup** and **FormControl** building blocks.
-- Reactive forms are recommended for complex applications, as they provide a more robust, scalable, reusable, and testable solution.
+- The login and register pages use **reactive forms**, explained in the [previous laboratory](../../06_Frontend_Development/Theory/README.md#reactive-forms).
+- The dashboard's small inputs (the blotter filters, the widget's notional and tenor) use `ngModel`, the **template-driven** way: the template binds the input directly to a value.
+- With signals, write the binding in two halves, reading the signal and setting it on every change:
 
-### Reactive forms
+```HTML
+<input [ngModel]="ccyPair()" (ngModelChange)="ccyPair.set($event)" />
+```
 
-- In reactive forms, the form model provides the value and status of form elements.
-- Each form element in the view is directly linked to a **FormControl** instance in the model.
-- Updates from the view to the model and vice versa are synchronous and independent of UI rendering.
-- Validator functions are added directly to form control models in the component class.
-- *e.g.*:
-
-    ```javascript
-    const formGroup = new FormGroup({
-        'phones': new FormArray([
-            new FormGroup({
-                'number': new FormControl('', [ Validators.required ]),
-                'type': new FormControl('Primary')
-            }),
-            new FormGroup({
-                'number': new FormControl(''),
-                'type': new FormControl('Secondary')
-            })
-        ])
-    });
-    ```
-
-    ```HTML
-    <form [formGroup]="formGroup" >
-        <h1>User Phones</h1>
-        <div class="phones"
-            *ngFor="let phoneGroup of formGroup.get('phones')['controls'];
-                    let i = index"
-            formArrayName="phones">
-            <ng-container [formGroupName]="i" >
-            <p>Phone Type: {{ phoneGroup.get('type').value }}</p>
-            <input
-                type="tel"
-                placeholder="Phone number"
-                formControlName="number"
-            />
-            </ng-container>
-        </div>
-    </form>
-    ```
-
-> Note
->
-> We can also create our own Custom Validators.
-
-### Template-driven forms
-
-- Template-driven forms are easier to use but may not scale well for complex requirements.
-- The template manages the form model internally.
-- Validation is added through attributes in the template, and validation is performed as the value of a form control changes.
-- *e.g.*:
-
-    ```HTML
-    <input id="name" name="name" class="form-control" required minlength="4" [(ngModel="book.name")]>
-    <div *ngIf="name.invalid && (name.dirty || name.touched)" class="alert alert-danger">
-        <div *ngIf="name.errors?.required">Name is required.</div>
-        <div *ngIf="name.errors?.minlength">Name must be at least 4 characters long.</div>
-    </div>
-    ```
-
-> Note
->
-> We can also create our own Custom Validators.
-
-### Key differences between Reactive and Template-driven forms
-
-| Key | Reactive | Template-driven |
-| ------------- | ------------- | ------------- |
-| Setup (form model) | More explicit, created in component class  | Less explicit, created by directives  |
-| Data model | Structured | Unstructured |
-| Predictability | Synchronous | Asynchronous |
-| Form validation | Functions | Directives |
-| Mutability | Immutable | Mutable |
-| Scalability | Low-level API access | Abstraction on top of APIs |
+- Template-driven forms are quick for one or two fields. For a whole form with validation, use reactive forms.

@@ -1,30 +1,30 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { Widget } from '../../../models/widget';
 import { TradeService } from '../../../services/trade.service';
+import { WidgetComponent } from '../widget/widget.component';
 
 @Component({
   selector: 'app-fx-rates-view',
+  imports: [WidgetComponent],
   templateUrl: './fx-rates-view.component.html',
   styleUrls: ['./fx-rates-view.component.css'],
-  standalone: false
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class FxRatesViewComponent implements OnInit {
-  widgets: Widget[] = [];
-  currencies: string[] = [];
+export class FxRatesViewComponent {
+  private tradeService = inject(TradeService);
 
-  constructor(private tradeService: TradeService) {}
+  currencies = toSignal(this.tradeService.getCurrencies(), {
+    initialValue: [] as string[],
+  });
 
-  ngOnInit() {
-    this.tradeService.getCurrencies().subscribe((response) => {
-      this.currencies = response;
-    });
-  }
+  widgets = signal<Widget[]>([]);
 
   onAddWidget() {
-    this.widgets = [...this.widgets, new Widget('', '', 0, 0, null, '', true)];
+    this.widgets.update((widgets) => [...widgets, new Widget()]);
   }
 
   onDeleteWidget(index: number) {
-    this.widgets.splice(index, 1);
+    this.widgets.update((widgets) => widgets.filter((_, i) => i !== index));
   }
 }

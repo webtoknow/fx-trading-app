@@ -5,114 +5,139 @@
   </div>
 
   <!-- Select currency step -->
-  <div *ngIf="widget.pickCCYState">
-    <h4 class="widget-title">Pick a currency</h4>
-    <div class="content-container">
-      <div class="mb-3 row">
-        <label class="col-sm-3 col-form-label" for="primaryCcy">Primary</label>
-        <div class="col-sm-9">
-          <select
-            name="primaryCcy"
-            id="primaryCcy"
-            class="form-control"
-            [(ngModel)]="widget.primaryCcy"
-            required
-          >
-            <option value="" disabled selected>Please select</option>
-            <option *ngFor="let currency of currencies" [value]="currency">
-              {{ currency }}
-            </option>
-          </select>
+  @if (pickCCYState()) {
+    <div>
+      <h4 class="widget-title">Pick a currency</h4>
+      <div class="content-container">
+        <div class="mb-3 row">
+          <label class="col-sm-3 col-form-label" for="primaryCcy">Primary</label>
+          <div class="col-sm-9">
+            <select
+              name="primaryCcy"
+              id="primaryCcy"
+              class="form-control"
+              [ngModel]="primaryCcy()"
+              (ngModelChange)="primaryCcy.set($event)"
+              required
+              >
+              <option value="" disabled selected>Please select</option>
+              @for (currency of currencies(); track currency) {
+                <option [value]="currency">
+                  {{ currency }}
+                </option>
+              }
+            </select>
+          </div>
+        </div>
+        <div class="mb-3 row">
+          <label class="col-sm-3 col-form-label" for="secondaryCcy"
+            >Secondary</label
+            >
+            <div class="col-sm-9">
+              <select
+                name="secondaryCcy"
+                id="secondaryCcy"
+                class="form-control"
+                [ngModel]="secondaryCcy()"
+                (ngModelChange)="secondaryCcy.set($event)"
+                required
+                >
+                <option value="" disabled selected>Please select</option>
+                @for (currency of currencies(); track currency) {
+                  <option [value]="currency">
+                    {{ currency }}
+                  </option>
+                }
+              </select>
+            </div>
+          </div>
+          <div class="btn-wraper">
+            <button class="btn btn-primary" (click)="onPickCurrency()">Ok</button>
+          </div>
         </div>
       </div>
-      <div class="mb-3 row">
-        <label class="col-sm-3 col-form-label" for="secondaryCcy"
-          >Secondary</label
-        >
-        <div class="col-sm-9">
-          <select
-            name="secondaryCcy"
-            id="secondaryCcy"
-            class="form-control"
-            [(ngModel)]="widget.secondaryCcy"
-            required
-          >
-            <option value="" disabled selected>Please select</option>
-            <option *ngFor="let currency of currencies" [value]="currency">
-              {{ currency }}
-            </option>
-          </select>
-        </div>
-      </div>
-      <div class="btn-wraper">
-        <button class="btn btn-primary" (click)="onPickCurrency()">Ok</button>
-      </div>
-    </div>
-  </div>
+    }
 
-  <!-- Trade step -->
-  <div *ngIf="!widget.pickCCYState">
-    <!-- Title -->
-    <h4 class="widget-title no-border">
-      <span class="widget-primary">{{ widget.primaryCcy }}</span
-      >/{{ widget.secondaryCcy }}
-      <span class="fa fa-exchange-alt exchange" (click)="onCCYChange()"></span>
-    </h4>
-    <!-- Rates -->
-    <div class="rates-container">
+    <!-- Trade step -->
+    @if (!pickCCYState()) {
       <div>
-        <span class="widget-subtitle">SELL: </span>
-        <span class="rate">{{ widget.sellRate | number : "1.1-2" }}</span>
-        <i *ngIf="sellRateTrend === RateTrend.UP" class="fa fa-chevron-up rate-up"></i>
-        <i *ngIf="sellRateTrend === RateTrend.DOWN" class="fa fa-chevron-down rate-down"></i>
-        <i *ngIf="sellRateTrend === RateTrend.FLAT" class="fa fa-minus rate-flat"></i>
-        
-      </div>
-      <div>
-        <span class="widget-subtitle">BUY: </span>
-        <span class="rate">{{ widget.buyRate | number : "1.1-2" }}</span>
-        <i *ngIf="sellRateTrend === RateTrend.UP" class="fa fa-chevron-up rate-up"></i>
-        <i *ngIf="sellRateTrend === RateTrend.DOWN" class="fa fa-chevron-down rate-down"></i>
-        <i *ngIf="sellRateTrend === RateTrend.FLAT" class="fa fa-minus rate-flat"></i>
-      </div>
-    </div>
-    <div class="content-container">
-      <!-- Form  -->
-      <div class="mb-3 row">
-        <label class="col-sm-3 col-form-label" for="amount">Amount</label>
-        <div class="col-sm-9">
-          <input
-            type="number"
-            class="form-control"
-            id="amount"
-            placeholder="Type the amount"
-            [(ngModel)]="widget.notional"
-            required
-          />
+        <!-- Title -->
+        <h4 class="widget-title no-border">
+          <span class="widget-primary">{{ primaryCcy() }}</span
+            >/{{ secondaryCcy() }}
+            <span class="fa fa-exchange exchange" (click)="onCCYChange()"></span>
+          </h4>
+          <!-- Rates -->
+          <div class="rates-container">
+            <div>
+              <span class="widget-subtitle">SELL: </span>
+              <span class="rate">{{ rates()?.sellRate | number : "1.1-2" }}</span>
+              @if (sellTrend() === RateTrend.UP) {
+                <i class="fa fa-chevron-up rate-up"></i>
+              }
+              @if (sellTrend() === RateTrend.DOWN) {
+                <i class="fa fa-chevron-down rate-down"></i>
+              }
+              @if (sellTrend() === RateTrend.FLAT) {
+                <i class="fa fa-minus rate-flat"></i>
+              }
+            </div>
+            <div>
+              <span class="widget-subtitle">BUY: </span>
+              <span class="rate">{{ rates()?.buyRate | number : "1.1-2" }}</span>
+              @if (buyTrend() === RateTrend.UP) {
+                <i class="fa fa-chevron-up rate-up"></i>
+              }
+              @if (buyTrend() === RateTrend.DOWN) {
+                <i class="fa fa-chevron-down rate-down"></i>
+              }
+              @if (buyTrend() === RateTrend.FLAT) {
+                <i class="fa fa-minus rate-flat"></i>
+              }
+            </div>
+          </div>
+          <div class="content-container">
+            <!-- Form  -->
+            <div class="mb-3 row">
+              <label class="col-sm-3 col-form-label" for="amount">Amount</label>
+              <div class="col-sm-9">
+                <input
+                  type="number"
+                  class="form-control"
+                  id="amount"
+                  placeholder="Type the amount"
+                  [ngModel]="notional()"
+                  (ngModelChange)="notional.set($event)"
+                  required
+                  />
+              </div>
+            </div>
+            <div class="mb-3 row">
+              <label class="col-sm-3 col-form-label" for="tenor">Tenor</label>
+              <div class="col-sm-9">
+                <select
+                  name="tenor"
+                  id="tenor"
+                  class="form-control"
+                  [ngModel]="tenor()"
+                  (ngModelChange)="tenor.set($event)"
+                  required
+                  >
+                  <option value="" disabled selected>Please select</option>
+                  @for (tenor of tenors; track tenor) {
+                    <option [value]="tenor">
+                      {{ tenor }}
+                    </option>
+                  }
+                </select>
+              </div>
+            </div>
+            <!-- Buttons  -->
+            <div class="btns-wrapper">
+              <button class="btn btn-primary" (click)="onSell()">Sell</button>
+              <button class="btn btn-success" (click)="onBuy()">Buy</button>
+            </div>
+          </div>
         </div>
-      </div>
-      <div class="mb-3 row">
-        <label class="col-sm-3 col-form-label" for="tenor">Tenor</label>
-        <div class="col-sm-9">
-          <select
-            name="tenor"
-            id="tenor"
-            class="form-control"
-            [(ngModel)]="widget.tenor"
-            required
-          >
-            <option value="" disabled selected>Please select</option>
-            <option *ngFor="let tenor of tenors" [value]="tenor">
-              {{ tenor }}
-            </option>
-          </select>
-        </div>
-      </div>
-      <!-- Buttons  -->
-      <div class="btns-wrapper">
-        <button class="btn btn-primary" (click)="onSell()">Sell</button>
-        <button class="btn btn-success" (click)="onBuy()">Buy</button>
-      </div>
+      }
     </div>
-  </div>
-</div>

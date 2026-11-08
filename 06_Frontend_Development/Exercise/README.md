@@ -2,12 +2,28 @@
 
 ![You are here](../frontend.png)
 
-For this tutorial to work, it's essential to have Node.js, npm, and the Angular CLI installed on your machine. Node.js enables server-side JavaScript execution, while npm helps manage project dependencies. The Angular CLI is a command-line tool that simplifies the development of Angular applications. If you haven't installed these yet, you can download Node.js and npm from the official  [Node.js](https://nodejs.org/) website and install the [Angular CLI](https://angular.dev/installation#install-angular-cli) using npm.
+**Goal:** build registration, login, protected navigation, and a not-found page. Everyone can complete this laboratory with the supplied mock server. Java services, PostgreSQL, and completed backend laboratories are not prerequisites. Real backend integration is an optional extension at the end.
 
-**IMPORTANT**: Make sure you have Angular CLI version 18 installed globally to avoid compatibility issues with the commands used in this tutorial. You can install it using:
+For this laboratory to work, it's essential to have Node.js, npm, and the Angular CLI installed on your machine. Node.js enables server-side JavaScript execution, while npm helps manage project dependencies. The Angular CLI is a command-line tool that simplifies the development of Angular applications. If you haven't installed these yet, you can download Node.js and npm from the official  [Node.js](https://nodejs.org/) website and install the [Angular CLI](https://angular.dev/installation#install-angular-cli) using npm.
+
+**IMPORTANT**: This laboratory uses Angular 21. Node.js 24 is recommended; an existing Node.js 22 installation at version 22.12 or newer also works. Check which Node.js you have:
 
 ```bash
-npm install -g @angular/cli@18
+node -v
+```
+
+If Node.js is missing or you do not have one of those supported versions, install Node.js 24:
+
+- **Windows and macOS**: download the **24 LTS** installer from [nodejs.org](https://nodejs.org/en/download) and run it. It replaces an older version and includes npm.
+- **Linux**: install it with your package manager, or follow the instructions for your distribution on the same page.
+- If you already use a version manager such as `nvm` (or `nvm-windows`), run `nvm install 24` and then `nvm use 24`.
+
+After installing, close and reopen the terminal, then run `node -v` again: it should print `v24.x.x`. If you already have a supported Node.js 22 version, keep it.
+
+Then install Angular CLI version 21 globally, to avoid compatibility issues with the commands used in this laboratory:
+
+```bash
+npm install -g @angular/cli@21
 ```
 
 To verify your Angular CLI version, run:
@@ -16,11 +32,13 @@ To verify your Angular CLI version, run:
 ng version
 ```
 
-If you missed last week's session, you'll also need to install [Git](https://git-scm.com/) and clone the project repository using the command below, or download it directly from GitHub:
+If you missed the previous laboratories, you'll also need to install [Git](https://git-scm.com/) and clone the project repository using the command below, or download it directly from GitHub:
 
 ```bash
 git clone https://github.com/webtoknow/fx-trading-app.git
 ```
+
+> To run the supplied solution or switch between mocks and Java services, see [Local frontend setup](../../FRONTEND_LABS.md).
 
 ## Table of contents
 - [Exercise 0 - Configure and start Mock Server](#exercise-0---configure-and-start-mock-server)
@@ -35,38 +53,34 @@ git clone https://github.com/webtoknow/fx-trading-app.git
   - [User model](#user-model)
   - [Constants file](#constants-file)
   - [User service](#user-service)
-  - [Update Application Module](#update-application-module)
+  - [Provide the HTTP client](#provide-the-http-client)
   - [Register component](#register-component)
 - [Exercise 3 - Login page](#exercise-3---login-page)
   - [Authentication service](#authentication-service)
   - [Authentication guard](#authentication-guard)
   - [JWT Interceptor](#jwt-interceptor)
   - [Error Interceptor](#error-interceptor)
-  - [Update Application Module with the new added classes](#update-application-module-with-the-new-added-classes)
+  - [Register the interceptors](#register-the-interceptors)
   - [Login component](#login-component)
 - [Exercise 4 - Not found page](#exercise-4---not-found-page)
+- [Done when](#done-when)
+- [Optional - Connect to the real backend](#optional---connect-to-the-real-backend)
 
 ## Exercise 0 - Configure and start Mock Server
 
-Mock server is used to create a fake API to mock the backend data using [JSON Server](https://github.com/typicode/json-server).
+Use the supplied mock server for the exercises below. It provides the same registration and login endpoints as the Java user-administration service. The authentication handler is already provided in `server.js`; you do not need to write backend code in this laboratory.
 
-Let's install its packages:
-
-```bash
-cd fx-trading-app\06_Frontend_Development\Exercise\Code\mock-server
-npm install
-```
-
-### Option 1: Start mock server from mock-server directory
-
-Navigate to the mock-server folder and start all microservices:
+In **terminal 1**, from the directory containing your cloned `fx-trading-app` folder, install and start the mocks:
 
 ```bash
-cd fx-trading-app\06_Frontend_Development\Exercise\Code\mock-server
+cd fx-trading-app/06_Frontend_Development/Exercise/Code/mock-server
+npm ci
 npm start
 ```
 
-### Option 2: Add npm script to start mock server from UI folder
+Leave this terminal running. Registration and login use port **8200**. The start command also runs the JSON Server APIs on **8210** and **8220**, which are used in laboratory 07.
+
+### Optional shortcut: start mocks from the UI folder
 
 For convenience, you can add an npm script to your **ui/package.json** that allows you to start the mock server from the UI folder:
 
@@ -74,16 +88,16 @@ For convenience, you can add an npm script to your **ui/package.json** that allo
 "scripts": {
   "ng": "ng",
   "start": "ng serve",
-  "start:mock": "cd ../../mock-server && npm start",
+  "start:mock": "cd ../mock-server && npm start",
   "build": "ng build",
   ...
 }
 ```
 
-Then you can start the mock server from the **ui/** folder:
+After installing the mock packages above, you can use this command instead of starting them from the mock folder. Stop the first mock process before using this shortcut, and use a separate terminal from the UI server:
 
 ```bash
-cd fx-trading-app\06_Frontend_Development\Exercise\Code\ui
+cd fx-trading-app/06_Frontend_Development/Exercise/Code/ui
 npm run start:mock
 ```
 
@@ -95,13 +109,11 @@ Now we can access these APIs:
 - `http://localhost:8220/currencies` - get all currencies
 - `http://localhost:8220/fx-rate` - get fx rates for specific currencies
 
-**Note**: The Mock Server serves as a backup solution for local development when the backend services are not available. For integration with the real backend services, proceed to Exercise 0.1 below.
+The mock login is `student` / `student123`. You will also create a new account when testing the registration page. Keep using mocks through Exercise 4; the [optional backend extension](#optional---connect-to-the-real-backend) comes afterwards.
 
 ## Exercise 0.1 - Configure UI Reverse Proxy
 
-When integrating the frontend with the real backend services (from the Backend Development sessions), we need to configure a reverse proxy to avoid CORS issues during local development. This is the **primary integration method** when working with the actual backend microservices (from a different domain).
-
-Even though CORS is explicitly allowed in the backend security configuration, some browsers might still block cross-origin requests. The proxy server intercepts frontend requests and forwards them to the backend services, bypassing these restrictions.
+Use a development proxy to connect the UI to the mocks. The same configuration also works with the optional Java backend. The browser calls the Angular server on port 4200, which forwards API requests to ports 8200–8220. This keeps browser requests on the same origin and avoids a separate CORS setup.
 
 ### Step 1: Create proxy configuration file
 
@@ -109,8 +121,8 @@ Create a file called **proxy.conf.json** under the **ui/** folder with the follo
 
 ```json
 {
-    "/auth": {
-        "target": "http://localhost:8200",
+    "/auth/**": {
+        "target": "http://127.0.0.1:8200",
         "secure": false,
         "changeOrigin": true,
         "logLevel": "debug",
@@ -118,8 +130,8 @@ Create a file called **proxy.conf.json** under the **ui/** folder with the follo
             "^/auth": ""
         }
     },
-    "/trade": {
-        "target": "http://localhost:8210",
+    "/trade/**": {
+        "target": "http://127.0.0.1:8210",
         "secure": false,
         "changeOrigin": true,
         "logLevel": "debug",
@@ -127,8 +139,8 @@ Create a file called **proxy.conf.json** under the **ui/** folder with the follo
             "^/trade": ""
         }
     },
-    "/quote": {
-        "target": "http://localhost:8220",
+    "/quote/**": {
+        "target": "http://127.0.0.1:8220",
         "secure": false,
         "changeOrigin": true,
         "logLevel": "debug",
@@ -140,28 +152,16 @@ Create a file called **proxy.conf.json** under the **ui/** folder with the follo
 ```
 
 **Explanation**:
-This configuration intercepts requests made to specific paths like `/auth`, `/trade`, and `/quote` and forwards them to the corresponding backend services running on different ports:
+This configuration intercepts requests below `/auth/**`, `/trade/**`, and `/quote/**` and forwards them to the corresponding backend services running on different ports:
 - `/auth` → http://localhost:8200 (User Administration Service)
 - `/trade` → http://localhost:8210 (FX Trading Service)
 - `/quote` → http://localhost:8220 (Quote Service)
 
-The **pathRewrite** option ensures the backend receives requests without the initial path prefixes, while **changeOrigin: true** adjusts the request headers for proper routing.
+The `/**` patterns include nested endpoints such as `/auth/user/register`. The **pathRewrite** option ensures the backend receives requests without the initial path prefixes, while **changeOrigin: true** adjusts the request headers for proper routing.
 
-_Remember, this is primarily for development; production environments require proper CORS configuration on the backend for security._
+Use `npm start` to enable this proxy. Restart the dev server after changing `proxy.conf.json`. These settings apply to local development; a production host must provide its own API routing. See [Angular proxy documentation](https://angular.dev/tools/cli/serve#proxying-to-a-backend-server).
 
-### Step 2: Configure the UI to use proxy paths
-
-Update the service URLs in the **ui/src/app/constants.ts** file to match the paths from the proxy configuration:
-
-```typescript
-export const authApi = '/auth';
-export const tradeApi = '/trade';
-export const quoteApi = '/quote';
-```
-
-_For simplicity, we are using a constants file for the service URLs. In a production deployment, these URLs would be determined dynamically based on the target environment, resulting in a more specific configuration process (https://v17.angular.io/guide/build)_
-
-### Step 3: Update the start script
+### Step 2: Update the start script
 
 Change the start script in **package.json** to use the proxy configuration:
 
@@ -169,44 +169,37 @@ Change the start script in **package.json** to use the proxy configuration:
 "start": "ng serve --proxy-config proxy.conf.json"
 ```
 
-### Step 4: Test the integration
+### Step 3: Use the proxy paths and test the connection
 
-1. Ensure all backend services are running (from Backend Development sessions):
-   - User Administration Service on port 8200
-   - FX Trading Service on port 8210
-   - Quote Service on port 8220
+These two steps need files that are created later in this laboratory, so you will do them there:
 
-2. Start the UI application:
-   ```bash
-   npm start
-   ```
+- *Use the proxy paths in the UI*: at the end of [Constants file](#constants-file), once `constants.ts` exists.
+- *Test the integration*: at the end of [Exercise 3 - Login page](#exercise-3---login-page), once the register and login pages exist.
 
-3. Test the existing flows (login, register) to verify the integration works correctly.
-
-**Alternative**: If the backend services are not available, you can use the Mock Server from Exercise 0 as a fallback by updating the constants.ts file to point directly to the mock server URLs (e.g., `http://localhost:8200`).
+Use the proxy paths for both modes. Switching between mocks and real services only requires stopping one set of APIs and starting the other; no edit to `constants.ts` is needed.
 
 ## Exercise 1 - Pages, Routing and Navigation
 
 ### Create pages
 
-Go to *06_Frontend_Development/Exercise/Code/ui* using a new **terminal** windows:
+Go to *06_Frontend_Development/Exercise/Code/ui* using a new **terminal** window:
 
 ```bash
-cd fx-trading-app\06_Frontend_Development\Exercise\Code\ui
+cd fx-trading-app/06_Frontend_Development/Exercise/Code/ui
 ```
 
-> In the `public` directory, you'll find several images, such as `favicon.ico`, as well as the following under the `\assets\img\` folder: `error_404.png`, `logo-grayscale.svg`, and `logo-main.svg`.
+> In the `public` directory, you'll find several images, such as `favicon.ico`, as well as the following under the `assets/img/` folder: `error_404.png`, `logo-grayscale.svg`, and `logo-main.svg`.
 
-Run *npm install* to download all dependencies:
+Run `npm ci` to install the dependencies from the supplied lockfile:
 
 ```bash
-npm install
+npm ci
 ```
 
 Create a folder for pages in *ui/src/app*:
 
 ```bash
-cd src\app
+cd src/app
 mkdir pages
 cd pages
 ```
@@ -220,40 +213,106 @@ ng generate component not-found-page
 ng generate component register-page
 ```
 
+Each command creates a standalone component: a component that lists what it uses in its own `imports`, so nothing else has to register it. Each command also creates a `*.spec.ts` file (a unit test) next to the component. The generated tests are only a starting point: you will replace them with real ones, collapsed in the `<details>` blocks below. **Paste each spec file when you reach it, but run `ng test` only at the end** (see [Done when](#done-when)): the specs import `AuthenticationService`, which you create in Exercise 3.
+
+The dashboard page stays a placeholder in this laboratory (`dashboard-page works!`), so its spec is the only thing you change in it now. Replace the content of `dashboard-page.component.spec.ts`:
+
+<details>
+<summary>dashboard-page.component.spec.ts</summary>
+
+```TypeScript
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { provideRouter } from '@angular/router';
+import { ToastrModule } from 'ngx-toastr';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { UserService } from '../../services/user.service';
+import { AuthenticationService } from '../../services/authentication.service';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { DashboardPageComponent } from './dashboard-page.component';
+
+describe('DashboardPageComponent', () => {
+  let component: DashboardPageComponent;
+  let fixture: ComponentFixture<DashboardPageComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [DashboardPageComponent, FormsModule, ReactiveFormsModule, ToastrModule.forRoot(), BsDatepickerModule],
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([]), UserService, AuthenticationService],
+      schemas: [NO_ERRORS_SCHEMA]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(DashboardPageComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+```
+
+</details>
+
 ### Add routes
 
-In `app-routing.module`, import all the necessary components to make them available for routing. After that, update the `routes` array by linking each of the components.
+In `app.routes.ts`, import all the necessary components to make them available for routing. After that, fill in the `routes` array by linking each of the components. `app.config.ts` already passes these routes to the router with `provideRouter(routes)`.
 
 ```JS
-...
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { Routes } from '@angular/router';
+
 import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { RegisterPageComponent } from './pages/register-page/register-page.component';
 import { DashboardPageComponent } from './pages/dashboard-page/dashboard-page.component';
 import { NotFoundPageComponent } from './pages/not-found-page/not-found-page.component';
 
-const routes: Routes = [
+export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'login', component: LoginPageComponent },
   { path: 'register', component: RegisterPageComponent },
   { path: 'dashboard', component: DashboardPageComponent },
   { path: '**', component: NotFoundPageComponent }
 ];
-
-@NgModule({
-  imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
-})
-export class AppRoutingModule { }
 ```
-Now we need to clean up de project by:
-- Removing the startup project markup from *app.component.html* and only keeping `<router-outlet></router-outlet>`.
+Now we need to clean up the project by:
+- Deleting everything in *app.component.html* (the whole startup page) and leaving only `<router-outlet></router-outlet>`.
 - Removing `title = 'ui'` from AppComponent in *app.component.ts*.
+- Replacing the content of *app.component.spec.ts*: the generated tests check the `title` and the `<h1>` you just removed, so they would fail. Keep only the test that checks that the component is created:
+
+<details>
+<summary>app.component.spec.ts</summary>
+
+```TypeScript
+import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
+import { AppComponent } from './app.component';
+
+describe('AppComponent', () => {
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [AppComponent],
+      providers: [provideRouter([])],
+    }).compileComponents();
+  });
+
+  it('should create the app', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.componentInstance;
+    expect(app).toBeTruthy();
+  });
+});
+```
+
+</details>
 
 Great job! 👍👍 Now, let's view your first Angular application by starting the development server in a **terminal** window.
 
-Use the previously opened terminal and ensure you're in the *fx-trading-app\06_Frontend_Development\Exercise\Code\ui* directory. You can navigate to this directory with the following commands:
+Use the previously opened terminal and ensure you're in the *fx-trading-app/06_Frontend_Development/Exercise/Code/ui* directory. You can navigate to this directory with the following commands:
 
 ```bash
 cd ..
@@ -261,7 +320,7 @@ cd ..
 cd ..
 ```
 
-Once you're in the root folder of your Angular application (*06_Frontend_Development\Exercise\Code\ui*), run:
+Once you're in the root folder of your Angular application (*06_Frontend_Development/Exercise/Code/ui*), run:
 
 ```bash
 npm start
@@ -280,52 +339,36 @@ We are using [ngx-toastr](https://github.com/scttcper/ngx-toastr) for notificati
 Install *ngx-toastr*:
 
 ```bash
-npm install ngx-toastr@19.0.0
+npm install ngx-toastr@20.0.5
 ```
 
-In order to load *toast* style, we should update `angular.json`:
+In order to load *toast* style, we should update `angular.json`. Find the `styles` array of the `build` target (`projects` > `ui` > `architect` > `build` > `options` > `styles`; not the one under `test`) and add the toastr stylesheet to it:
 
 ```JSON
 "styles": [
- "src/styles.css" // already here
-  "node_modules/ngx-toastr/toastr.css" // add this
+  "src/styles.css",
+  "node_modules/ngx-toastr/toastr.css"
 ]
 ```
 
-We also need to update `app.module.ts.ts` by adding `ToastrModule` and ensuring `BrowserAnimationsModule` is included as well:
+We also need to update `app.config.ts`: add `provideAnimations()` (Toastr animates its messages) and `provideToastr()`:
 
 ```JS
-import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+import { provideRouter } from '@angular/router';
+import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideToastr } from 'ngx-toastr';
 
-import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
-import { DashboardPageComponent } from './pages/dashboard-page/dashboard-page.component';
-import { LoginPageComponent } from './pages/login-page/login-page.component';
-import { NotFoundPageComponent } from './pages/not-found-page/not-found-page.component';
-import { RegisterPageComponent } from './pages/register-page/register-page.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { ToastrModule } from 'ngx-toastr';
+import { routes } from './app.routes';
 
-@NgModule({
-  declarations: [
-    AppComponent,
-    DashboardPageComponent,
-    LoginPageComponent,
-    NotFoundPageComponent,
-    RegisterPageComponent
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    BrowserAnimationsModule,
-    ToastrModule.forRoot()
-  ],
-  providers: [],
-  bootstrap: [AppComponent]
-})
-export class AppModule { }
-
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideZoneChangeDetection({ eventCoalescing: true }),
+    provideRouter(routes),
+    provideAnimations(),
+    provideToastr()
+  ]
+};
 ```
 This will ensure both Toastr notifications and animations are properly configured in the application.
 
@@ -335,12 +378,14 @@ To verify that you’ve correctly added `ngx-toastr`, replace the contents of `a
 
 ```JS
 import { Component, OnInit } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-root',
+  imports: [RouterOutlet],
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrl: './app.component.css'
 })
 export class AppComponent implements OnInit {
   constructor(private toastr: ToastrService) {}
@@ -354,7 +399,21 @@ export class AppComponent implements OnInit {
   }
 }
 ```
-After making this change, refresh the browser, and you should see the toastr notification displayed. Please remember to revert the file to its previous state once you’ve completed testing.
+After making this change, refresh the browser, and you should see the toastr notification displayed. Please remember to revert the file once you’ve completed testing. It must end up like this:
+
+```JS
+import { Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+
+@Component({
+  selector: 'app-root',
+  imports: [RouterOutlet],
+  templateUrl: './app.component.html',
+  styleUrl: './app.component.css'
+})
+export class AppComponent {
+}
+```
 
 ### Fill in global style file
 
@@ -415,44 +474,33 @@ h1,h2,h3,h4,h5,h6 {
 
 ### Add Bootstrap, Datepicker and Fontawesome
 
-To incorporate the Open Sans font, Bootstrap styles, and Font Awesome into your project, you'll need to update your `index.html` file with the following CSS and script links. Please add them into `<head>` tag:
+The application uses the Open Sans font from Google Fonts. Add these links at the end of the `<head>` tag of `index.html`, after the `favicon` link:
 
 ```HTML
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
-
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65">
-
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
 ```
 
-Additionally, install `ngx-bootstrap` by running the following command:
+Bootstrap (layout and form styles), Font Awesome (icons) and `ngx-bootstrap` (the datepicker) are installed as packages, like any other dependency of the project:
 
 ```bash
-npm install ngx-bootstrap@18.0.2
+npm install bootstrap@5.3.8 font-awesome@4.7.0 ngx-bootstrap@21.2.2
 ```
 
-Link `ngx-bootstrap` by updating `app.module.ts`:
+There is nothing to register for `ngx-bootstrap` now: the component that uses the datepicker (the blotter, in the next laboratory) imports `BsDatepickerModule` itself.
 
-```JavaScript
-import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
-
-imports: [
-    ...
-    ToastrModule.forRoot(),
-    BsDatepickerModule.forRoot()
-]
-```
-
-In order to load *DatePicker* style, we should update `angular.json`:
+Load their stylesheets by updating the same `styles` array in `angular.json`. Bootstrap and Font Awesome come first, so that our own `src/styles.css` can override them:
 
 ```JSON
 "styles": [
- "src/styles.css" // already here
-  "node_modules/ngx-toastr/toastr.css", // already here
-   "node_modules/ngx-bootstrap/datepicker/bs-datepicker.css"
+  "node_modules/bootstrap/dist/css/bootstrap.min.css",
+  "node_modules/font-awesome/css/font-awesome.min.css",
+  "src/styles.css",
+  "node_modules/ngx-toastr/toastr.css",
+  "node_modules/ngx-bootstrap/datepicker/bs-datepicker.css"
 ]
+```
 
 ## Exercise 2 - Register page
 
@@ -491,9 +539,9 @@ In the directory *06_Frontend_Development/Exercise/Code/ui/src/app*, we will cre
 
 
 ```JavaScript
-export const authApi = 'http://localhost:8200'
-export const tradeApi = 'http://localhost:8210'
-export const quoteApi = 'http://localhost:8220'
+export const authApi = '/auth'
+export const tradeApi = '/trade'
+export const quoteApi = '/quote'
 
 export const backendUrl = {
   authService: {
@@ -511,6 +559,18 @@ export const backendUrl = {
 }
 ```
 
+#### Use the proxy paths (Exercise 0.1, Step 3)
+
+Keep the first three lines of **ui/src/app/constants.ts** as shown above. These prefixes match the proxy configuration for both backend modes:
+
+```JavaScript
+export const authApi = '/auth'
+export const tradeApi = '/trade'
+export const quoteApi = '/quote'
+```
+
+_For simplicity, we are using a constants file for the service URLs. In a production deployment, these URLs would be determined dynamically based on the target environment, resulting in a more specific configuration process (https://angular.dev/tools/cli/environments)_
+
 ### User service
 
 Now, let's focus on creating the service to send user details via an HTTP request to the server.
@@ -522,56 +582,44 @@ Our first service will be in a file called `user.service.ts`:
 ```JavaScript
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 import { User } from '../models/user';
 import { backendUrl } from '../constants';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class UserService {
   constructor(private http: HttpClient) { }
 
-  register(user: User) {
-    return this.http.post(backendUrl.authService.register, user) as any;
+  // The backend answers POST /user/register with an empty body
+  register(user: User): Observable<void> {
+    return this.http.post<void>(backendUrl.authService.register, user);
   }
-  
+
 }
 ```
 
 Here's what the service does:
 * The constructor injects `HttpClient`, enabling the service to make HTTP requests.
 * The register method accepts a User object (the user data to be sent for account creation) and makes a `POST` request to the API URL defined in `constants.ts` (backendUrl.authService.register), passing the user as the request body.
+* `register` returns an `Observable<void>`: an Observable is a value that arrives later (here, the answer of the server). The backend answers this request with an empty body, so there is nothing to read from the response, and we say so in the type (`post<void>`) instead of using `any`. The component that calls `register` gets the answer by subscribing, as you will see below.
 
 This service allows us to communicate with the backend to register new users.
 
-### Update Application Module
+### Provide the HTTP client
 
-In `app.module.ts`:
+In `app.config.ts`, add `provideHttpClient()` right after `provideRouter(routes)`, so that services can use `HttpClient`:
 
-- add `FormsModule`and `ReactiveFormsModule` in order to use them:
-
-```JavaScript
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-
- imports: [
-    ...,
-    FormsModule,
-    ReactiveFormsModule,
+```TypeScript
+import { provideHttpClient } from '@angular/common/http';
+...
+  providers: [
     ...
- ]
+    provideHttpClient()
+  ]
 ```
 
-- provide *Http Client* and `UserService`:
-
-```JavaScript
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-
-import { UserService } from './services/user.service';
-...
-providers: [provideHttpClient(withInterceptorsFromDi()), UserService],
-...
-```
-
-**Note:** We use `withInterceptorsFromDi()` to enable HTTP interceptors that are registered via dependency injection tokens (like `HTTP_INTERCEPTORS`). This is required when using the new `provideHttpClient()` API in Angular 15+.
+`UserService` needs no registration: `@Injectable({ providedIn: 'root' })` makes Angular create it the first time a component asks for it. The forms modules are not registered here either: the register and login pages import `ReactiveFormsModule` in their own `imports`.
 
 ### Register component
 
@@ -586,7 +634,7 @@ We have already set up the necessary files for the registration functionality. N
       class="fx-grayscale-logo"
       alt="fx-logo"
       src="./assets/img/logo-grayscale.svg"
-    />
+      />
   </aside>
   <main class="col-md-6">
     <article class="container-center screen-full-height">
@@ -602,117 +650,144 @@ We have already set up the necessary files for the registration functionality. N
               formControlName="username"
               placeholder="username"
               autocomplete="username"
-              [ngClass]="{ 'is-invalid': submitted && f['username'].errors }"
-            />
-            <span
-              *ngIf="submitted && f['username'].errors"
-              class="invalid-feedback"
-            >
-              <span *ngIf="f['username'].errors['required']"
-                >Username is required!</span
-              >
-            </span>
-          </p>
-          <p class="mb-3">
-            <label for="email">Email</label>
-            <input
-              type="text"
-              class="form-control form-control-sm"
-              id="inputEmail"
-              formControlName="email"
-              placeholder="email address"
-              [ngClass]="{ 'is-invalid': submitted && f['email'].errors }"
-            />
-            <span
-              *ngIf="submitted && f['email'].errors"
-              class="invalid-feedback"
-            >
-              <span *ngIf="f['email'].errors['required']">
-                Email is required!
-              </span>
-            </span>
-          </p>
-          <p class="mb-3">
-            <label for="password">Password</label>
-            <input
-              type="password"
-              class="form-control form-control-sm"
-              id="inputPassword"
-              formControlName="password"
-              placeholder="password"
-              autocomplete="new-password"
-              [ngClass]="{ 'is-invalid': submitted && f['password'].errors }"
-            />
-            <span
-              *ngIf="submitted && f['password'].errors"
-              class="invalid-feedback"
-            >
-              <span *ngIf="f['password'].errors['required']">
-                Password is required!
-              </span>
-              <span *ngIf="f['password'].errors['minlength']">
-                Password must be at least 6 characters!
-              </span>
-            </span>
-          </p>
-          <p class="mb-3">
-            <label for="password">Confirm password</label>
-            <input
-              type="password"
-              class="form-control form-control-sm"
-              id="inputConfirmPassword"
-              formControlName="confirmPassword"
-              placeholder="confirm password"
-              autocomplete="new-password"
+              [ngClass]="{ 'is-invalid': submitted() && f['username'].errors }"
+              />
+            @if (submitted() && f['username'].errors) {
+              <span
+                class="invalid-feedback"
+                >
+                @if (f['username'].errors['required']) {
+                  <span
+                    >Username is required!</span
+                    >
+                  }
+                </span>
+              }
+            </p>
+            <p class="mb-3">
+              <label for="email">Email</label>
+              <input
+                type="text"
+                class="form-control form-control-sm"
+                id="inputEmail"
+                formControlName="email"
+                placeholder="email address"
+                [ngClass]="{ 'is-invalid': submitted() && f['email'].errors }"
+                />
+              @if (submitted() && f['email'].errors) {
+                <span
+                  class="invalid-feedback"
+                  >
+                  @if (f['email'].errors['required']) {
+                    <span>
+                      Email is required!
+                    </span>
+                  }
+                </span>
+              }
+            </p>
+            <p class="mb-3">
+              <label for="password">Password</label>
+              <input
+                type="password"
+                class="form-control form-control-sm"
+                id="inputPassword"
+                formControlName="password"
+                placeholder="password"
+                autocomplete="new-password"
+                [ngClass]="{ 'is-invalid': submitted() && f['password'].errors }"
+                />
+              @if (submitted() && f['password'].errors) {
+                <span
+                  class="invalid-feedback"
+                  >
+                  @if (f['password'].errors['required']) {
+                    <span>
+                      Password is required!
+                    </span>
+                  }
+                  @if (f['password'].errors['minlength']) {
+                    <span>
+                      Password must be at least 6 characters!
+                    </span>
+                  }
+                </span>
+              }
+            </p>
+            <p class="mb-3">
+              <label for="password">Confirm password</label>
+              <input
+                type="password"
+                class="form-control form-control-sm"
+                id="inputConfirmPassword"
+                formControlName="confirmPassword"
+                placeholder="confirm password"
+                autocomplete="new-password"
               [ngClass]="{
-                'is-invalid': submitted && f['confirmPassword'].errors
+                'is-invalid': submitted() && f['confirmPassword'].errors
               }"
-            />
-            <span
-              *ngIf="submitted && f['confirmPassword'].errors"
-              class="invalid-feedback"
-            >
-              <span *ngIf="f['confirmPassword'].errors['required']">
-                Password confirmation is required!
-              </span>
-            </span>
-          </p>
-          <button
-            [disabled]="loading"
-            type="submit"
-            class="btn btn-primary btn-block"
-          >
-            Register
-          </button>
-          <p class="text-container">
-            <span>Already have an account?&nbsp;</span>
-            <a [routerLink]="'/login'" class="btn btn-link">Login</a>
-          </p>
-        </form>
-      </div>
-    </article>
-  </main>
-</div>
+                />
+              @if (submitted() && f['confirmPassword'].errors) {
+                <span
+                  class="invalid-feedback"
+                  >
+                  @if (f['confirmPassword'].errors['required']) {
+                    <span>
+                      Password confirmation is required!
+                    </span>
+                  }
+                </span>
+              }
+            </p>
+            <button
+              [disabled]="loading()"
+              type="submit"
+              class="btn btn-primary btn-block"
+              >
+              Register
+            </button>
+            <p class="text-container">
+              <span>Already have an account?&nbsp;</span>
+              <a [routerLink]="'/login'" class="btn btn-link">Login</a>
+            </p>
+          </form>
+        </div>
+      </article>
+    </main>
+  </div>
 ```
 
 Key points:
 
 - The form uses `[formGroup]="registerForm"` to bind the form fields.
 - The `onSubmit` method is triggered when the form is submitted.
+- `submitted()` and `loading()` are read with parentheses because they are *signals*. They are created in the TypeScript file below, which also explains what a signal is.
 - There are validation checks for required fields and minimum length, such as:
 
   ```HTML
-  <span *ngIf="submitted && f['username'].errors" class="invalid-feedback">
-    <span *ngIf="f['username'].errors['required']">Username is required!</span>
-  </span>
+  @if (submitted() && f['username'].errors) {
+    <span class="invalid-feedback">
+      @if (f['username'].errors['required']) {
+        <span>Username is required!</span>
+      }
+    </span>
+  }
   ```
 
   ```HTML
-  <span *ngIf="submitted && f['password'].errors" class="invalid-feedback">
-    <span *ngIf="f['password'].errors['required']">Password is required!</div>
-    <span *ngIf="f['password'].errors['minlength']">Password must be at least 6 characters!</div>
-  </span>
+  @if (submitted() && f['password'].errors) {
+    <span class="invalid-feedback">
+      @if (f['password'].errors['required']) {
+        <span>Password is required!</span>
+      }
+      @if (f['password'].errors['minlength']) {
+        <span>Password must be at least 6 characters!</span>
+      }
+    </span>
+  }
   ```
+
+  The `@if` blocks are Angular's built-in control flow (the replacement for the `*ngIf` directive, see the [Theory](../Theory/README.md#control-flow)).
 
 - There is a `routerLink` to *Login Page*:
   ```HTML
@@ -767,24 +842,27 @@ Key points:
 **register-page.component.ts**:
 
 ```JavaScript
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit, signal } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Router, RouterLink } from '@angular/router';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 
 import { UserService } from '../../services/user.service';
+import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-register-page',
+  imports: [ReactiveFormsModule, NgClass, RouterLink],
   templateUrl: './register-page.component.html',
-  styleUrls: ['./register-page.component.css'],
+  styleUrls: ['./register-page.component.css']
 })
 export class RegisterPageComponent implements OnInit {
   registerForm!: FormGroup ;
 
-  loading = false;
-  submitted = false;
+  loading = signal(false);
+  submitted = signal(false);
 
   constructor(
     private formBuilder: FormBuilder,
@@ -832,37 +910,113 @@ export class RegisterPageComponent implements OnInit {
     };
   }
   onSubmit() {
-    this.submitted = true;
+    this.submitted.set(true);
 
     // Exit function if form is invalid
     if (this.registerForm.invalid) {
       return;
     }
 
-    this.loading = true;
+    this.loading.set(true);
     this.userService
       .register(this.registerForm.value)
       .pipe(first())
-      .subscribe(
-        (data: any) => {
+      .subscribe({
+        next: () => {
           this.toastr.success('Registration successful!');
-          this.loading = false;
+          this.loading.set(false);
           this.router.navigate(['/login']);
         },
-        (error: string) => {
-          this.toastr.error(error);
-          this.loading = false;
-        }
-      );
+        error: (error: HttpErrorResponse) => {
+          this.toastr.error(error.error?.message || error.statusText || 'Registration failed');
+          this.loading.set(false);
+        },
+      });
   }
 }
 ```
 
 Key points:
 
-- The form fields and validations are defined in the class.
+- The form is a *reactive form* (`FormBuilder`, `FormGroup`, `Validators`): the fields and validations are defined in the class, not in the template. See [Reactive forms](../Theory/README.md#reactive-forms) in the Theory.
 - The `onSubmit` method sends the form data to the server using `userService.register`.
-- On successful registration, the user is redirected to the login page, and a success message is shown. If there's an error, it's displayed using a toast notification.
+- `.subscribe({ next, error })` takes one function for the answer and one for the failure. `first()` takes the first answer and then unsubscribes.
+- On successful registration, the user is redirected to the login page, and a success message is shown. If there's an error, it's displayed using a toast notification. The error is the `HttpErrorResponse` that the Error Interceptor (below) passes on: its `error.message` is the text sent by the server, and `statusText` is the fallback.
+
+#### First signals: `loading` and `submitted`
+
+`loading = signal(false)` creates a **signal**: it holds a value and tells the template when the value changes.
+
+- You read it by calling it like a function: `loading()`. In the template, `[disabled]="loading()"` reads it.
+- You change it with `set`: `this.loading.set(true)`. (`update(v => !v)` computes the new value from the old one.)
+- When the value changes, Angular re-renders exactly the parts of the template that read the signal. You never assign `this.loading = true` any more: that would replace the signal itself.
+- That is why the template says `submitted()` and not `submitted`: without the parentheses you would test the signal object, which is always truthy.
+
+A plain `boolean` would work too, but with a signal the button updates as soon as `onSubmit` sets it. The next laboratory uses signals for all its state. See [Signals: the basics](../Theory/README.md#signals-the-basics) in the Theory.
+
+The register spec checks only that the component is created. Replace the content of `register-page.component.spec.ts` (do not run `ng test` yet):
+
+<details>
+<summary>register-page.component.spec.ts</summary>
+
+```TypeScript
+import { provideHttpClient } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Router, provideRouter } from '@angular/router';
+import { ToastrModule, ToastrService } from 'ngx-toastr';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { UserService } from '../../services/user.service';
+import { AuthenticationService } from '../../services/authentication.service';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { backendUrl } from '../../constants';
+
+import { RegisterPageComponent } from './register-page.component';
+
+describe('RegisterPageComponent', () => {
+  let component: RegisterPageComponent;
+  let fixture: ComponentFixture<RegisterPageComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [RegisterPageComponent, FormsModule, ReactiveFormsModule, ToastrModule.forRoot(), BsDatepickerModule],
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([]), UserService, AuthenticationService],
+      schemas: [NO_ERRORS_SCHEMA]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(RegisterPageComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+  it('rejects mismatched passwords without sending registration', () => {
+    component.registerForm.setValue({ username: 'ana', email: 'ana@example.com', password: 'password123', confirmPassword: 'different' });
+    component.onSubmit();
+    expect(component.f['confirmPassword'].hasError('mustMatch')).toBeTrue();
+    TestBed.inject(HttpTestingController).expectNone(backendUrl.authService.register);
+  });
+
+  it('accepts the empty registration response from the Java backend', () => {
+    const navigate = spyOn(TestBed.inject(Router), 'navigate');
+    spyOn(TestBed.inject(ToastrService), 'success');
+    component.registerForm.setValue({ username: 'ana', email: 'ana@example.com', password: 'password123', confirmPassword: 'password123' });
+    component.onSubmit();
+    expect(component.loading()).toBeTrue();
+    TestBed.inject(HttpTestingController).expectOne(backendUrl.authService.register).flush(null);
+    expect(component.loading()).toBeFalse();
+    expect(navigate).toHaveBeenCalledWith(['/login']);
+  });
+
+});
+```
+
+</details>
 
 ## Exercise 3 - Login page
 
@@ -878,7 +1032,7 @@ import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { backendUrl } from '../constants';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class AuthenticationService {
   constructor(private http: HttpClient) {}
 
@@ -920,42 +1074,37 @@ To protect certain routes from unauthorized access, we'll create a guard.
 Create a new file `auth.guard.ts` inside a guards folder in *06_Frontend_Development/Exercise/Code/ui/src/app/*:
 
 ```JavaScript
-import { Injectable } from '@angular/core';
-import {
-  Router,
-  CanActivate,
-  ActivatedRouteSnapshot,
-  RouterStateSnapshot,
-} from '@angular/router';
+import { inject } from '@angular/core';
+import { CanActivateFn, Router } from '@angular/router';
 
-@Injectable()
-export class AuthGuard implements CanActivate {
-  constructor(private router: Router) {}
-
-  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    if (localStorage.getItem('currentUser')) {
-      // we are logged in => return true
-      return true;
-    }
-
-    // we are not logged in => redirect to login page with the return url
-    this.router.navigate(['/login'], { queryParams: { returnUrl: state.url } });
-    return false;
+export const authGuard: CanActivateFn = (route, state) => {
+  if (localStorage.getItem('currentUser')) {
+    // we are logged in => return true
+    return true;
   }
-}
+
+  // we are not logged in => redirect to login page with the return url
+  return inject(Router).createUrlTree(['/login'], { queryParams: { returnUrl: state.url } });
+};
 ```
 This guard checks whether a user is logged in by inspecting `localStorage`. If not, it redirects them to the login page.
 
-Next, add the guard to private routes by updating `app-routing.module.ts`:
+Next, add the guard to private routes by updating `app.routes.ts`. The new parts are the `authGuard` import and `canActivate: [authGuard]` on the dashboard route; the whole file now looks like this:
 
 ```JavaScript
-import { AuthGuard } from './guards/auth.guard';
+import { Routes } from '@angular/router';
 
-const appRoutes: Routes = [
+import { LoginPageComponent } from './pages/login-page/login-page.component';
+import { RegisterPageComponent } from './pages/register-page/register-page.component';
+import { DashboardPageComponent } from './pages/dashboard-page/dashboard-page.component';
+import { NotFoundPageComponent } from './pages/not-found-page/not-found-page.component';
+import { authGuard } from './guards/auth.guard';
+
+export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'login', component: LoginPageComponent },
   { path: 'register', component: RegisterPageComponent },
-  { path: 'dashboard', component: DashboardPageComponent, canActivate: [AuthGuard] },
+  { path: 'dashboard', component: DashboardPageComponent, canActivate: [authGuard] },
   { path: '**', component: NotFoundPageComponent }
 ];
 ```
@@ -968,26 +1117,21 @@ To attach the JWT token to outgoing HTTP requests, create `jwt.interceptor.ts` i
 // intercepts http requests from the application to add a JWT auth token to the Authentication header
 // if the user is logged in
 
-import { Injectable } from '@angular/core';
-import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpInterceptorFn } from '@angular/common/http';
 
-@Injectable()
-export class JwtInterceptor implements HttpInterceptor {
-  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    // add authorization header with jwt token if available
-    let currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-    if (currentUser && currentUser.token) {
-      request = request.clone({
-        setHeaders: {
-          Authorization: `Bearer ${currentUser.token}`
-        }
-      })
-    }
-
-    return next.handle(request);
+export const jwtInterceptor: HttpInterceptorFn = (request, next) => {
+  // add authorization header with jwt token if available
+  const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+  if (currentUser && currentUser.token) {
+    request = request.clone({
+      setHeaders: {
+        Authorization: `Bearer ${currentUser.token}`
+      }
+    });
   }
-}
+
+  return next(request);
+};
 ```
 
 ### Error Interceptor
@@ -997,79 +1141,73 @@ To handle API errors (e.g., unauthorized access), create `error.interceptor.ts` 
 ```JavaScript
 // intercepts http responses from the api to check if there were any errors.
 // If there is a 401 Unauthorized response the user is automatically logged out of the application.
-// All other errors are re-thrown to be caught by the calling service so an alert will be displayed to the user
 
-import { Injectable } from '@angular/core';
-import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
+import { inject } from '@angular/core';
+import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
+import { throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 import { AuthenticationService } from '../services/authentication.service';
 
-@Injectable()
-export class ErrorInterceptor implements HttpInterceptor {
-  constructor(private authenticationService: AuthenticationService) { }
+export const errorInterceptor: HttpInterceptorFn = (request, next) => {
+  const authenticationService = inject(AuthenticationService);
 
-  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    return next.handle(request).pipe(catchError(err => {
-      if (err.status === 401) {
-        //logout if 401 response is returned from api
-        this.authenticationService.logout();
-      }
+  return next(request).pipe(catchError((err: HttpErrorResponse) => {
+    if (err.status === 401) {
+      //logout if 401 response is returned from api
+      authenticationService.logout();
+    }
 
-      const error = err.error.message || err.statusText;
-      return throwError(error);
-    }))
-  }
-
-}
+    return throwError(() => err);
+  }));
+};
 ```
 
-### Update Application Module with the new added classes
+The interceptor logs the user out on a `401` and then re-throws **the same `HttpErrorResponse`** (`throwError(() => err)`; the arrow function is the form current RxJS expects). It does not turn the error into a string, so the component that subscribed can still read `error.status` and `error.error.message`. The login page below depends on that: it shows "Username or password is incorrect" only when `error.status === 401`.
 
-Finally, update `app.module.ts` to include the new services and interceptors:
+An interceptor is a good example of what an **Observable** is for: it sits in the middle of a stream of HTTP answers that arrive later, and it can transform or stop them.
 
+### Register the interceptors
 
-- Add the `AuthenticationService`:
+Finally, register the two interceptors in `app.config.ts`: add the two imports under `import { routes }`, and replace `provideHttpClient()` with this line:
 
-```JavaScript
-import { AuthenticationService } from './services/authentication.service';
+```TypeScript
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 
-providers: [
-    ...
-    AuthenticationService,
-    ...
-```
-
-- Add the *Authorization Guard*:
-
-```JavaScript
-import { AuthGuard } from './guards/auth.guard';
-
-providers: [
-    AuthGuard,
+import { routes } from './app.routes';
+import { jwtInterceptor } from './helpers/jwt.interceptor';
+import { errorInterceptor } from './helpers/error.interceptor';
+...
+    provideRouter(routes),
+    provideHttpClient(withInterceptors([jwtInterceptor, errorInterceptor])),
     ...
 ```
 
-- Register the *JWT* and *Error Interceptors*:
+`AuthenticationService` and the guard need no registration: the service is `providedIn: 'root'`, and the guard is a function that the route uses directly.
 
-First, update the import to include `HTTP_INTERCEPTORS`:
+After all the changes in this laboratory, `app.config.ts` should look like this (the order of the imports does not matter, the content does):
 
-```JavaScript
-import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { JwtInterceptor } from './helpers/jwt.interceptor';
-import { ErrorInterceptor } from './helpers/error.interceptor';
+```TypeScript
+import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+import { provideRouter } from '@angular/router';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideToastr } from 'ngx-toastr';
 
- providers: [
-    provideHttpClient(withInterceptorsFromDi()),
-    ...
-    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
-    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }
-  ],
+import { routes } from './app.routes';
+import { jwtInterceptor } from './helpers/jwt.interceptor';
+import { errorInterceptor } from './helpers/error.interceptor';
 
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideZoneChangeDetection({ eventCoalescing: true }),
+    provideRouter(routes),
+    provideHttpClient(withInterceptors([jwtInterceptor, errorInterceptor])),
+    provideAnimations(),
+    provideToastr()
+  ]
+};
 ```
-
-**Important:** The `withInterceptorsFromDi()` parameter is essential for the interceptors to work properly. Without it, the `JwtInterceptor` won't add the Authorization header to requests.
 
 ### Login component
 
@@ -1084,7 +1222,7 @@ Let's fill in the necessary files for login functionality with some code in orde
       class="fx-grayscale-logo"
       alt="fx-grayscale-logo"
       src="./assets/img/logo-grayscale.svg"
-    />
+      />
   </aside>
   <main class="col-md-6 container-center screen-full-height">
     <article class="content">
@@ -1101,16 +1239,19 @@ Let's fill in the necessary files for login functionality with some code in orde
               placeholder="username"
               autocomplete="username"
               id="username"
-              [ngClass]="{ 'is-invalid': submitted && f['username'].errors }"
-            />
-            <span
-              *ngIf="submitted && f['username'].errors"
-              class="invalid-feedback"
-            >
-              <span *ngIf="f['username'].errors['required']">
-                Username is required!
+              [ngClass]="{ 'is-invalid': submitted() && f['username'].errors }"
+              />
+            @if (submitted() && f['username'].errors) {
+              <span
+                class="invalid-feedback"
+                >
+                @if (f['username'].errors['required']) {
+                  <span>
+                    Username is required!
+                  </span>
+                }
               </span>
-            </span>
+            }
           </span>
         </p>
         <!-- Password -->
@@ -1124,24 +1265,27 @@ Let's fill in the necessary files for login functionality with some code in orde
               placeholder="password"
               autocomplete="current-password"
               id="password"
-              [ngClass]="{ 'is-invalid': submitted && f['password'].errors }"
-            />
-            <span
-              *ngIf="submitted && f['password'].errors"
-              class="invalid-feedback"
-            >
-              <span *ngIf="f['password'].errors['required']">
-                Password is required!
+              [ngClass]="{ 'is-invalid': submitted() && f['password'].errors }"
+              />
+            @if (submitted() && f['password'].errors) {
+              <span
+                class="invalid-feedback"
+                >
+                @if (f['password'].errors['required']) {
+                  <span>
+                    Password is required!
+                  </span>
+                }
               </span>
-            </span>
+            }
           </span>
         </p>
         <!-- Login button -->
         <button
-          [disabled]="loading"
+          [disabled]="loading()"
           type="submit"
           class="btn btn-primary btn-block"
-        >
+          >
           Login
         </button>
         <!-- Register link -->
@@ -1216,22 +1360,25 @@ This CSS styles the login form and centers the content. It also styles the inval
 **login-page.component.ts**:
 
 ```JavaScript
-import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit, signal } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Router, ActivatedRoute, RouterLink } from '@angular/router';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 import { AuthenticationService } from '../../services/authentication.service';
+import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-login-page',
+  imports: [ReactiveFormsModule, NgClass, RouterLink],
   templateUrl: './login-page.component.html',
-  styleUrls: ['./login-page.component.css'],
+  styleUrls: ['./login-page.component.css']
 })
 export class LoginPageComponent implements OnInit {
   loginForm!: FormGroup;
-  loading = false;
-  submitted = false;
+  loading = signal(false);
+  submitted = signal(false);
   returnUrl: string = '';
 
   constructor(
@@ -1260,14 +1407,14 @@ export class LoginPageComponent implements OnInit {
   }
 
   onSubmit() {
-    this.submitted = true;
+    this.submitted.set(true);
 
     // Exit function if form is invalid
     if (this.loginForm.invalid) {
       return;
     }
 
-    this.loading = true;
+    this.loading.set(true);
     this.authenticationService
       .login(this.f['username'].value, this.f['password'].value)
       .pipe(first())
@@ -1275,13 +1422,13 @@ export class LoginPageComponent implements OnInit {
         next: () => {
           this.router.navigate([this.returnUrl]);
         },
-        error: (error) => {
+        error: (error: HttpErrorResponse) => {
           if (error.status === 401) {
             this.toastr.error('Username or password is incorrect');
           } else {
-            this.toastr.error(error.message);
+            this.toastr.error(error.error?.message || error.statusText || 'Login failed');
           }
-          this.loading = false;
+          this.loading.set(false);
         },
       });
   }
@@ -1294,10 +1441,87 @@ Key points:
 - On form submission (`onSubmit`), the component checks the form’s validity.
 - If valid, the `login` method from `AuthenticationService` is called to authenticate the user.
 - Successful login redirects the user to the dashboard or the `returnUrl`, while errors show a notification using `ToastrService`.
+- `loading` and `submitted` are signals, exactly as in the register page: `set(true)` when the user submits, `loading.set(false)` when the request fails.
+- `error` is the `HttpErrorResponse` that the Error Interceptor re-throws, so `error.status === 401` works.
+
+The login spec has three tests: the component is created, a `401` shows the "incorrect" message, and any other error shows the message sent by the server. In both error cases the button must be enabled again (`loading()` is `false`). Replace the content of `login-page.component.spec.ts` (do not run `ng test` yet):
+
+<details>
+<summary>login-page.component.spec.ts</summary>
+
+```TypeScript
+import { provideHttpClient } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { provideRouter } from '@angular/router';
+import { ToastrModule, ToastrService } from 'ngx-toastr';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { UserService } from '../../services/user.service';
+import { AuthenticationService } from '../../services/authentication.service';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { LoginPageComponent } from './login-page.component';
+
+describe('LoginPageComponent', () => {
+  let component: LoginPageComponent;
+  let fixture: ComponentFixture<LoginPageComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [LoginPageComponent, FormsModule, ReactiveFormsModule, ToastrModule.forRoot(), BsDatepickerModule],
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([]), UserService, AuthenticationService],
+      schemas: [NO_ERRORS_SCHEMA]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(LoginPageComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+
+  function submit(status: number, body: object, statusText: string) {
+    const toastr = TestBed.inject(ToastrService);
+    const errorSpy = spyOn(toastr, 'error');
+    component.loginForm.setValue({ username: 'ana', password: 'secret' });
+    component.onSubmit();
+    expect(component.loading()).toBeTrue();
+    TestBed.inject(HttpTestingController)
+      .expectOne((r) => r.method === 'POST')
+      .flush(body, { status, statusText });
+    return errorSpy;
+  }
+
+  it('shows "incorrect" on a 401 and re-enables the button', () => {
+    const errorSpy = submit(401, { message: 'Bad credentials' }, 'Unauthorized');
+    expect(errorSpy).toHaveBeenCalledWith('Username or password is incorrect');
+    expect(component.loading()).toBeFalse();
+  });
+
+  it('shows the server message on any other error', () => {
+    const errorSpy = submit(500, { message: 'Boom' }, 'Server Error');
+    expect(errorSpy).toHaveBeenCalledWith('Boom');
+    expect(component.loading()).toBeFalse();
+  });
+});
+```
+
+</details>
 
 Now, we can test the registration and login pages. Navigate to `http://localhost:4200/register` to access the registration page and create a new user. After registering, use the same credentials to log in via the "Login Page". Upon successful login, you should be redirected to the "Dashboard Page".
 
-> Please ensure you have the mock server running to handle the backend requests.
+Keep the mock server running in terminal 1 and the UI running in terminal 2 with `npm start`.
+
+Check the connection now (Exercise 0.1, Step 3):
+
+1. Register a new user on `/register`, then log in with the same credentials.
+2. Confirm that you reach `/dashboard` and see `dashboard-page works!`.
+3. Return to `/login`, try an incorrect password, and check that an error appears and the button becomes available again.
+4. In the browser Network tab, confirm that the requests go to `/auth/user/register` and `/auth/user/authenticate` on the UI's origin. The proxy forwards them to the mock on port 8200.
 
 ## Exercise 4 - Not found page
 
@@ -1351,19 +1575,89 @@ This page contains:
 For this component, the default generated by the Angular CLI is sufficient since no specific logic is required:
 
 ```JavaScript
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-not-found-page',
+  imports: [],
   templateUrl: './not-found-page.component.html',
-  styleUrls: ['./not-found-page.component.css']
+  styleUrl: './not-found-page.component.css',
 })
-export class NotFoundPageComponent implements OnInit {
-
-  constructor() { }
-
-  ngOnInit(): void {
-  }
+export class NotFoundPageComponent {
 
 }
 ```
+
+Replace the content of `not-found-page.component.spec.ts`:
+
+<details>
+<summary>not-found-page.component.spec.ts</summary>
+
+```TypeScript
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { provideRouter } from '@angular/router';
+import { ToastrModule } from 'ngx-toastr';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { UserService } from '../../services/user.service';
+import { AuthenticationService } from '../../services/authentication.service';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { NotFoundPageComponent } from './not-found-page.component';
+
+describe('NotFoundPageComponent', () => {
+  let component: NotFoundPageComponent;
+  let fixture: ComponentFixture<NotFoundPageComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [NotFoundPageComponent, FormsModule, ReactiveFormsModule, ToastrModule.forRoot(), BsDatepickerModule],
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([]), UserService, AuthenticationService],
+      schemas: [NO_ERRORS_SCHEMA]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(NotFoundPageComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+```
+
+</details>
+
+## Done when
+
+1. You can register a new user on `http://localhost:4200/register`, log in with it on `/login` and land on the dashboard page (it shows `dashboard-page works!`). Opening `/dashboard` without being logged in sends you back to the login page.
+2. `npm run build` succeeds and `ng test` is green: 9 tests in 5 spec files (the application, dashboard, login, register and not-found).
+3. Empty fields and mismatched passwords prevent registration. Incorrect login credentials show an error, and you can try again. An unknown route shows the not-found page.
+
+These checks are completed with the mock server. The real backend is optional.
+
+```bash
+ng test
+```
+
+`ng test` opens Chrome and watches your files. Add `--watch=false --browsers=ChromeHeadless` to run it once without a browser window.
+
+## Optional - Connect to the real backend
+
+Try this after completing the exercises if your user-administration service from laboratory 05 is working. If you do not have it, you have still completed laboratory 06; you can follow the instructor's demonstration or try this later.
+
+Only the **user-administration service on port 8200 and its users database** are needed for laboratory 06. The trading and quote services are used in laboratory 07.
+
+1. Stop the mocks with `Ctrl+C` in their terminal to free port 8200.
+2. Start your user-administration service and its database. If you are using the reference service in `App/`, follow [Local frontend setup](../../FRONTEND_LABS.md#optional-real-backend-for-lab-06).
+3. Keep the UI running with `npm start`. Keep `constants.ts` and `proxy.conf.json` unchanged: `/auth` now reaches the Java service on the same port.
+4. Open `/login` to clear the mock login, then register a new user and log in. Mock accounts and tokens are separate from those stored by Java.
+5. Confirm that you reach the same placeholder dashboard. In the browser Network tab, the frontend URLs are still `/auth/user/...`.
+
+To return to mocks, stop the Java service, run `npm start` in the mock-server folder, and log in again with a mock account.
+
+Next laboratory: [Dashboard Page with Angular](../../07_Frontend_Development/Exercise/README.md), which continues from the project you have now.

@@ -11,12 +11,6 @@ import { Rate } from '../models/rate';
 export class TradeService {
   constructor(private http: HttpClient) {}
 
-  getTransactions() {
-    return this.http.get(
-      backendUrl.fxTradeService.getTransactions
-    ) as Observable<Transaction[]>;
-  }
-
   getTransactionsPolling() {
     return interval(2000).pipe(
       startWith(0),
@@ -35,12 +29,6 @@ export class TradeService {
     return this.http.get(backendUrl.quoteService.getCurrencies) as Observable<
       string[]
     >;
-  }
-
-  getFxRate(primaryCcy: string, secondaryCcy: string) {
-    return this.http.get(backendUrl.quoteService.getFxRate, {
-      params: { primaryCcy, secondaryCcy },
-    }) as Observable<Rate>;
   }
 
   getFxRatePolling(primaryCcy: string, secondaryCcy: string) {

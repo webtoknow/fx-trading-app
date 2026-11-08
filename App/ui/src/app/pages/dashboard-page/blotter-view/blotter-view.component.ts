@@ -1,85 +1,64 @@
-import { Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { Transaction } from '../../../models/transaction';
-import { Subject, takeUntil } from 'rxjs';
 import { TradeService } from '../../../services/trade.service';
+import { DatePipe, DecimalPipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 
 @Component({
   selector: 'app-blotter-view',
+  imports: [FormsModule, BsDatepickerModule, DatePipe, DecimalPipe],
   templateUrl: './blotter-view.component.html',
   styleUrl: './blotter-view.component.css',
-  standalone: false
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BlotterViewComponent {
-  filter = {
-    ccyPair: '',
-    date: 0,
-  };
+  private tradeService = inject(TradeService);
 
-  private unsubscribe = new Subject();
-  transactions: Transaction[] = [];
-  private initialTransactions: Transaction[] = [];
+  transactions = toSignal(this.tradeService.getTransactionsPolling(), {
+    initialValue: [] as Transaction[],
+  });
 
-  currenciesPairs: (string | undefined)[] = [];
+  // Filter state
+  ccyPair = signal('');
+  date = signal<Date | null>(null);
 
-  constructor(private tradeService: TradeService) {}
+  private withCcyPair = computed<Transaction[]>(() =>
+    this.transactions().map((transaction) => ({
+      ...transaction,
+      ccyPair: `${transaction.primaryCcy}/${transaction.secondaryCcy}`,
+    }))
+  );
 
-  ngOnInit() {
-    this.startPooling();
-  }
+  pairs = computed(() => [
+    ...new Set(this.withCcyPair().map((transaction) => transaction.ccyPair)),
+  ]);
 
-  startPooling(): void {
-    this.tradeService
-      .getTransactionsPolling()
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe((response) => {
-        // Create transaction transform list by adding ccyPair
-        const transactionsWithCcyPair: Transaction[] = response.map(
-          (transaction) => ({
-            ...transaction,
-            ccyPair: `${transaction.primaryCcy}/${transaction.secondaryCcy}`,
-          })
-        );
-        this.transactions = transactionsWithCcyPair;
-        this.initialTransactions = [...transactionsWithCcyPair];
-        // Get all Ccy pairs for select
-        this.currenciesPairs = this.transactions
-          .map((transaction) => transaction.ccyPair)
-          .filter((x, i, a) => x && a.indexOf(x) === i);
-        this.filterBy();
-      });
-  }
-
-  getDateWithoutHourAndMinuteAndSeconds(date: number) {
-    return new Date(
-      new Date(date).getFullYear(),
-      new Date(date).getMonth(),
-      new Date(date).getDay()
+  rows = computed(() => {
+    const ccyPair = this.ccyPair();
+    const date = this.date();
+    return this.withCcyPair().filter(
+      (transaction) =>
+        (!ccyPair || transaction.ccyPair === ccyPair) &&
+        (!date || this.isSameDay(transaction.date, date))
     );
-  }
+  });
 
-  filterBy(): void {
-    this.transactions = this.initialTransactions
-      .filter(
-        (transaction) =>
-          (this.filter.ccyPair &&
-            transaction.ccyPair === this.filter.ccyPair) ||
-          !this.filter.ccyPair
-      )
-      .filter(
-        (transaction) =>
-          (this.filter.date &&
-            this.getDateWithoutHourAndMinuteAndSeconds(
-              transaction.date
-            ).getTime() ===
-              this.getDateWithoutHourAndMinuteAndSeconds(
-                this.filter.date
-              ).getTime()) ||
-          !this.filter.date
-      );
-  }
-
-  ngOnDestroy() {
-    this.unsubscribe.next('');
-    this.unsubscribe.complete();
+  // same day = same year, month and getDate() (not getDay())
+  private isSameDay(a: number | Date, b: number | Date): boolean {
+    const first = new Date(a);
+    const second = new Date(b);
+    return (
+      first.getFullYear() === second.getFullYear() &&
+      first.getMonth() === second.getMonth() &&
+      first.getDate() === second.getDate()
+    );
   }
 }

@@ -1,6 +1,6 @@
 {
-    "/auth": {
-        "target": "http://localhost:8200",
+    "/auth/**": {
+        "target": "http://127.0.0.1:8200",
         "secure": false,
         "changeOrigin": true,
         "logLevel": "debug",
@@ -8,8 +8,8 @@
             "^/auth": ""
         }
     },
-    "/trade": {
-        "target": "http://localhost:8210",
+    "/trade/**": {
+        "target": "http://127.0.0.1:8210",
         "secure": false,
         "changeOrigin": true,
         "logLevel": "debug",
@@ -17,8 +17,8 @@
             "^/trade": ""
         }
     },
-    "/quote": {
-        "target": "http://localhost:8220",
+    "/quote/**": {
+        "target": "http://127.0.0.1:8220",
         "secure": false,
         "changeOrigin": true,
         "logLevel": "debug",

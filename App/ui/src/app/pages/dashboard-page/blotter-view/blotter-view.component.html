@@ -11,16 +11,17 @@
         name="Ccy"
         id="Ccy"
         class="form-control form-control-sm"
-        [(ngModel)]="filter.ccyPair"
-        (ngModelChange)="filterBy()"
-      >
-        <option value="" selected>Please select&nbsp;&nbsp;</option>
-        <option
-          *ngFor="let currencyPair of currenciesPairs"
-          [value]="currencyPair"
+        [ngModel]="ccyPair()"
+        (ngModelChange)="ccyPair.set($event)"
         >
-          {{ currencyPair }}
-        </option>
+        <option value="" selected>Please select&nbsp;&nbsp;</option>
+        @for (currencyPair of pairs(); track currencyPair) {
+          <option
+            [value]="currencyPair"
+            >
+            {{ currencyPair }}
+          </option>
+        }
       </select>
     </div>
 
@@ -31,19 +32,19 @@
           type="text"
           class="form-control form-control-sm"
           placeholder="Please select&nbsp;"
-          [(ngModel)]="filter.date"
-          (ngModelChange)="filterBy()"
+          [ngModel]="date()"
+          (ngModelChange)="date.set($event ?? null)"
           [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }"
           #dp="bsDatepicker"
           bsDatepicker
-        />
+          />
         <div class="input-group-append">
           <button
             class="input-group-text calendar-icon"
             id="date-picker-icon"
             (click)="dp.show()"
             [attr.aria-expanded]="dp.isOpen"
-          >
+            >
             <i class="fa fa-calendar-check-o icon" aria-hidden="true"></i>
           </button>
         </div>
@@ -77,16 +78,18 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let transaction of transactions">
-        <td>{{ transaction.id }}</td>
-        <td>{{ transaction.username }}</td>
-        <td>{{ transaction.ccyPair }}</td>
-        <td>{{ transaction.rate | number }}</td>
-        <td>{{ transaction.action }}</td>
-        <td>{{ transaction.notional | number }}</td>
-        <td>{{ transaction.tenor }}</td>
-        <td>{{ transaction.date | date : "dd/MM/yyyy HH:mm" }}</td>
-      </tr>
+      @for (transaction of rows(); track transaction.id) {
+        <tr>
+          <td>{{ transaction.id }}</td>
+          <td>{{ transaction.username }}</td>
+          <td>{{ transaction.ccyPair }}</td>
+          <td>{{ transaction.rate | number }}</td>
+          <td>{{ transaction.action }}</td>
+          <td>{{ transaction.notional | number }}</td>
+          <td>{{ transaction.tenor }}</td>
+          <td>{{ transaction.date | date : "dd/MM/yyyy HH:mm" }}</td>
+        </tr>
+      }
     </tbody>
   </table>
 </div>

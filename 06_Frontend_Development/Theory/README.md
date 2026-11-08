@@ -6,557 +6,236 @@
 
 - [Components](#components)
 - [Data Binding](#data-binding)
+- [Signals: the basics](#signals-the-basics)
+- [Control Flow](#control-flow)
 - [Pipes](#pipes)
 - [Directives](#directives)
-  - [Structural Directives (*ngIf, *ngFor)](#structural-directives)
-  - [Attribute Directives](#attribute-directives)
-  - [Control Flow (Angular 17+)](#control-flow-angular-17)
+- [Data Sharing](#data-sharing)
 - [Routing](#routing)
-- [Services](#services)
-  - [Http Service](#http-service)
+- [Services and HTTP](#services-and-http)
 - [Dependency Injection](#dependency-injection)
-- [inject() Function (Angular 14+)](#inject-function-angular-14)
 - [Route Guards](#route-guards)
 - [HTTP Interceptors](#http-interceptors)
+- [Reactive forms](#reactive-forms)
 
 ## About Angular - part I
 
-- Angular is a powerful JavaScript framework that simplifies web application development.
-- Key features of Angular include data-binding, change-detection, forms, routing and navigation, and HTTP implementation.
+- Angular is a framework for building web applications. It gives you components, templates, routing, forms and an HTTP client in one package.
+- The material shows the current way of doing things. When older code you find online looks different, a short note says so.
 
 ### Components
 
-- Component is the fundamental building block in Angular.
-- Components are classes that interact with an associated *HTML* file, which is rendered in the browser.
-- The application logic of a component is defined within its class.
-- Interaction with the view is accomplished through properties and methods.
-- Components are identified using the **@Component** decorator.
-- Component metadata, such as the selector, template URL, and style URLs, must be specified. Example:
+- A component is the building block of an Angular application: a TypeScript class plus an HTML template and its CSS.
+- The class holds the data and the methods; the template shows them.
+- A component is marked with the **@Component** decorator:
 
-```JavaScript
+```TypeScript
 @Component({
-  selector: 'app-blotter-view',
-  templateUrl: './blotter-view.component.html',
-  styleUrls: ['./blotter-view.component.css']
+  selector: 'app-login-page',
+  imports: [ReactiveFormsModule, NgClass, RouterLink],
+  templateUrl: './login-page.component.html',
+  styleUrls: ['./login-page.component.css']
 })
+export class LoginPageComponent { }
 ```
 
-- After declaring a component, it can be used in the HTML of its parent component using its selector:
+- `imports` lists what the template uses: here the reactive forms directives, `[ngClass]` and `routerLink`. Each component imports what it needs itself, so nothing else has to register it.
+- Use it in another template by its selector: `<app-login-page></app-login-page>`, after adding the component to that template's `imports`.
+- Older Angular code groups components in **NgModules** (an `AppModule` with a `declarations` list). You will meet them in older projects; this application does not use them.
 
-```Html
-<app-blotter-view></app-blotter-view>
-```
+The application starts in `main.ts` with `bootstrapApplication(AppComponent, appConfig)`. `app.config.ts` holds the `providers` for the whole application: the router, the HTTP client, Toastr.
 
 ### Data Binding
 
-- Data binding is a powerful feature inherited from AngularJS.
-- Angular supports **interpolation** for data binding using curly braces - **{{ }}** :
+- **Interpolation** shows a value in the template: `{{ username }}`.
+- **Property binding** sets a property of an element: `<button [disabled]="loading()">`.
+- **Event binding** runs a method when something happens: `<button (click)="login()">`.
+- **Two-way binding** keeps an input and a value in sync: `<input [(ngModel)]="username">`.
 
-```Html
- <tr *ngFor="let transaction of transactions">
-    <td>{{ transaction.id }}</td>
-    <td>{{ transaction.username }}</td>
-    <td>{{ transaction.CcyPair }}</td>
-    <td>{{ transaction.rate | number }}</td>
-    <td>{{ transaction.action  }}</td>
-    <td>{{ transaction.notional }}</td>
-    <td>{{ transaction.tenor }}</td>
-    <td>{{ transaction.date | date:'dd/MM/yyyy HH:mm' }}</td>
- </tr>
+### Signals: the basics
+
+A **signal** holds a value and tells Angular when it changes, so the screen updates by itself. Signals are the recommended way to keep the state of a component.
+
+```TypeScript
+loading = signal(false);       // create, with a starting value
+
+this.loading();                // read: call it like a function
+this.loading.set(true);        // replace the value
+this.count.update(c => c + 1); // compute the new value from the old one
 ```
 
-- Angular also supports **two-way data binding** for interactive UI elements:
+- **computed** is a value calculated from other signals. You never assign it; it is always up to date:
+
+```TypeScript
+price = signal(100);
+quantity = signal(1);
+total = computed(() => this.price() * this.quantity());
+```
+
+- In the template, read a signal with parentheses: `{{ total() }}`. When `quantity` changes, Angular updates exactly the places that show `total()`.
+- A signal compares the old and the new value with `===`. For arrays and objects, **replace** them instead of editing them: `items.update(list => [...list, item])`, not `list.push(item)`.
+- In this laboratory, `loading` and `submitted` in the login and register pages are signals.
+
+### Control Flow
+
+The template decides what to show with `@if` and `@for` blocks:
 
 ```HTML
-<input [(ngModel)]="username">
+@if (loading()) {
+  <p>Please wait...</p>
+} @else {
+  <button (click)="login()">Login</button>
+}
 
-<p>Hello {{username}}!</p>
-````
+@for (transaction of transactions(); track transaction.id) {
+  <p>{{ transaction.username }}: {{ transaction.notional }}</p>
+} @empty {
+  <p>No transactions yet.</p>
+}
+```
+
+- `track` is required: it tells Angular which item is which, so it only redraws the rows that changed.
+- Older code uses `*ngIf` and `*ngFor` for the same thing.
 
 ### Pipes
 
-- Pipes allow you to transform and format data for display in the HTML template.
-- Angular provides several built-in pipes like **date**, **currency**, and **uppercase**:
-
-```Html
- <td>{{ transaction.date | date:'dd/MM/yyyy HH:mm' }}</td>
-```
-
-- You can create custom pipes by defining a class with the **@Pipe** decorator:
-
-```JavaScript
-import { Pipe, PipeTransform } from '@angular/core';
-/*
- * Raise the value exponentially
- * Takes an exponent argument that defaults to 1.
- * Usage:
- *   value | exponentialStrength:exponent
- * Example:
- *   {{ 2 | exponentialStrength:10 }}
- *   formats to: 1024
-*/
-@Pipe({name: 'exponentialStrength'})
-export class ExponentialStrengthPipe implements PipeTransform {
-  transform(value: number, exponent: string): number {
-    let exp = parseFloat(exponent);
-    return Math.pow(value, isNaN(exp) ? 1 : exp);
-  }
-}
-```
+- A pipe formats a value for display: `{{ transaction.date | date:'dd/MM/yyyy HH:mm' }}`, `{{ rate | number:'1.4-4' }}`, `{{ name | uppercase }}`.
+- You can write your own with the **@Pipe** decorator and a `transform(value)` method.
 
 ### Directives
 
-- Templates in Angular are dynamic, and directives instruct Angular on how to transform the DOM.
-- To create a custom attribute directive, use the **@Directive** decorator.
-- Directives can be either structural (e.g., *ngIf, *ngFor) or attribute (e.g., custom directives).
-
-#### Structural Directives
-
-**\*ngIf** - Conditionally display content:
-
-```HTML
-<div *ngIf="isLoggedIn">
-  <p>Welcome back!</p>
-</div>
-
-<div *ngIf="isLoggedIn; else loginPrompt">
-  <p>Welcome back!</p>
-</div>
-<ng-template #loginPrompt>
-  <p>Please log in.</p>
-</ng-template>
-```
-
-**\*ngFor** - Iterate over collections:
-
-```HTML
-<tr *ngFor="let transaction of transactions">
-  <td>{{ transaction.id }}</td>
-  <td>{{ transaction.username }}</td>
-  <td>{{ transaction.CcyPair }}</td>
-  <td>{{ transaction.rate | number }}</td>
-  <td>{{ transaction.action }}</td>
-  <td>{{ transaction.notional }}</td>
-  <td>{{ transaction.tenor }}</td>
-  <td>{{ transaction.date | date:'dd/MM/yyyy HH:mm' }}</td>
-</tr>
-```
-
-- You can access the index and other loop variables:
-
-```HTML
-<div *ngFor="let item of items; let i = index">
-  {{ i + 1 }}. {{ item.name }}
-</div>
-```
-
-#### Attribute Directives
-
-```JavaScript
-import { Directive, ElementRef } from '@angular/core';
-
-@Directive({
-  selector: '[appHighlight]'
-})
-export class HighlightDirective {
-    constructor(el: ElementRef) {
-       el.nativeElement.style.backgroundColor = 'yellow';
-    }
-}
-```
-
-### Control Flow (Angular 17+)
-
-**Note**: This section covers new Angular 17+ syntax. The exercises in this laboratory use the traditional structural directives shown above (*ngIf, *ngFor).
-
-- **Angular 17** introduced a new built-in control flow syntax as an alternative to structural directives.
-- The new syntax uses `@if`, `@else`, `@for`, and `@switch` blocks for better performance and readability.
-
-#### @if and @else
-
-```HTML
-@if (isLoggedIn) {
-  <p>Welcome back!</p>
-} @else {
-  <p>Please log in.</p>
-}
-```
-
-#### @for
-
-```HTML
-@for (transaction of transactions; track transaction.id) {
-  <tr>
-    <td>{{ transaction.id }}</td>
-    <td>{{ transaction.username }}</td>
-    <td>{{ transaction.amount }}</td>
-  </tr>
-} @empty {
-  <p>No transactions found.</p>
-}
-```
-
-- The `track` expression is required and helps Angular identify which items changed for efficient rendering.
-
-**Important**: Both approaches work in Angular 17+. This laboratory uses the traditional structural directives (*ngIf, *ngFor) which are still fully supported and widely used.
+- A directive adds behaviour to an existing element. Built-in ones you will use: `[ngClass]` (add CSS classes on a condition) and `[formGroup]` (connect a form).
+- You can write your own with the **@Directive** decorator, for example one that highlights the element it sits on.
 
 ### Data Sharing
 
-- Data sharing between parent and child components is a common pattern in Angular.
-- **@Input()** is used to decorate properties in a child component, and it receives data from the parent component.
+- Data goes **down** from parent to child through an **input**, and events go **up** from child to parent through an **output**.
 
-```JavaScript
-  // widget.component.ts 
-  @Input() index: number = 0;
-  @Output() deleted = new EventEmitter<number>();
+```TypeScript
+// widget.component.ts (the child)
+index = input.required<number>();   // the parent must pass it
+deleted = output<number>();         // an event the child sends
+
+onDelete() {
+  this.deleted.emit(this.index());  // an input is a signal: read it with ()
+}
 ```
 
-- The value of *index* property for each Widget instance comes from the parent component template.
-- The *index* property is binded to the child (*WidgetComponent*) to the *i* property of the parent (*FxRatesViewComponent*).
-
-```Html
-<!-- fx-rates-view.component.html -->
-  <app-widget
-    *ngFor="let i=index"
-    [index]="i"
-  >
-  </app-widget>
+```HTML
+<!-- the parent's template -->
+<app-widget [index]="i" (deleted)="onDeleteWidget($event)"></app-widget>
 ```
 
-- **@Output()** marks a property in a child component as an event emitter, allowing data to flow from the child to the parent:
-
-```JavaScript
-  // widget.component.ts 
-  @Output() deleted = new EventEmitter<number>();
-  ...
-  this.deleted.emit(this.index);
-```
-
-- The *onDeleteWidget* property from the parent, is binded to the child event (*deleted*).
-
-```Html
-<!-- fx-rates-view.component.html -->
-  <app-widget
-    *ngFor="let i=index"
-    [index]="i"
-    (deleted)="onDeleteWidget($event)"
-  >
-  </app-widget>
-```
+- Older code uses the `@Input()` and `@Output()` decorators for the same thing. The dashboard in [laboratory 07](../../07_Frontend_Development/Theory/README.md#inputs-and-outputs-as-functions) is built with `input()` and `output()`.
 
 ### Routing
 
-- Angular provides powerful routing capabilities for navigating between different pages (components).
-- Define routes and components in the routing configuration:
+- The router shows a different page (component) for each URL:
 
-```JavaScript
-import { RouterModule, Routes } from '@angular/router';
-
-import { AppComponent } from './app.component';
-import { LoginPageComponent } from './pages/login-page/login-page.component';
-import { RegisterPageComponent } from './pages/register-page/register-page.component';
-import { DashboardPageComponent } from './pages/dashboard-page/dashboard-page.component';
-import { NotFoundPageComponent } from './pages/not-found-page/not-found-page.component';
-
-...
-
-const appRoutes: Routes = [
-  { path: '', redirectTo: '/login', pathMatch: 'full', canActivate: [AuthGuard] },
+```TypeScript
+export const routes: Routes = [
+  { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'login', component: LoginPageComponent },
   { path: 'register', component: RegisterPageComponent },
-  { path: 'dashboard', component: DashboardPageComponent, canActivate: [AuthGuard] },
+  { path: 'dashboard', component: DashboardPageComponent, canActivate: [authGuard] },
   { path: '**', component: NotFoundPageComponent }
 ];
-
-@NgModule({
-  declarations: [
-    AppComponent,
-    LoginPageComponent,
-    RegisterPageComponent,
-    DashboardPageComponent,
-    NotFoundPageComponent,
-    ...
-  ],
-  imports: [
-      RouterModule.forRoot(appRoutes),
-      ...
-  ],
-  ...
-})
-
-export class AppModule { }
 ```
 
-```Html
-<router-outlet></router-outlet>
-```
-- Use the **<router-outlet></router-outlet>** element to display routed components.
+- The routes live in `app.routes.ts` and are given to the router in `app.config.ts` with `provideRouter(routes)`. The page appears where the template has `<router-outlet></router-outlet>`.
+- `**` matches any other URL: that is the "page not found".
 
-### Services
+### Services and HTTP
 
-- Services are used to encapsulate functionality that needs to be shared across components.
-- A service typically contains methods and properties that can be accessed by multiple components.
-- Define services using the **@Injectable()** decorator.
+- A **service** holds code that several components share, for example the calls to the backend. It is a class marked with `@Injectable({ providedIn: 'root' })`: Angular creates one instance for the whole application the first time somebody asks for it.
+- `HttpClient` makes HTTP calls. It is enabled once, in `app.config.ts`, with `provideHttpClient()`.
 
-```JavaScript
-@Injectable()
-export class UserService {
-    constructor() { }
+```TypeScript
+@Injectable({ providedIn: 'root' })
+export class AuthenticationService {
+  constructor(private http: HttpClient) { }
 
-    // some methods and properties
+  login(username: string, password: string) {
+    return this.http.post<User>(backendUrl.authService.authenticate, { username, password });
+  }
 }
 ```
 
-#### Http Service
+- `http.post` returns an **Observable**: a value that arrives later. Nothing is sent until somebody subscribes, and the answer arrives once:
 
-- The HttpClient is used to perform HTTP operations.
-- For using Http Service, we need to provide it in *app.module.ts*
-
-```JavaScript
-import { provideHttpClient } from '@angular/common/http';
-
-@NgModule({
-     imports: [
-        ...
-     ],
-     providers: [
-        provideHttpClient(),
-        ...
-     ],
-     ...
-})
+```TypeScript
+this.authenticationService.login(username, password).subscribe({
+  next: (user) => this.router.navigate(['/dashboard']),
+  error: () => this.loading.set(false)
+});
 ```
 
-- Define an HTTP service that makes requests and handles responses from external sources:
-
-```JavaScript
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs/internal/Observable';
-
-import { Transaction } from 'src/app/models/transaction';
-
-@Injectable()
-export class TradeService {
-
-    constructor(
-        private http: HttpClient
-    ) { }
-
-       getTransactions() {
-        return this.http.get(backendUrl.fxTradeService.getTransactions) as Observable<Transaction[]>
-    }
-}
-```
+- This is the one place where you meet Observables in this laboratory. [Laboratory 07](../../07_Frontend_Development/Theory/README.md#observables) explains them and shows how to turn one into a signal.
 
 ### Dependency Injection
 
-- Angular uses **dependency injection** to provide dependencies to a class when an instance of that class is created.
-- Dependencies can be services or objects required by a class to perform its function.
-
-**Constructor-based Injection (Traditional approach)**
-
-```JavaScript
-import { TradeService } from '../../../services/trade.service';
-
-@Component({
-  selector: 'app-blotter-view',
-  templateUrl: './blotter-view.component.html',
-  styleUrls: ['./blotter-view.component.css']
-})
-export class BlotterViewComponent {
-  constructor(
-    private tradeService: TradeService
-  ) { }
-  ...
-}
-```
-
-### inject() Function (Angular 14+)
-
-- **Angular 14** introduced the `inject()` function, which allows dependency injection outside of constructors.
-- This enables a more flexible and functional approach to dependency injection.
-
-**Using inject() in Components**
-
-```JavaScript
-import { Component, inject } from '@angular/core';
-import { TradeService } from '../../../services/trade.service';
-
-@Component({
-  selector: 'app-blotter-view',
-  templateUrl: './blotter-view.component.html',
-  styleUrls: ['./blotter-view.component.css']
-})
-export class BlotterViewComponent {
-  private tradeService = inject(TradeService);
-
-  ngOnInit() {
-    this.tradeService.getTransactions();
-  }
-}
-```
-
-**Using inject() in Functions**
-
-```JavaScript
-import { inject } from '@angular/core';
-import { Router } from '@angular/router';
-
-export const myUtilityFunction = () => {
-  const router = inject(Router);
-
-  return router.createUrlTree(['/dashboard']);
-};
-```
-
-**Benefits of inject()**
-- Cleaner code with less boilerplate
-- Easier to use in functional contexts (guards, interceptors, factory functions)
-- Better tree-shaking for smaller bundle sizes
-- More flexible - can be used in class fields, functions, and factories
-
-**Note**: Both constructor injection and `inject()` function work in Angular 14+. The `inject()` function is particularly useful in functional guards, interceptors, and when creating reusable utility functions. Constructor injection is still the standard for components and services in most cases.
+- A component does not create its services; it asks for them and Angular hands them over. This is **dependency injection**.
+- This application asks in the constructor: `constructor(private http: HttpClient) { }`.
+- The same thing can be written as a field: `private http = inject(HttpClient);`. New Angular code often uses `inject()`; both work.
 
 ### Route Guards
 
-- Route guards are used to control access to routes based on certain conditions (e.g., authentication, authorization).
-- Guards implement specific interfaces like `CanActivate`, `CanDeactivate`, `CanActivateChild`, etc.
+- A guard decides whether a route may open. Our `authGuard` lets the dashboard open only for a logged-in user:
 
-#### Class-based Guard (Traditional approach)
-
-```JavaScript
-import { Injectable } from '@angular/core';
-import { Router, CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
-
-@Injectable()
-export class AuthGuard implements CanActivate {
-  constructor(private router: Router) {}
-
-  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    if (localStorage.getItem('currentUser')) {
-      // User is logged in, allow access
-      return true;
-    }
-
-    // User is not logged in, redirect to login page
-    this.router.navigate(['/login'], { queryParams: { returnUrl: state.url } });
-    return false;
-  }
-}
-```
-
-#### Functional Guard (Angular 15+)
-
-- **Angular 15** introduced functional guards, which offer a simpler, more flexible approach.
-- Functional guards use the `inject()` function (introduced in Angular 14) to access dependencies:
-
-```JavaScript
-import { inject } from '@angular/core';
-import { Router } from '@angular/router';
-
-export const authGuard = () => {
-  const router = inject(Router);
-
+```TypeScript
+export const authGuard: CanActivateFn = (route, state) => {
   if (localStorage.getItem('currentUser')) {
     return true;
   }
-
-  return router.createUrlTree(['/login']);
+  return inject(Router).createUrlTree(['/login'], { queryParams: { returnUrl: state.url } });
 };
 ```
 
-#### Using Guards in Routes
-
-```JavaScript
-const routes: Routes = [
-  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
-  // Or with functional guard:
-  { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] }
-];
-```
-
-**Note**: Functional guards are recommended for Angular 15+ as they are more concise and easier to test. Class-based guards still work but are considered the legacy approach.
+- A guard is a function. It returns `true` to let the route open, or a `UrlTree` to send the user somewhere else. `inject(Router)` asks Angular for the router inside the function.
+- The route uses it with `canActivate: [authGuard]`.
 
 ### HTTP Interceptors
 
-- HTTP Interceptors allow you to intercept and modify HTTP requests and responses globally.
-- Common use cases include adding authentication tokens, logging, error handling, and caching.
+- An interceptor sees every HTTP request and response. Our application has two:
+  - `jwtInterceptor` adds the user's token to every request (`Authorization: Bearer ...`);
+  - `errorInterceptor` logs the user out when the server answers 401.
 
-#### Class-based Interceptor (Traditional approach)
-
-```JavaScript
-import { Injectable } from '@angular/core';
-import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/common/http';
-import { Observable } from 'rxjs';
-
-@Injectable()
-export class JwtInterceptor implements HttpInterceptor {
-  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    // Add authorization header with jwt token if available
-    let currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-    if (currentUser && currentUser.token) {
-      request = request.clone({
-        setHeaders: {
-          Authorization: `Bearer ${currentUser.token}`
-        }
-      });
-    }
-
-    return next.handle(request);
-  }
-}
-```
-
-- Register the interceptor in `app.module.ts`:
-
-```JavaScript
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { JwtInterceptor } from './helpers/jwt.interceptor';
-
-@NgModule({
-  providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true }
-  ]
-})
-```
-
-#### Functional Interceptor (Angular 15+)
-
-- **Angular 15** introduced functional interceptors for a more streamlined approach.
-- Functional interceptors can also use the `inject()` function to access services if needed:
-
-```JavaScript
-import { HttpInterceptorFn } from '@angular/common/http';
-
-export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
+```TypeScript
+export const jwtInterceptor: HttpInterceptorFn = (request, next) => {
   const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-
-  if (currentUser && currentUser.token) {
-    req = req.clone({
-      setHeaders: {
-        Authorization: `Bearer ${currentUser.token}`
-      }
-    });
+  if (currentUser.token) {
+    request = request.clone({ setHeaders: { Authorization: `Bearer ${currentUser.token}` } });
   }
-
-  return next(req);
+  return next(request);
 };
 ```
 
-- Register functional interceptor using `provideHttpClient`:
+- An interceptor is a function: it may change the request, then passes it on with `next(request)`.
+- They are registered in `app.config.ts`: `provideHttpClient(withInterceptors([jwtInterceptor, errorInterceptor]))`.
 
-```JavaScript
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { jwtInterceptor } from './helpers/jwt.interceptor';
+### Reactive forms
 
-@NgModule({
-  providers: [
-    provideHttpClient(
-      withInterceptors([jwtInterceptor])
-    )
-  ]
-})
+- A form blocks invalid data before it reaches the server. The login and register pages use **reactive forms**: the form is described in the component class, and the template connects to it.
+
+```TypeScript
+this.registerForm = this.formBuilder.group(
+  {
+    username: ['', Validators.required],
+    email: ['', Validators.required],
+    password: ['', [Validators.required, Validators.minLength(6)]],
+    confirmPassword: ['', Validators.required],
+  },
+  { validator: this.mustMatch('password', 'confirmPassword') }
+);
 ```
 
-**Note**: Functional interceptors are recommended for Angular 15+ as they are simpler and more composable. Class-based interceptors still work but are considered the legacy approach.
+```HTML
+<form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+  <input formControlName="password" [ngClass]="{ 'is-invalid': submitted() && f['password'].errors }" />
+  @if (submitted() && f['password'].errors?.['minlength']) {
+    <div>Password must be at least 6 characters</div>
+  }
+</form>
+```
+
+- `Validators` gives the common rules (`required`, `minLength`, `email`). `mustMatch` is our own validator: it checks that the two passwords are equal. `f` is a short getter for `registerForm.controls`.
